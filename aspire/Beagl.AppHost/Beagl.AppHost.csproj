@@ -1,0 +1,15 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.0.2">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Beagl.WebApp\Beagl.WebApp.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>7107e9ec-1447-41aa-9d32-34ee9ce23f65</UserSecretsId>
+  </PropertyGroup>
+
+</Project>
