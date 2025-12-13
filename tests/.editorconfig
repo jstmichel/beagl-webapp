@@ -1,0 +1,10 @@
+# EditorConfig for test projects
+# Inherit all rules from root .editorconfig
+
+# Allow underscores in test method names for readability
+[*.cs]
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1515.severity = none
+dotnet_diagnostic.CA1852.severity = none
+dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA2000.severity = none

@@ -63,11 +63,33 @@ Beagl is a modern CRM for animal centers. It centralizes management of animals, 
 - EF Core migrations in `src/Beagl.Infrastructure/Migrations/`
 - Configuration files in `src/Beagl.WebApp/`
 
+
 ## Commit Message Guidelines
 
 - Use Conventional Commits, lowercase (e.g., `feat: add login form partial`)
 - Include a clear summary of the change
 - For breaking changes, add `BREAKING CHANGE:` in the message body and describe the impact
+
+### Commit Message Generation for Multiple Changes
+
+- When committing multiple related changes, generate a single Conventional Commit message that summarizes all changes.
+- Use only one header (type/scope/subject) per commit.
+- List all relevant details in the commit body as bullet points.
+- Do not include multiple headers or separate commit messages in a single commit.
+- Example:
+
+```
+chore: add .gitignore, security policy, and test .editorconfig
+
+- include common build results and user-specific files
+- add settings for VSCode and Rider
+- exclude environment and database files
+- cover logs, npm packages, and temporary files
+- outline supported versions and reporting process
+- include security best practices for users
+- emphasize responsible disclosure of vulnerabilities
+- allow underscores in test method names for readability
+```
 
 ## Code Standards and Style
 
