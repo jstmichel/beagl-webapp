@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Beagl.Application\Beagl.Application.csproj" />
     <ProjectReference Include="..\Beagl.Infrastructure\Beagl.Infrastructure.csproj" />
     <ProjectReference Include="..\Beagl.Domain\Beagl.Domain.csproj" />
+    <ProjectReference Include="..\..\aspire\Beagl.ServiceDefaults\Beagl.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

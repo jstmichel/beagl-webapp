@@ -15,6 +15,8 @@ builder.Services.AddHsts(options =>
     options.MaxAge = TimeSpan.FromDays(365);
 });
 
+builder.AddServiceDefaults();
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
