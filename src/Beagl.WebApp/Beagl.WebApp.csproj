@@ -1,19 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <ItemGroup>
-    <ProjectReference Include="..\Beagl.Application\Beagl.Application.csproj" />
-    <ProjectReference Include="..\Beagl.Infrastructure\Beagl.Infrastructure.csproj" />
-    <ProjectReference Include="..\Beagl.Domain\Beagl.Domain.csproj" />
-    <ProjectReference Include="..\..\aspire\Beagl.ServiceDefaults\Beagl.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Beagl.Application\Beagl.Application.csproj"/>
+    <ProjectReference Include="..\Beagl.Infrastructure\Beagl.Infrastructure.csproj"/>
+    <ProjectReference Include="..\Beagl.Domain\Beagl.Domain.csproj"/>
+    <ProjectReference Include="..\..\aspire\Beagl.ServiceDefaults\Beagl.ServiceDefaults.csproj"/>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.101">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.1"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
   </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -26,6 +29,6 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>0.0.1</Version>
+    <UserSecretsId>7107e9ec-1447-41aa-9d32-34ee9ce23f65</UserSecretsId>
   </PropertyGroup>
-
 </Project>

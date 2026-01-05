@@ -3,9 +3,18 @@
 IDistributedApplicationBuilder builder =
     DistributedApplication.CreateBuilder(args);
 
+IResourceBuilder<IResourceWithConnectionString> connectionString =
+    builder.AddConnectionString("beagl-db");
+
 // Register PostgreSQL database
-IResourceBuilder<PostgresServerResource> postgresServer = builder.AddPostgres("postgres-server");
-IResourceBuilder<PostgresDatabaseResource> postgresdb = postgresServer.AddDatabase("postgres-db");
+IResourceBuilder<PostgresServerResource> postgresServer = builder
+    .AddPostgres("beagl-db-server")
+    .WithHostPort(5432);
+
+IResourceBuilder<PostgresDatabaseResource> postgresdb = postgresServer
+    .WithConnectionStringRedirection(connectionString.Resource)
+    .WithVolume("postgres-data", "/var/lib/postgresql/data")
+    .AddDatabase("beagl-database");
 
 // Register Beagl web application
 builder.AddProject("beagl-webapp", "../../src/Beagl.WebApp")
