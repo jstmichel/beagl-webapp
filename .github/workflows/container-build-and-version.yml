@@ -24,7 +24,7 @@ env:
 
 jobs:
   container-build-and-version:
-    name: "Build, Version & publish Container"
+    name: "Build, Version & Publish"
     runs-on: ubuntu-latest
 
     steps:
