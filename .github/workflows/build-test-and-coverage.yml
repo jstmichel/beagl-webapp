@@ -1,0 +1,39 @@
+name: Beagl .NET Core Build, Test & Coverage
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./beagl-webapp.sln
+
+      - name: Build solution
+        run: dotnet build ./beagl-webapp.sln --configuration Release --no-restore
+
+      - name: Test all projects
+        run: dotnet test ./beagl-webapp.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --logger "trx" --results-directory ./TestResults
+
+      - name: Upload all test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults

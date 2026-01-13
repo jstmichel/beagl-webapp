@@ -1,0 +1,134 @@
+name: Beagl Container Build and Version
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  discussions: read
+  packages: write
+  pages: write
+  pull-requests: read
+  repository-projects: read
+  security-events: read
+  statuses: read
+
+env:
+  IMAGE_NAME: beagl-webapp
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Setup git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Install Versionize
+      run: dotnet tool install --global Versionize
+
+    - name: Versioning
+      id: versionize
+      run: |
+        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          versionize --skip-dirty --aggregate-pre-releases
+        elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+          versionize --pre-release alpha --skip-dirty
+        elif [[ "${GITHUB_REF}" == "refs/heads/beta/*" ]]; then
+          versionize --pre-release beta --skip-dirty
+        fi
+      continue-on-error: true
+
+    - name: No release required
+      if: steps.versionize.outcome != 'success'
+      run: echo "Skipping Release. No release required."
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test all projects
+      run: dotnet test ./beagl-webapp.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --logger "trx" --results-directory ./TestResults
+
+    - name: Upload all test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: ./TestResults
+
+    - name: Log in to GitHub Container Registry
+      if: steps.versionize.outcome == 'success'
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push changes to GitHub
+      if: steps.versionize.outcome == 'success'
+      id: push-version
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        tags: true
+        force: true
+
+    - name: Create release
+      if: steps.versionize.outcome == 'success' && steps.push-version.outcome == 'success'
+      id: create_release
+      uses: actions/github-script@v5
+      with:
+        github-token: "${{ secrets.GITHUB_TOKEN }}"
+        script: |
+          try {
+            const tags_url = context.payload.repository.tags_url + "?per_page=1"
+            const result = await github.request(tags_url)
+            const current_tag = result.data[0].name
+            core.setOutput("current_tag", current_tag)
+            await github.rest.repos.createRelease({
+              draft: false,
+              generate_release_notes: true,
+              name: current_tag,
+              owner: context.repo.owner,
+              prerelease: false,
+              repo: context.repo.repo,
+              tag_name: current_tag,
+            });
+          } catch (error) {
+            core.setFailed(error.message);
+          }
+
+    - name: Build and push image to GitHub Container Registry
+      id: build-image
+      if: steps.versionize.outcome == 'success' && steps.create_release.outcome == 'success'
+      run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=${{ steps.create_release.outputs.current_tag }}
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker build --tag $IMAGE_ID:$VERSION --tag $IMAGE_ID:latest --file src/Beagl.WebApp/Dockerfile .
+          docker push $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:latest
+      continue-on-error: false
