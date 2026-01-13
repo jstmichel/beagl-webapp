@@ -1,5 +1,5 @@
 # Dockerfile for Beagl.WebApp
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore src/Beagl.WebApp/Beagl.WebApp.csproj
