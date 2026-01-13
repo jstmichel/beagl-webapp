@@ -1,16 +1,12 @@
 # Dockerfile for Beagl.WebApp
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-WORKDIR /app
-EXPOSE 8080
-
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ["Beagl.WebApp.csproj", "."]
-RUN dotnet restore "Beagl.WebApp.csproj"
 COPY . .
-RUN dotnet publish "Beagl.WebApp.csproj" -c Release -o /app/publish
+RUN dotnet restore src/Beagl.WebApp/Beagl.WebApp.csproj
+RUN dotnet publish src/Beagl.WebApp/Beagl.WebApp.csproj -c Release -o /app/publish
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "Beagl.WebApp.dll"]
