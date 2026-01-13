@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.0.7"></a>
+## [0.0.7](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.0.7) (2026-01-13)
+
 <a name="0.0.6"></a>
 ## [0.0.6](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.0.6) (2026-01-13)
 
