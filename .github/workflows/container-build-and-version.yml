@@ -23,7 +23,8 @@ env:
   IMAGE_NAME: beagl-webapp
 
 jobs:
-  build:
+  container-build-and-version:
+    name: "Build, Version & publish Container"
     runs-on: ubuntu-latest
 
     steps:
