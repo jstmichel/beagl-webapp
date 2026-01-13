@@ -37,7 +37,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./beagl-webapp.sln
 
     - name: Setup git
       run: |
@@ -64,7 +64,7 @@ jobs:
       run: echo "Skipping Release. No release required."
 
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ./beagl-webapp.sln --configuration Release --no-restore
 
     - name: Test all projects
       run: dotnet test ./beagl-webapp.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --logger "trx" --results-directory ./TestResults
