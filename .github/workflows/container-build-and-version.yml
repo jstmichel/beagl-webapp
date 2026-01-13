@@ -128,7 +128,7 @@ jobs:
           VERSION=${{ steps.create_release.outputs.current_tag }}
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
-          docker build --tag $IMAGE_ID:$VERSION --tag $IMAGE_ID:latest .
+          docker build --tag $IMAGE_ID:$VERSION --tag $IMAGE_ID:latest --file src/Beagl.WebApp/Dockerfile .
           docker push $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:latest
       continue-on-error: false
