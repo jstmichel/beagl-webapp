@@ -1,153 +1,145 @@
-# Project Overview
+# Beagl – Copilot Instructions (C# / .NET 10)
 
-Beagl is a modern CRM for animal centers. It centralizes management of animals, owners, and employees, provides a self-service portal, facilitates adoption and annual fee payments, and offers reporting tools and a secure web interface.
+Beagl is a modern CRM for animal centers.
 
-## Technologies Used
+---
 
-- .NET 10 / C#
-- ASP.NET Core
- - Blazor static server-side rendering (SSR) and interactive server-side Blazor (real-time UI updates via SignalR)
-- Entity Framework Core
-- Docker (deployment)
-- PostgreSQL (development and production)
-- Identity with EF Core for user and role management
+# 1. Architecture
 
-## Main Features & Workflows
+- Follow Clean Architecture with strict layer separation:
+  - Domain
+  - Application
+  - Infrastructure
+  - WebApp
+- Respect SOLID principles.
+- Prefer composition over inheritance.
+- Avoid static state.
+- Use dependency injection for all services.
 
-- Domain entity and role management
-- Data access and migrations
-- Authentication and authorization
-- Employee management (profiles, details)
-- Animal registration and tracking
-- Adoption workflow
-- Owner portal (self-service, annual fee payment)
-- Payment processing
-- Data centralization
-- Reporting tools
+## Layer Boundaries
 
-## Design Patterns & Architecture
+- Domain must not reference Infrastructure or WebApp.
+- Application must not reference WebApp.
+- Infrastructure may reference Domain and Application.
+- Mapping between layers must occur in Application.
+- Do not expose EF Core entities outside Infrastructure.
+- Repository interfaces live in Domain.
+- Repository implementations live in Infrastructure.
 
-- Layered architecture: Domain, Infrastructure, Application, WebApp
-- SOLID principles and Clean Architecture
-- Patterns used: Repository, Dependency Injection, Factory, Singleton, Strategy, Adapter, Observer, Mediator, Command, CQRS, Specification
+---
 
-## Naming and Formatting Conventions
+# 2. Async and Concurrency
 
-- PascalCase for classes, methods, properties
-- camelCase for local variables and parameters
-- Prefix 'I' for interfaces (e.g., `IAnimalRepository`)
-- Explicit and descriptive names
-- Tab indentation (per `.editorconfig`)
-- Line length: max 120 characters
-- Braces on new line
+- All I/O operations must be asynchronous.
+- Do not use `.Result`, `.Wait()`, or blocking calls.
+- Avoid `async void`.
+- Use `CancellationToken` in application services and handlers.
+- Async must flow from WebApp down to Infrastructure.
 
-## Error Handling and Logging
+---
 
-**Error Handling Guidelines:**
-- Always use the result pattern (e.g., `Result<T>`) for error handling in all layers, including domain, application services, use cases, and handlers, except for critical exceptions in domain logic.
-- Only throw exceptions in aggregates, entities, and value objects for critical domain invariant violations. Such exceptions must inherit from `DomainException`.
-- Do not use exceptions for expected business or validation errors; always prefer the result pattern.
-- Only catch exceptions if they are explicitly handled.
-- Use custom exception types if relevant.
-- Logging via ASP.NET Core `ILogger<T>`.
+# 3. Error Handling
+
+- Use the `Result<T>` pattern for expected errors in all layers.
+- Do not use exceptions for validation or business errors.
+- Only throw exceptions in Domain aggregates/entities/value objects for invariant violations.
+- Domain exceptions must inherit from `DomainException`.
+- Only catch exceptions when explicitly handling them.
+- Use custom exception types when relevant.
+
+---
+
+# 4. Validation
+
+- Input validation belongs in Application layer.
+- Domain enforces invariants only.
+- Do not mix validation logic with UI concerns.
+
+---
+
+# 5. Entity Framework Core
+
+- DbContext must remain in Infrastructure.
+- Use Fluent API for configuration.
+- Do not use lazy loading.
+- Use `AsNoTracking()` for read-only queries.
+- Do not leak DbContext outside Infrastructure.
+- Keep queries efficient and explicit.
+
+---
+
+# 6. C# Conventions
+
+- Enable nullable reference types.
+- Do not suppress nullable warnings without reason.
+- Use file-scoped namespace declarations.
+- Use explicit access modifiers.
+- Remove unused `using` statements.
+- Prefer records for immutable DTOs.
+- Use PascalCase for types/members.
+- Use camelCase for locals/parameters.
+- Prefix interfaces with `I`.
+- Keep methods small and cohesive.
+- Limit file and function size.
+
+---
+
+# 7. Logging
+
+- Use `ILogger<T>` for logging.
+- Use structured logging.
 - Do not log sensitive information.
-- Use structured logging for complex data.
 
-## Data Sources
+---
 
-- PostgreSQL database for all environments
+# 8. Testing
 
-## Configuration and Deployment
+- Use xUnit + FluentAssertions.
+- Add unit tests for all critical logic.
+- Cover:
+  - Happy path
+  - Edge cases
+  - Failure cases
+- Domain tests must not depend on Infrastructure.
+- Application tests must mock repositories.
 
-- Dockerfile for web app deployment
-- EF Core migrations in `src/Beagl.Infrastructure/Migrations/`
-- Configuration files in `src/Beagl.WebApp/`
+---
 
+# 9. Code Quality
 
-## Commit Message Guidelines
+- Follow `.editorconfig` strictly.
+- All analyzer warnings are treated as errors.
+- Use spaces for indentation (4 spaces per `.editorconfig`).
+- Max line length: 120.
+- Braces on new line.
+- XML documentation required for public members.
+- Code must be written in English (identifiers, comments, documentation).
 
-- Use Conventional Commits, lowercase (e.g., `feat: add login form partial`)
-- Include a clear summary of the change
-- For breaking changes, add `BREAKING CHANGE:` in the message body and describe the impact
+---
 
-### Commit Message Generation for Multiple Changes
+# 10. Folder Structure
 
-- When committing multiple related changes, generate a single Conventional Commit message that summarizes all changes.
-- Use only one header (type/scope/subject) per commit.
-- List all relevant details in the commit body as bullet points.
-- Do not include multiple headers or separate commit messages in a single commit.
-- Example:
+Projects:
 
-```
-chore: add .gitignore, security policy, and test .editorconfig
+- `src/Beagl.WebApp`
+- `src/Beagl.Infrastructure`
+- `src/Beagl.Application`
+- `src/Beagl.Domain`
 
-- include common build results and user-specific files
-- add settings for VSCode and Rider
-- exclude environment and database files
-- cover logs, npm packages, and temporary files
-- outline supported versions and reporting process
-- include security best practices for users
-- emphasize responsible disclosure of vulnerabilities
-- allow underscores in test method names for readability
-```
+Tests mirror source structure under `tests/`.
 
-## Code Standards and Style
+Repositories must include:
+- `README.md`
+- `src/`
+- `tests/`
+- Required config files
 
-- Source code must be written in English (variable, function, class names, etc.)
-- Comments and documentation must be in English, clear and precise
-- Follow clean code principles: simplicity, readability, modularity, avoid duplication
-- Follow Microsoft style recommendations for the language used
-- Indentation must be tabs, per `.editorconfig`
-- Use `.editorconfig` as the main linter for code quality and consistency
-- C# analyzers are used and all warnings are treated as errors during compilation
-- Document all public functions and main classes
-- Avoid code duplication: prefer reuse via functions or classes
-- Favor simplicity and readability: code understandable by all team members
-- Modularize code: separate responsibilities into distinct modules or classes
-- Respect Single Responsibility Principle
-- Use explicit names for variables, functions, and classes
-- Add unit tests for critical functions
-- Limit file and function size for maintainability
-- Document entry points and public APIs
-- Commit messages must follow Conventional Commits for clarity and traceability
-- Use file-scoped namespace declarations for C# source files
+---
 
-## Folder and Project Structure
+# 11. Commit Messages
 
-The repository contains the following projects:
-
-- `src/Beagl.WebApp`: main web app (Blazor SSR + interactive Blazor)
-    - Should contain: controllers, viewmodels, pages, UI components, integration services, UI-specific config
-- `src/Beagl.Infrastructure`: infrastructure layer (data access, external services)
-    - Should contain: repositories, data contexts, persistence DTOs, external integrations, technical config
-- `src/Beagl.Application`: application logic (use cases, business services)
-    - Should contain: application services, exchange DTOs, use case management, domain/infrastructure mapping
-- `src/Beagl.Domain`: domain model and business rules
-    - Should contain: entities, aggregates, value objects, repository interfaces, business rules, domain exceptions
-
-Tests are organized similarly:
-
-- `tests/Beagl.WebApp.Tests`: web app tests (controllers, UI, integration)
-- `tests/Beagl.Infrastructure.Tests`: infrastructure tests (repositories, data access)
-- `tests/Beagl.Application.Tests`: application logic tests (services, use cases)
-- `tests/Beagl.Domain.Tests`: domain tests (entities, aggregates, business rules)
-
-All repositories must include:
-- A `README.md` file with specific instructions
-- Source code in the `src/` folder as described
-- Unit tests in the `tests/` folder as described
-- Required config files (`.editorconfig`, etc.)
-
-**Important: All code generation must strictly follow the rules defined in the `.editorconfig` file at the project root.**
-This includes:
-- Indentation (spaces or tabs per config)
-- UTF-8 encoding
-- LF line endings
-- No trailing whitespace
-- Naming and documentation conventions
-- C# style preferences (explicit types, private fields prefixed, `readonly`, initializers, etc.)
-- Explicit access modifiers
-- Remove unused `using` statements
-- XML documentation for public members
-- Other analyzer rules and recommendations in `.editorconfig`
-- File header based on `.editorconfig` settings
+- Use Conventional Commits (lowercase).
+- Single header per commit.
+- Keep title under 72 characters.
+- Summarize related changes in bullet points in body.
+- Add `BREAKING CHANGE:` in body if applicable.
