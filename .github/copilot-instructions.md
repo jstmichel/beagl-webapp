@@ -109,7 +109,7 @@ Beagl is a modern CRM for animal centers.
 
 - Follow `.editorconfig` strictly.
 - All analyzer warnings are treated as errors.
-- Use tabs for indentation (per `.editorconfig`).
+- Use spaces for indentation (4 spaces per `.editorconfig`).
 - Max line length: 120.
 - Braces on new line.
 - XML documentation required for public members.

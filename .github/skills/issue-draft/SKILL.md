@@ -34,6 +34,10 @@ Rules:
   - Acceptance Criteria (>= 3 checkbox items, testable)
 - If any answer is missing, make minimal assumptions and label them clearly under Description as “Assumptions”.
 
+## Title rules
+- Keep it short and specific.
+- Prefer: "<type>: <short outcome>" (e.g., "bug: fix adoption fee not updating owner balance")
+
 Template:
 
 ```markdown
@@ -54,6 +58,3 @@ Assumptions:
 - Out of scope:
 - Verification:
 ```
-## Title rules
-- Keep it short and specific.
-- Prefer: "<type>: <short outcome>" (e.g., "bug: fix adoption fee not updating owner balance")

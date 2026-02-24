@@ -33,14 +33,14 @@ and stop.
 - Exactly one header line: `<type>(optional-scope): <subject>`
 - Header length <= 72 characters.
 - Types: feat, fix, refactor, perf, test, docs, chore
-- Scopes: domain, application, infrastructure, webapp, build, docs, test
+- Scopes: domain, application, infrastructure, webapp, build, docs, tests
 - Choose scope based on where most staged changes are (by folder path):
   - src/Beagl.Domain -> domain
   - src/Beagl.Application -> application
   - src/Beagl.Infrastructure -> infrastructure
   - src/Beagl.WebApp -> webapp
   - .github/, README, docs -> docs
-  - tests/* -> test
+  - tests/* -> tests
   - build scripts, docker -> build
 - If multiple related changes exist: add bullet points in body.
 - If breaking change exists: include `BREAKING CHANGE:` paragraph.
