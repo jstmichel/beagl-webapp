@@ -1,6 +1,7 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using Beagl.Infrastructure;
+using Beagl.Infrastructure.Database;
 
 namespace Beagl.WebApp.Extensions;
 
@@ -19,8 +20,11 @@ internal static class WebApplicationExtensions
         ArgumentNullException.ThrowIfNull(app);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        await DatabaseInitializer
-            .InitializeAsync(app.Services, configuration)
-            .ConfigureAwait(false);
+        using IServiceScope scope = app.Services.CreateScope();
+        ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        EfCoreDatabaseMigrator migrator = new(dbContext);
+
+        DatabaseInitializer initializer = new(migrator, configuration);
+        await initializer.InitializeAsync().ConfigureAwait(false);
     }
 }
