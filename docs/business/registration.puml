@@ -1,0 +1,33 @@
+@startuml Registration
+actor Citizen
+actor Administrator
+participant "WebApp" as WA
+participant "Identity Service" as IS
+participant "Database" as DB
+
+Citizen -> WA : Register
+WA -> IS : Validate registration data
+alt Citizen has email
+    IS -> DB : Create citizen account (pending activation)
+    DB --> IS : Account created
+    IS -> Citizen : Send activation email
+    Citizen -> WA : Activate account (via email link)
+    WA -> IS : Activate citizen account
+    IS -> DB : Update account status to active
+    DB --> IS : Account activated
+    IS --> WA : Activation success
+    WA --> Citizen : Show confirmation
+else No email
+    IS -> DB : Create citizen account (pending activation)
+    DB --> IS : Account created
+    WA --> Citizen : Notify: Administrator will contact you for approval
+    IS -> Administrator : Notify for manual activation
+    Administrator -> WA : Approve and activate citizen account (asynchronous)
+    WA -> IS : Activate citizen account
+    IS -> DB : Update account status to active
+    DB --> IS : Account activated
+    IS --> WA : Activation success
+    WA --> Administrator : Show confirmation
+    WA --> Citizen : Show account activated confirmation
+end
+@enduml

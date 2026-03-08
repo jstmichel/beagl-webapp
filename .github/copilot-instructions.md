@@ -72,9 +72,9 @@ Beagl is a modern CRM for animal centers.
 
 # 6. C# Conventions
 
-- Enable nullable reference types.
 - Do not suppress nullable warnings without reason.
 - Always use file-scoped namespace declarations for all C# files (not block-scoped).
+- Always use C# primary constructor syntax for classes unless custom logic is required in the constructor body.
 - Always use explicit types instead of `var` for all variable declarations.
 - When using explicit types, simplify variable creation using the new type() syntax (IDE0090), e.g., `MyType myVar = new();`.
 - Add the file header as defined in `.editorconfig` to every generated file:
