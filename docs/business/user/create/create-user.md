@@ -2,13 +2,13 @@
 
 *Note:*
 Creating a new user should be done for specific roles considered privileged
-users. Creating a user is different that creating an employee entry. It is
+users. Creating a user is different than creating an employee entry. It is
 possible to have an employee with no application account.
 
 *Considerations*:
 - username uniqueness is shared with all user types - so no duplicates possible
 - Employee username must have an email - usually the one provided by the manager
-- Employee also provide a phone number for security reason
+- Employee also provides a phone number for security reasons
 - Two-factor is not initialized at the account creation
 - An account validation will be sent to the provided email
 - The user will need to activate his account with the provided link

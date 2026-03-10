@@ -1,12 +1,12 @@
 # Login process
 
-*Note:* login applies to any type of users. They must authenticate using their account name, or email address. The phone number could be used multiple time so it is not a good authentication solution for this app.
+*Note:* login applies to any type of users. They must authenticate using their account name, or email address. The phone number could be used multiple times so it is not a good authentication solution for this app.
 
 *Considerations*:
 - Citizens may or may not have an email address - might not be relevant
 - It is possible that a user has been locked or disabled and must be validated
-- Two factor remain optional but can occurs for user having setup two factor authientication
-- If username, email or password is not found or can't be paired. We only tell that auhentication failed.
+- Two factor remain optional but can occurs for user having setup two factor authentication
+- If username, email or password is not found or can't be paired. We only tell that authentication failed.
 - Reset password is not in this scope.
 
 ```
