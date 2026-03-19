@@ -2,16 +2,13 @@
 
 using Beagl.Infrastructure;
 using Beagl.Infrastructure.Users.Entities;
-using Beagl.WebApp.Components;
 using Beagl.WebApp.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorPages();
 
 // Add EF Core DbContext with PostgreSQL
 string? connectionString = builder.Configuration.GetConnectionString("beagl-db");
@@ -51,10 +48,12 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.MapRazorPages();
 
 await app.RunAsync();

@@ -11,7 +11,7 @@
             "program": ""
         },
         {
-            "name": "Blazor",
+            "name": "Razor Pages",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
