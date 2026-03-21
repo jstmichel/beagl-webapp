@@ -1,0 +1,23 @@
+@using Beagl.WebApp.Components.Layout
+@inject IStringLocalizer<ErrorResource> L
+
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(MainLayout)">
+            <section class="users-page-shell">
+                <div class="container py-5">
+                    <div class="users-surface mx-auto p-4 p-lg-5 text-center" style="max-width: 720px;">
+                        <p class="users-kicker mb-3">@L["NotFound.Kicker"]</p>
+                        <h1 class="display-6 fw-semibold">@L["NotFound.Title"]</h1>
+                        <p class="text-secondary mb-4">@L["NotFound.Description"]</p>
+                        <a class="btn btn-primary px-4" href="/users">@L["NotFound.Action.Users"]</a>
+                    </div>
+                </div>
+            </section>
+        </LayoutView>
+    </NotFound>
+</Router>

@@ -1,0 +1,594 @@
+@page "/users"
+@rendermode InteractiveServer
+@inject IUserManagementService UserManagementService
+@inject ILogger<Users> Logger
+@inject IStringLocalizer<UsersResource> L
+
+<PageTitle>@L["Users.PageTitle"]</PageTitle>
+
+<section class="users-page-shell">
+    <div class="container-xxl py-4 py-lg-5">
+        <div class="users-hero mb-4 mb-lg-5">
+            <div>
+                <p class="users-kicker mb-2">@L["Users.Kicker"]</p>
+                <h1 class="display-5 fw-semibold mb-3">@L["Users.Title"]</h1>
+                <p class="users-hero__copy mb-0">@L["Users.Copy"]</p>
+            </div>
+            <button type="button" class="btn btn-primary btn-lg users-primary-action" @onclick="OpenCreatePanel" data-testid="create-user-button">
+                <i class="bi bi-person-plus me-2" aria-hidden="true"></i>
+                @L["Users.Action.Create"]
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(_statusMessage))
+        {
+            <div class="alert alert-success mb-4" role="status" aria-live="polite">@_statusMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <div class="alert alert-danger mb-4" role="alert" aria-live="assertive">@_errorMessage</div>
+        }
+
+        <div class="users-metrics mb-4">
+            <article class="users-metric-card">
+                <span class="users-metric-card__icon"><i class="bi bi-people"></i></span>
+                <div>
+                    <p class="users-metric-card__label">@L["Users.Metric.Total"]</p>
+                    <p class="users-metric-card__value">@_users.Count</p>
+                </div>
+            </article>
+            <article class="users-metric-card">
+                <span class="users-metric-card__icon"><i class="bi bi-envelope-check"></i></span>
+                <div>
+                    <p class="users-metric-card__label">@L["Users.Metric.Confirmed"]</p>
+                    <p class="users-metric-card__value">@ConfirmedUsersCount</p>
+                </div>
+            </article>
+            <article class="users-metric-card">
+                <span class="users-metric-card__icon"><i class="bi bi-shield-lock"></i></span>
+                <div>
+                    <p class="users-metric-card__label">@L["Users.Metric.Locked"]</p>
+                    <p class="users-metric-card__value">@LockedOutUsersCount</p>
+                </div>
+            </article>
+        </div>
+
+        <div class="users-workspace">
+            <section class="users-surface users-surface--table" aria-labelledby="users-directory-title">
+                <div class="users-surface__header">
+                    <div>
+                        <h2 id="users-directory-title" class="h4 mb-1">@L["Users.Directory.Title"]</h2>
+                        <p class="text-secondary mb-0">@L["Users.Directory.Description"]</p>
+                    </div>
+                    <label class="users-search" for="userSearch">
+                        <span class="visually-hidden">@L["Users.Search.Label"]</span>
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input id="userSearch" type="search" class="form-control" placeholder="@L["Users.Search.Placeholder"]" @bind="_searchText" @bind:event="oninput" />
+                    </label>
+                </div>
+
+                @if (_isLoading)
+                {
+                    <div class="users-empty-state py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">@L["Users.Loading"]</span>
+                        </div>
+                    </div>
+                }
+                else if (FilteredUsers.Count == 0)
+                {
+                    <div class="users-empty-state py-5" data-testid="empty-state">
+                        <div class="users-empty-state__icon"><i class="bi bi-people"></i></div>
+                        <h3 class="h5">@L["Users.Empty.Title"]</h3>
+                        <p class="text-secondary mb-0">@L["Users.Empty.Description"]</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle users-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">@L["Users.Table.User"]</th>
+                                    <th scope="col">@L["Users.Table.Phone"]</th>
+                                    <th scope="col">@L["Users.Table.Status"]</th>
+                                    <th scope="col" class="text-end">@L["Users.Table.Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (UserListItemDto user in FilteredUsers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <span class="users-avatar" aria-hidden="true">@GetAvatarInitial(user)</span>
+                                                <div>
+                                                    <p class="fw-semibold mb-1">@user.UserName</p>
+                                                    <p class="text-secondary mb-0">@user.Email</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@FormatOptionalValue(user.PhoneNumber)</td>
+                                        <td>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <span class="badge text-bg-light">@(user.EmailConfirmed ? L["Users.Status.EmailConfirmed"] : L["Users.Status.PendingConfirmation"])</span>
+                                                @if (user.IsLockedOut)
+                                                {
+                                                    <span class="badge text-bg-warning">@L["Users.Status.LockedOut"]</span>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="users-actions justify-content-end">
+                                                <button
+                                                    type="button"
+                                                    class="users-icon-action"
+                                                    @onclick="() => OpenDetailsPanelAsync(user.Id)"
+                                                    data-testid="details-@user.Id"
+                                                    aria-label='@L["Users.Action.Details"]'
+                                                    title='@L["Users.Action.Details"]'>
+                                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="users-icon-action"
+                                                    @onclick="() => OpenEditPanelAsync(user.Id)"
+                                                    data-testid="edit-@user.Id"
+                                                    aria-label='@L["Users.Action.Edit"]'
+                                                    title='@L["Users.Action.Edit"]'>
+                                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="users-icon-action users-icon-action--danger"
+                                                    @onclick="() => OpenDeletePanelAsync(user.Id)"
+                                                    data-testid="delete-@user.Id"
+                                                    aria-label='@L["Users.Action.Delete"]'
+                                                    title='@L["Users.Action.Delete"]'>
+                                                    <i class="bi bi-trash3" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </section>
+        </div>
+
+        @if (_panelMode != UserPanelMode.None)
+        {
+            <div class="users-dialog-backdrop" @onclick="ClosePanel">
+                <aside class="users-surface users-surface--panel users-dialog" aria-live="polite" role="dialog" aria-modal="true" aria-labelledby="users-panel-title" @onclick:stopPropagation="true">
+                    <div class="users-panel__header">
+                        <div>
+                            <p class="users-kicker mb-2">@L["Users.Panel.Kicker"]</p>
+                            <h2 id="users-panel-title" class="h4 mb-1">@PanelTitle</h2>
+                            <p class="text-secondary mb-0">@PanelDescription</p>
+                        </div>
+                    </div>
+
+                    @switch (_panelMode)
+                    {
+                        case UserPanelMode.Create:
+                            <EditForm EditContext="_createEditContext" OnValidSubmit="CreateUserAsync">
+                                <DataAnnotationsValidator />
+
+                                @if (_createEditContext.GetValidationMessages().Any())
+                                {
+                                    <div class="alert alert-danger" role="alert">
+                                        <ul class="mb-0 ps-3">
+                                            @foreach (string message in _createEditContext.GetValidationMessages().Distinct())
+                                            {
+                                                <li>@LocalizeValidationMessage(message)</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+
+                                <div class="users-form-grid">
+                                    <div>
+                                        <label class="form-label" for="createUserName">@L["Users.Form.UserName"]</label>
+                                        <InputText id="createUserName" class="form-control" @bind-Value="_createForm.UserName" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="createEmail">@L["Users.Form.Email"]</label>
+                                        <InputText id="createEmail" class="form-control" @bind-Value="_createForm.Email" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="createPhone">@L["Users.Form.Phone"]</label>
+                                        <InputText id="createPhone" class="form-control" @bind-Value="_createForm.PhoneNumber" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="createPassword">@L["Users.Form.TempPassword"]</label>
+                                        <InputText id="createPassword" type="password" class="form-control" @bind-Value="_createForm.Password" />
+                                        <div class="form-text">@L["Users.Form.TempPasswordHint"]</div>
+                                    </div>
+                                </div>
+
+                                <div class="users-panel__actions">
+                                    <button type="submit" class="btn btn-primary" disabled="@_isSaving">@L["Users.Action.Create"]</button>
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Cancel"]</button>
+                                </div>
+                            </EditForm>
+                            break;
+                        case UserPanelMode.Details when _selectedUser is not null:
+                            <dl class="users-detail-grid" data-testid="details-panel">
+                                <div>
+                                    <dt>@L["Users.Form.UserName"]</dt>
+                                    <dd>@_selectedUser.UserName</dd>
+                                </div>
+                                <div>
+                                    <dt>@L["Users.Form.Email"]</dt>
+                                    <dd>@_selectedUser.Email</dd>
+                                </div>
+                                <div>
+                                    <dt>@L["Users.Form.Phone"]</dt>
+                                    <dd>@FormatOptionalValue(_selectedUser.PhoneNumber)</dd>
+                                </div>
+                                <div>
+                                    <dt>@L["Users.Details.EmailConfirmation"]</dt>
+                                    <dd>@(_selectedUser.EmailConfirmed ? L["Users.Details.Confirmed"] : L["Users.Details.Pending"])</dd>
+                                </div>
+                                <div>
+                                    <dt>@L["Users.Details.Lockout"]</dt>
+                                    <dd>@(_selectedUser.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
+                                </div>
+                                <div>
+                                    <dt>@L["Users.Details.Identifier"]</dt>
+                                    <dd><code>@_selectedUser.Id</code></dd>
+                                </div>
+                            </dl>
+                            <div class="users-panel__actions">
+                                <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Close"]</button>
+                                <button type="button" class="btn btn-outline-primary" @onclick="() => OpenEditPanelAsync(_selectedUser.Id)">@L["Users.Action.EditUser"]</button>
+                                <button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeletePanelAsync(_selectedUser.Id)">@L["Users.Action.DeleteUser"]</button>
+                            </div>
+                            break;
+                        case UserPanelMode.Edit:
+                            <EditForm EditContext="_editEditContext" OnValidSubmit="UpdateUserAsync">
+                                <DataAnnotationsValidator />
+
+                                @if (_editEditContext.GetValidationMessages().Any())
+                                {
+                                    <div class="alert alert-danger" role="alert">
+                                        <ul class="mb-0 ps-3">
+                                            @foreach (string message in _editEditContext.GetValidationMessages().Distinct())
+                                            {
+                                                <li>@LocalizeValidationMessage(message)</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+
+                                <div class="users-form-grid">
+                                    <div>
+                                        <label class="form-label" for="editUserName">@L["Users.Form.UserName"]</label>
+                                        <InputText id="editUserName" class="form-control" @bind-Value="_editForm.UserName" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="editEmail">@L["Users.Form.Email"]</label>
+                                        <InputText id="editEmail" class="form-control" @bind-Value="_editForm.Email" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="editPhone">@L["Users.Form.Phone"]</label>
+                                        <InputText id="editPhone" class="form-control" @bind-Value="_editForm.PhoneNumber" />
+                                    </div>
+                                </div>
+
+                                <div class="users-panel__actions">
+                                    <button type="submit" class="btn btn-primary" disabled="@_isSaving">@L["Users.Action.SaveChanges"]</button>
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Cancel"]</button>
+                                </div>
+                            </EditForm>
+                            break;
+                        case UserPanelMode.Delete when _selectedUser is not null:
+                            <div class="users-delete-card" data-testid="delete-panel">
+                                <p class="mb-3">@L["Users.Delete.Warning", _selectedUser.UserName]</p>
+                                <p class="text-secondary mb-4">@L["Users.Delete.Description"]</p>
+                                <div class="users-panel__actions">
+                                    <button type="button" class="btn btn-danger" @onclick="DeleteUserAsync" disabled="@_isSaving">@L["Users.Action.DeleteUser"]</button>
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Cancel"]</button>
+                                </div>
+                            </div>
+                            break;
+                    }
+                </aside>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private readonly List<UserListItemDto> _users = [];
+    private readonly CreateUserFormModel _createForm = new();
+    private readonly EditUserFormModel _editForm = new();
+
+    private bool _isLoading = true;
+    private bool _isSaving;
+    private string _searchText = string.Empty;
+    private string? _errorMessage;
+    private string? _statusMessage;
+    private UserPanelMode _panelMode;
+    private UserDetailsDto? _selectedUser;
+    private EditContext _createEditContext = default!;
+    private EditContext _editEditContext = default!;
+
+    private int ConfirmedUsersCount => _users.Count(user => user.EmailConfirmed);
+
+    private int LockedOutUsersCount => _users.Count(user => user.IsLockedOut);
+
+    private IReadOnlyList<UserListItemDto> FilteredUsers => _users
+        .Where(user => string.IsNullOrWhiteSpace(_searchText)
+            || user.UserName.Contains(_searchText, StringComparison.OrdinalIgnoreCase)
+            || user.Email.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
+        .ToArray();
+
+    private string PanelTitle => _panelMode switch
+    {
+        UserPanelMode.Create => L["Users.Panel.Title.Create"],
+        UserPanelMode.Details => L["Users.Panel.Title.Details"],
+        UserPanelMode.Edit => L["Users.Panel.Title.Edit"],
+        UserPanelMode.Delete => L["Users.Panel.Title.Delete"],
+        _ => string.Empty,
+    };
+
+    private string PanelDescription => _panelMode switch
+    {
+        UserPanelMode.Create => L["Users.Panel.Description.Create"],
+        UserPanelMode.Details => L["Users.Panel.Description.Details"],
+        UserPanelMode.Edit => L["Users.Panel.Description.Edit"],
+        UserPanelMode.Delete => L["Users.Panel.Description.Delete"],
+        _ => string.Empty,
+    };
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        _createEditContext = new(_createForm);
+        _editEditContext = new(_editForm);
+        await LoadUsersAsync().ConfigureAwait(false);
+    }
+
+    private async Task LoadUsersAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            IReadOnlyList<UserListItemDto> users = await UserManagementService.GetUsersAsync(CancellationToken.None).ConfigureAwait(false);
+
+            _users.Clear();
+            _users.AddRange(users);
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(exception, "Failed to load managed users");
+            _errorMessage = L["Users.Error.LoadFailed"];
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void OpenCreatePanel()
+    {
+        _createForm.Reset();
+        _createEditContext = new(_createForm);
+        _selectedUser = null;
+        _panelMode = UserPanelMode.Create;
+        _errorMessage = null;
+        _statusMessage = null;
+    }
+
+    private async Task OpenDetailsPanelAsync(string userId)
+    {
+        await LoadSelectedUserAsync(userId, UserPanelMode.Details).ConfigureAwait(false);
+    }
+
+    private async Task OpenEditPanelAsync(string userId)
+    {
+        bool isLoaded = await LoadSelectedUserAsync(userId, UserPanelMode.Edit).ConfigureAwait(false);
+        if (isLoaded && _selectedUser is not null)
+        {
+            _editForm.Load(_selectedUser);
+            _editEditContext = new(_editForm);
+        }
+    }
+
+    private async Task OpenDeletePanelAsync(string userId)
+    {
+        await LoadSelectedUserAsync(userId, UserPanelMode.Delete).ConfigureAwait(false);
+    }
+
+    private void ClosePanel()
+    {
+        _panelMode = UserPanelMode.None;
+        _selectedUser = null;
+        _errorMessage = null;
+    }
+
+    private async Task CreateUserAsync()
+    {
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+
+        CreateUserRequest request = new(
+            _createForm.UserName,
+            _createForm.Email,
+            _createForm.PhoneNumber,
+            _createForm.Password);
+
+        Result<UserDetailsDto> result = await UserManagementService.CreateAsync(request, CancellationToken.None).ConfigureAwait(false);
+        await HandleMutationResultAsync(result, L["Users.Success.Created"], UserPanelMode.Details).ConfigureAwait(false);
+    }
+
+    private async Task UpdateUserAsync()
+    {
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+
+        UpdateUserRequest request = new(
+            _editForm.Id,
+            _editForm.UserName,
+            _editForm.Email,
+            _editForm.PhoneNumber);
+
+        Result<UserDetailsDto> result = await UserManagementService.UpdateAsync(request, CancellationToken.None).ConfigureAwait(false);
+        await HandleMutationResultAsync(result, L["Users.Success.Updated"], UserPanelMode.Details).ConfigureAwait(false);
+    }
+
+    private async Task DeleteUserAsync()
+    {
+        if (_selectedUser is null)
+        {
+            return;
+        }
+
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+
+        Result result = await UserManagementService.DeleteAsync(_selectedUser.Id, CancellationToken.None).ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            _errorMessage = LocalizeError(result.Error!);
+            _isSaving = false;
+            return;
+        }
+
+        _selectedUser = null;
+        _panelMode = UserPanelMode.None;
+        _statusMessage = L["Users.Success.Deleted"];
+        await LoadUsersAsync().ConfigureAwait(false);
+        _isSaving = false;
+    }
+
+    private async Task<bool> LoadSelectedUserAsync(string userId, UserPanelMode panelMode)
+    {
+        _errorMessage = null;
+        _statusMessage = null;
+
+        Result<UserDetailsDto> result = await UserManagementService.GetUserByIdAsync(userId, CancellationToken.None).ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            _errorMessage = LocalizeError(result.Error!);
+            return false;
+        }
+
+        _selectedUser = result.Value!;
+        _panelMode = panelMode;
+        return true;
+    }
+
+    private async Task HandleMutationResultAsync(Result<UserDetailsDto> result, string successMessage, UserPanelMode successPanelMode)
+    {
+        if (result.IsFailure)
+        {
+            _errorMessage = LocalizeError(result.Error!);
+            _isSaving = false;
+            return;
+        }
+
+        _selectedUser = result.Value!;
+        _panelMode = successPanelMode;
+        _statusMessage = successMessage;
+        await LoadUsersAsync().ConfigureAwait(false);
+        _isSaving = false;
+    }
+
+    private string FormatOptionalValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? L["Users.Optional.NotProvided"] : value;
+    }
+
+    private string LocalizeError(ResultError error)
+    {
+        LocalizedString localizedError = L[error.Code];
+        return localizedError.ResourceNotFound ? error.Message : localizedError.Value;
+    }
+
+    private string LocalizeValidationMessage(string message)
+    {
+        LocalizedString localizedMessage = L[message];
+        return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
+    }
+
+    private static string GetAvatarInitial(UserListItemDto user)
+    {
+        return string.IsNullOrWhiteSpace(user.UserName)
+            ? "?"
+            : user.UserName[..1].ToUpperInvariant();
+    }
+
+    private enum UserPanelMode
+    {
+        None,
+        Create,
+        Details,
+        Edit,
+        Delete,
+    }
+
+    private sealed class CreateUserFormModel
+    {
+        [Required(ErrorMessage = "users.user_name_required")]
+        [StringLength(256, ErrorMessage = "users.user_name_too_long")]
+        public string UserName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "users.email_required")]
+        [EmailAddress(ErrorMessage = "users.invalid_email")]
+        [StringLength(256)]
+        public string Email { get; set; } = string.Empty;
+
+        [Phone]
+        [StringLength(32)]
+        public string? PhoneNumber { get; set; }
+
+        [Required(ErrorMessage = "users.password_required")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "users.password_too_short")]
+        public string Password { get; set; } = string.Empty;
+
+        public void Reset()
+        {
+            UserName = string.Empty;
+            Email = string.Empty;
+            PhoneNumber = null;
+            Password = string.Empty;
+        }
+    }
+
+    private sealed class EditUserFormModel
+    {
+        [Required(ErrorMessage = "users.invalid_id")]
+        public string Id { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "users.user_name_required")]
+        [StringLength(256, ErrorMessage = "users.user_name_too_long")]
+        public string UserName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "users.email_required")]
+        [EmailAddress(ErrorMessage = "users.invalid_email")]
+        [StringLength(256)]
+        public string Email { get; set; } = string.Empty;
+
+        [Phone]
+        [StringLength(32)]
+        public string? PhoneNumber { get; set; }
+
+        public void Load(UserDetailsDto user)
+        {
+            Id = user.Id;
+            UserName = user.UserName;
+            Email = user.Email;
+            PhoneNumber = user.PhoneNumber;
+        }
+    }
+}

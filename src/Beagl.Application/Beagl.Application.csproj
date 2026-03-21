@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Beagl.Domain\Beagl.Domain.csproj" />
-    <ProjectReference Include="..\Beagl.Infrastructure\Beagl.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -10,6 +9,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
   </ItemGroup>
 
   <PropertyGroup>

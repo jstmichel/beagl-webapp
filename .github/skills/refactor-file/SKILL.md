@@ -17,30 +17,9 @@ Refactor a single file in context to strictly follow Beagl coding guidelines, be
    - Identify unused code, static state, poor separation of concerns, and non-testable patterns.
 3. **Refactor:**
    - Apply changes only within the specified file.
-   - Enforce:
-     - File-scoped namespace
-     - Use C# primary constructor syntax for classes unless custom logic is required in the constructor body
-     - Explicit types (no `var`)
-     - Remove unused `using` statements
-     - Use dependency injection for services
-     - No static state
-     - Small, cohesive methods
-     - Mark methods as static when they do not use instance data
-     - If a class only contains static methods and holds no state, define the class as static.
-     - PascalCase for types/members, camelCase for locals/parameters
-     - XML documentation for public members
-     - File header as per `.editorconfig`
-     - Spaces for indentation (4 spaces)
-     - Max line length: 120
-     - Braces on new line
-     - Nullable reference types enabled
-     - No EF Core entities outside Infrastructure
-     - No blocking calls, all I/O async
-     - Result<T> for expected errors
-     - No exceptions for validation/business errors
-     - Prefer records for immutable DTOs
-     - Remove UI concerns from validation
-     - Structured logging with `ILogger<T>`
+   - Enforce all coding and architecture guidelines from `.github/copilot-instructions.md` (single source of truth).
+   - For UI files, enforce the centralized UI design system from `.github/copilot-instructions.md` section "UI Design System".
+    - For localization requirements, enforce `.github/copilot-instructions.md` section "Localization (i18n)".
    - Make the file testable:
      - Decouple dependencies
      - Use interfaces for external services

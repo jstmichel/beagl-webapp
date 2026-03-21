@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="Home.Title" xml:space="preserve"><value>Accueil</value></data>
+  <data name="Home.Kicker" xml:space="preserve"><value>Centre de contrôle Beagl</value></data>
+  <data name="Home.Hero.Title" xml:space="preserve"><value>Une façon plus claire de gérer l'identité et les opérations des centres animaliers.</value></data>
+  <data name="Home.Hero.Copy" xml:space="preserve"><value>Beagl offre aux équipes un espace opérationnel focalisé pour la gestion des comptes et l'administration quotidienne. Accédez directement aux utilisateurs, gardez des flux cohérents et maintenez la visibilité sur la santé des comptes.</value></data>
+  <data name="Home.Action.Users" xml:space="preserve"><value>Ouvrir l'espace utilisateurs</value></data>
+  <data name="Home.Action.Overview" xml:space="preserve"><value>Voir l'aperçu du tableau de bord</value></data>
+  <data name="Home.Highlights.Aria" xml:space="preserve"><value>Points forts de la plateforme</value></data>
+  <data name="Home.Highlight.Workspace.Title" xml:space="preserve"><value>Un seul espace</value></data>
+  <data name="Home.Highlight.Workspace.Copy" xml:space="preserve"><value>Créer, consulter, modifier et supprimer des utilisateurs sans changer de contexte.</value></data>
+  <data name="Home.Highlight.Clarity.Title" xml:space="preserve"><value>Clarté opérationnelle</value></data>
+  <data name="Home.Highlight.Clarity.Copy" xml:space="preserve"><value>Des indicateurs de statut et des panneaux cibles rendent les actions critiques plus lisibles.</value></data>
+  <data name="Home.Highlight.Teams.Title" xml:space="preserve"><value>Pensé pour les équipes</value></data>
+  <data name="Home.Highlight.Teams.Copy" xml:space="preserve"><value>Des interactions responsives pour desktop et mobile dans les centres occupés.</value></data>
+</root>

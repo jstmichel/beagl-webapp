@@ -1,14 +1,35 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Globalization;
 using Beagl.Infrastructure;
+using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
+using Beagl.Application.Users.Services;
+using Beagl.Domain.Users;
 using Beagl.WebApp.Extensions;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorPages();
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+CultureInfo[] supportedCultures =
+[
+    new CultureInfo("en"),
+    new CultureInfo("fr"),
+];
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 
 // Add EF Core DbContext with PostgreSQL
 string? connectionString = builder.Configuration.GetConnectionString("beagl-db");
@@ -21,9 +42,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Add ASP.NET Core Identity (without default UI), using EF Core for storage
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IUserRepository, IdentityUserRepository>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 
 builder.Services.AddHsts(options =>
 {
@@ -47,6 +74,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+app.UseRequestLocalization();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -54,6 +82,7 @@ app.UseAuthorization();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapRazorPages();
+app.MapRazorComponents<Beagl.WebApp.Components.App>()
+    .AddInteractiveServerRenderMode();
 
 await app.RunAsync();

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="Home.Title" xml:space="preserve"><value>Home</value></data>
+  <data name="Home.Kicker" xml:space="preserve"><value>Beagl control center</value></data>
+  <data name="Home.Hero.Title" xml:space="preserve"><value>A calmer, clearer way to run identity and operations for animal centers.</value></data>
+  <data name="Home.Hero.Copy" xml:space="preserve"><value>Beagl gives teams a focused operational surface for account management and day-to-day administration. Jump directly into users, keep workflows consistent, and maintain visibility across account health.</value></data>
+  <data name="Home.Action.Users" xml:space="preserve"><value>Open users workspace</value></data>
+  <data name="Home.Action.Overview" xml:space="preserve"><value>View dashboard overview</value></data>
+  <data name="Home.Highlights.Aria" xml:space="preserve"><value>Platform highlights</value></data>
+  <data name="Home.Highlight.Workspace.Title" xml:space="preserve"><value>One workspace</value></data>
+  <data name="Home.Highlight.Workspace.Copy" xml:space="preserve"><value>Create, inspect, edit, and remove users without switching contexts.</value></data>
+  <data name="Home.Highlight.Clarity.Title" xml:space="preserve"><value>Operational clarity</value></data>
+  <data name="Home.Highlight.Clarity.Copy" xml:space="preserve"><value>Status indicators and focused panels keep critical account actions readable.</value></data>
+  <data name="Home.Highlight.Teams.Title" xml:space="preserve"><value>Built for teams</value></data>
+  <data name="Home.Highlight.Teams.Copy" xml:space="preserve"><value>Responsive interactions support desktop and mobile usage for busy centers.</value></data>
+</root>

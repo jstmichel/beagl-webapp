@@ -22,6 +22,8 @@ Automates the implementation of a GitHub issue in the current codebase. Triggere
 
 ## Guidelines
 Refer to [copilot-instructions.md](../../copilot-instructions.md) for all coding, architecture, testing, and quality standards. All implementation must strictly follow these instructions.
+For frontend changes, use the "UI Design System" section in that file as the single source of truth.
+For localization requirements, use the "Localization (i18n)" section in that file as the single source of truth.
 
 ## Invocation
 - `/implement #XX`

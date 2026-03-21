@@ -17,7 +17,9 @@ Generate a new C# file (class, record, interface, etc.) strictly following Beagl
 3. **Generate:**
     - Create the implementation file in the correct project and folder structure based on context (e.g., Domain, Application, Infrastructure, WebApp).
     - Generate the corresponding unit test file in the proper test project and folder structure (e.g., tests/Beagl.Domain.Tests, tests/Beagl.Application.Tests).
-    - Follow Beagl guidelines as above for both files.
+    - Follow all coding guidelines from `.github/copilot-instructions.md` (single source of truth) for both files.
+    - For UI files, follow the centralized UI design system in `.github/copilot-instructions.md` section "UI Design System".
+   - For localization requirements, use `.github/copilot-instructions.md` section "Localization (i18n)" as the single source of truth.
     - Mark methods as static when they do not use instance data.
     - If a class only contains static methods and holds no state, define the class as static.
     - Unit test file:
