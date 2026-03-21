@@ -35,21 +35,21 @@
                 <span class="users-metric-card__icon"><i class="bi bi-people"></i></span>
                 <div>
                     <p class="users-metric-card__label">@L["Users.Metric.Total"]</p>
-                    <p class="users-metric-card__value">@_users.Count</p>
+                    <p class="users-metric-card__value">@_totalUsersCount</p>
                 </div>
             </article>
             <article class="users-metric-card">
-                <span class="users-metric-card__icon"><i class="bi bi-envelope-check"></i></span>
+                <span class="users-metric-card__icon"><i class="bi bi-envelope-exclamation"></i></span>
                 <div>
-                    <p class="users-metric-card__label">@L["Users.Metric.Confirmed"]</p>
-                    <p class="users-metric-card__value">@ConfirmedUsersCount</p>
+                    <p class="users-metric-card__label">@L["Users.Metric.PendingConfirmation"]</p>
+                    <p class="users-metric-card__value">@_pendingConfirmationUsersCount</p>
                 </div>
             </article>
             <article class="users-metric-card">
                 <span class="users-metric-card__icon"><i class="bi bi-shield-lock"></i></span>
                 <div>
                     <p class="users-metric-card__label">@L["Users.Metric.Locked"]</p>
-                    <p class="users-metric-card__value">@LockedOutUsersCount</p>
+                    <p class="users-metric-card__value">@_lockedOutUsersCount</p>
                 </div>
             </article>
         </div>
@@ -64,7 +64,7 @@
                     <label class="users-search" for="userSearch">
                         <span class="visually-hidden">@L["Users.Search.Label"]</span>
                         <i class="bi bi-search" aria-hidden="true"></i>
-                        <input id="userSearch" type="search" class="form-control" placeholder="@L["Users.Search.Placeholder"]" @bind="_searchText" @bind:event="oninput" />
+                        <input id="userSearch" type="search" class="form-control" placeholder="@L["Users.Search.Placeholder"]" value="@_searchText" @oninput="OnSearchInputAsync" />
                     </label>
                 </div>
 
@@ -76,7 +76,7 @@
                         </div>
                     </div>
                 }
-                else if (FilteredUsers.Count == 0)
+                else if (_users.Count == 0)
                 {
                     <div class="users-empty-state py-5" data-testid="empty-state">
                         <div class="users-empty-state__icon"><i class="bi bi-people"></i></div>
@@ -97,7 +97,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (UserListItemDto user in FilteredUsers)
+                                @foreach (UserListItemDto user in _users)
                                 {
                                     <tr>
                                         <td>
@@ -154,6 +154,15 @@
                                 }
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="users-pagination">
+                        <p class="text-secondary mb-0">@L["Users.Pagination.Summary", PageStartIndex, PageEndIndex, _filteredUsersCount]</p>
+                        <div class="btn-group" role="group" aria-label="@L["Users.Pagination.Aria"]">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="GoToPreviousPageAsync" disabled="@(!CanGoPreviousPage)">@L["Users.Pagination.Previous"]</button>
+                            <span class="btn btn-outline-secondary disabled">@L["Users.Pagination.Page", _currentPage, TotalPages]</span>
+                            <button type="button" class="btn btn-outline-secondary" @onclick="GoToNextPageAsync" disabled="@(!CanGoNextPage)">@L["Users.Pagination.Next"]</button>
+                        </div>
                     </div>
                 }
             </section>
@@ -306,10 +315,16 @@
     private readonly List<UserListItemDto> _users = [];
     private readonly CreateUserFormModel _createForm = new();
     private readonly EditUserFormModel _editForm = new();
+    private const int _pageSize = 10;
 
     private bool _isLoading = true;
     private bool _isSaving;
     private string _searchText = string.Empty;
+    private int _currentPage = 1;
+    private int _filteredUsersCount;
+    private int _totalUsersCount;
+    private int _pendingConfirmationUsersCount;
+    private int _lockedOutUsersCount;
     private string? _errorMessage;
     private string? _statusMessage;
     private UserPanelMode _panelMode;
@@ -317,15 +332,15 @@
     private EditContext _createEditContext = default!;
     private EditContext _editEditContext = default!;
 
-    private int ConfirmedUsersCount => _users.Count(user => user.EmailConfirmed);
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling((double)_filteredUsersCount / _pageSize));
 
-    private int LockedOutUsersCount => _users.Count(user => user.IsLockedOut);
+    private int PageStartIndex => _filteredUsersCount == 0 ? 0 : ((_currentPage - 1) * _pageSize) + 1;
 
-    private IReadOnlyList<UserListItemDto> FilteredUsers => _users
-        .Where(user => string.IsNullOrWhiteSpace(_searchText)
-            || user.UserName.Contains(_searchText, StringComparison.OrdinalIgnoreCase)
-            || user.Email.Contains(_searchText, StringComparison.OrdinalIgnoreCase))
-        .ToArray();
+    private int PageEndIndex => _filteredUsersCount == 0 ? 0 : Math.Min(_currentPage * _pageSize, _filteredUsersCount);
+
+    private bool CanGoPreviousPage => _currentPage > 1;
+
+    private bool CanGoNextPage => _currentPage < TotalPages;
 
     private string PanelTitle => _panelMode switch
     {
@@ -350,20 +365,40 @@
     {
         _createEditContext = new(_createForm);
         _editEditContext = new(_editForm);
-        await LoadUsersAsync().ConfigureAwait(false);
+        await LoadUsersMetricsAsync().ConfigureAwait(false);
+        await LoadUsersPageAsync().ConfigureAwait(false);
     }
 
-    private async Task LoadUsersAsync()
+    private async Task LoadUsersMetricsAsync()
+    {
+        try
+        {
+            UsersMetricsDto metrics = await UserManagementService.GetUsersMetricsAsync(CancellationToken.None).ConfigureAwait(false);
+            _totalUsersCount = metrics.TotalUsers;
+            _pendingConfirmationUsersCount = metrics.PendingConfirmationUsers;
+            _lockedOutUsersCount = metrics.LockedOutUsers;
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(exception, "Failed to load users metrics");
+            _errorMessage ??= L["Users.Error.LoadFailed"];
+        }
+    }
+
+    private async Task LoadUsersPageAsync()
     {
         _isLoading = true;
         _errorMessage = null;
 
         try
         {
-            IReadOnlyList<UserListItemDto> users = await UserManagementService.GetUsersAsync(CancellationToken.None).ConfigureAwait(false);
+            GetUsersPageRequest request = new(_searchText, _currentPage, _pageSize);
+            UsersPageDto page = await UserManagementService.GetUsersPageAsync(request, CancellationToken.None).ConfigureAwait(false);
 
             _users.Clear();
-            _users.AddRange(users);
+            _users.AddRange(page.Users);
+            _filteredUsersCount = page.TotalCount;
+            _currentPage = page.PageNumber;
         }
         catch (Exception exception)
         {
@@ -467,7 +502,8 @@
         _selectedUser = null;
         _panelMode = UserPanelMode.None;
         _statusMessage = L["Users.Success.Deleted"];
-        await LoadUsersAsync().ConfigureAwait(false);
+        await LoadUsersMetricsAsync().ConfigureAwait(false);
+        await LoadUsersPageAsync().ConfigureAwait(false);
         _isSaving = false;
     }
 
@@ -500,7 +536,8 @@
         _selectedUser = result.Value!;
         _panelMode = successPanelMode;
         _statusMessage = successMessage;
-        await LoadUsersAsync().ConfigureAwait(false);
+        await LoadUsersMetricsAsync().ConfigureAwait(false);
+        await LoadUsersPageAsync().ConfigureAwait(false);
         _isSaving = false;
     }
 
@@ -519,6 +556,35 @@
     {
         LocalizedString localizedMessage = L[message];
         return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
+    }
+
+    private async Task OnSearchInputAsync(ChangeEventArgs args)
+    {
+        _searchText = args.Value?.ToString() ?? string.Empty;
+        _currentPage = 1;
+        await LoadUsersPageAsync().ConfigureAwait(false);
+    }
+
+    private async Task GoToPreviousPageAsync()
+    {
+        if (!CanGoPreviousPage)
+        {
+            return;
+        }
+
+        _currentPage--;
+        await LoadUsersPageAsync().ConfigureAwait(false);
+    }
+
+    private async Task GoToNextPageAsync()
+    {
+        if (!CanGoNextPage)
+        {
+            return;
+        }
+
+        _currentPage++;
+        await LoadUsersPageAsync().ConfigureAwait(false);
     }
 
     private static string GetAvatarInitial(UserListItemDto user)

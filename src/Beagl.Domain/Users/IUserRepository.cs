@@ -10,11 +10,19 @@ namespace Beagl.Domain.Users;
 public interface IUserRepository
 {
     /// <summary>
-    /// Retrieves all users.
+    /// Retrieves global users metrics.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The collection of users.</returns>
-    public Task<IReadOnlyList<UserAccount>> GetAllAsync(CancellationToken cancellationToken);
+    /// <returns>The global users metrics.</returns>
+    public Task<UsersMetrics> GetMetricsAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Retrieves a paginated users list.
+    /// </summary>
+    /// <param name="query">The paginated query options.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The paginated users result.</returns>
+    public Task<UsersPage> GetPageAsync(GetUsersPageQuery query, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves a user by identifier.

@@ -81,6 +81,12 @@ public sealed class UsersPageTests : TestContext
 
         public UserDetailsDto? SelectedUser { get; init; }
 
+        public Task<UsersMetricsDto> GetUsersMetricsAsync(CancellationToken cancellationToken)
+        {
+            UsersMetricsDto metrics = new(Users.Count, Users.Count(user => !user.EmailConfirmed), Users.Count(user => user.IsLockedOut));
+            return Task.FromResult(metrics);
+        }
+
         public Task<Result<UserDetailsDto>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken)
         {
             UserDetailsDto createdUser = new(
@@ -105,9 +111,10 @@ public sealed class UsersPageTests : TestContext
             return Task.FromResult(Result.Success(user));
         }
 
-        public Task<IReadOnlyList<UserListItemDto>> GetUsersAsync(CancellationToken cancellationToken)
+        public Task<UsersPageDto> GetUsersPageAsync(GetUsersPageRequest request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(Users);
+            UsersPageDto page = new(Users, Users.Count, request.PageNumber, request.PageSize);
+            return Task.FromResult(page);
         }
 
         public Task<Result<UserDetailsDto>> UpdateAsync(UpdateUserRequest request, CancellationToken cancellationToken)

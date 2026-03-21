@@ -10,7 +10,7 @@
   <data name="Users.Copy" xml:space="preserve"><value>Browse active accounts, inspect account health, and handle create, update, or delete workflows without leaving the users page.</value></data>
   <data name="Users.Action.Create" xml:space="preserve"><value>Create user</value></data>
   <data name="Users.Metric.Total" xml:space="preserve"><value>Total users</value></data>
-  <data name="Users.Metric.Confirmed" xml:space="preserve"><value>Confirmed emails</value></data>
+  <data name="Users.Metric.PendingConfirmation" xml:space="preserve"><value>Unconfirmed emails</value></data>
   <data name="Users.Metric.Locked" xml:space="preserve"><value>Locked out</value></data>
   <data name="Users.Directory.Title" xml:space="preserve"><value>User directory</value></data>
   <data name="Users.Directory.Description" xml:space="preserve"><value>Direct URL access for list management with contextual actions.</value></data>
@@ -23,6 +23,11 @@
   <data name="Users.Table.Phone" xml:space="preserve"><value>Phone</value></data>
   <data name="Users.Table.Status" xml:space="preserve"><value>Status</value></data>
   <data name="Users.Table.Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Users.Pagination.Aria" xml:space="preserve"><value>Users list pagination</value></data>
+  <data name="Users.Pagination.Summary" xml:space="preserve"><value>Showing {0}-{1} of {2} users</value></data>
+  <data name="Users.Pagination.Previous" xml:space="preserve"><value>Previous</value></data>
+  <data name="Users.Pagination.Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Users.Pagination.Page" xml:space="preserve"><value>Page {0} of {1}</value></data>
   <data name="Users.Status.EmailConfirmed" xml:space="preserve"><value>Email confirmed</value></data>
   <data name="Users.Status.PendingConfirmation" xml:space="preserve"><value>Pending confirmation</value></data>
   <data name="Users.Status.LockedOut" xml:space="preserve"><value>Locked out</value></data>

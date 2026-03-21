@@ -18,11 +18,44 @@ public sealed class IdentityUserRepository(
     private readonly UserManager<ApplicationUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<UserAccount>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<UsersMetrics> GetMetricsAsync(CancellationToken cancellationToken)
     {
-        return await _userManager.Users
-            .AsNoTracking()
+        IQueryable<ApplicationUser> usersQuery = _userManager.Users.AsNoTracking();
+
+        int totalUsers = await usersQuery.CountAsync(cancellationToken).ConfigureAwait(false);
+        int pendingConfirmationUsers = await usersQuery
+            .CountAsync(user => !user.EmailConfirmed, cancellationToken)
+            .ConfigureAwait(false);
+        int lockedOutUsers = await usersQuery
+            .CountAsync(user => user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow, cancellationToken)
+            .ConfigureAwait(false);
+
+        return new UsersMetrics(totalUsers, pendingConfirmationUsers, lockedOutUsers);
+    }
+
+    /// <inheritdoc />
+    public async Task<UsersPage> GetPageAsync(GetUsersPageQuery query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        IQueryable<ApplicationUser> usersQuery = _userManager.Users.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+        {
+            string pattern = $"%{query.SearchTerm.Trim()}%";
+            usersQuery = usersQuery.Where(user =>
+                EF.Functions.ILike(user.UserName ?? string.Empty, pattern)
+                || EF.Functions.ILike(user.Email ?? string.Empty, pattern));
+        }
+
+        int totalCount = await usersQuery.CountAsync(cancellationToken).ConfigureAwait(false);
+        int totalPages = Math.Max(1, (int)Math.Ceiling((double)totalCount / query.PageSize));
+        int currentPage = Math.Min(query.PageNumber, totalPages);
+
+        IReadOnlyList<UserAccount> users = await usersQuery
             .OrderBy(user => user.UserName)
+            .ThenBy(user => user.Email)
+            .Skip((currentPage - 1) * query.PageSize)
+            .Take(query.PageSize)
             .Select(user => new UserAccount(
                 user.Id,
                 user.UserName ?? string.Empty,
@@ -32,6 +65,8 @@ public sealed class IdentityUserRepository(
                 user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
+
+        return new UsersPage(users, totalCount, currentPage, query.PageSize);
     }
 
     /// <inheritdoc />

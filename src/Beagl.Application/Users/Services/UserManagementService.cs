@@ -23,11 +23,38 @@ public sealed partial class UserManagementService(
     private readonly ILogger<UserManagementService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<UserListItemDto>> GetUsersAsync(CancellationToken cancellationToken)
+    public async Task<UsersMetricsDto> GetUsersMetricsAsync(CancellationToken cancellationToken)
     {
-        IReadOnlyList<UserAccount> users = await _userRepository.GetAllAsync(cancellationToken).ConfigureAwait(false);
+        UsersMetrics metrics = await _userRepository.GetMetricsAsync(cancellationToken).ConfigureAwait(false);
 
-        return [..users.Select(MapListItem)];
+        return new UsersMetricsDto(metrics.TotalUsers, metrics.PendingConfirmationUsers, metrics.LockedOutUsers);
+    }
+
+    /// <inheritdoc />
+    public async Task<UsersPageDto> GetUsersPageAsync(GetUsersPageRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        int pageNumber = request.PageNumber < 1 ? 1 : request.PageNumber;
+        int pageSize = request.PageSize switch
+        {
+            < 1 => 10,
+            > 100 => 100,
+            _ => request.PageSize,
+        };
+
+        GetUsersPageQuery query = new(
+            string.IsNullOrWhiteSpace(request.SearchTerm) ? null : request.SearchTerm.Trim(),
+            pageNumber,
+            pageSize);
+
+        UsersPage page = await _userRepository.GetPageAsync(query, cancellationToken).ConfigureAwait(false);
+
+        return new UsersPageDto(
+            [..page.Users.Select(MapListItem)],
+            page.TotalCount,
+            page.PageNumber,
+            page.PageSize);
     }
 
     /// <inheritdoc />

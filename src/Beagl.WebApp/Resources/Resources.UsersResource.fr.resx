@@ -10,7 +10,7 @@
   <data name="Users.Copy" xml:space="preserve"><value>Parcourez les comptes actifs, inspectez leur état et effectuez création, mise à jour ou suppression sans quitter la page.</value></data>
   <data name="Users.Action.Create" xml:space="preserve"><value>Créer un utilisateur</value></data>
   <data name="Users.Metric.Total" xml:space="preserve"><value>Total des utilisateurs</value></data>
-  <data name="Users.Metric.Confirmed" xml:space="preserve"><value>Courriels confirmés</value></data>
+  <data name="Users.Metric.PendingConfirmation" xml:space="preserve"><value>Courriels non confirmés</value></data>
   <data name="Users.Metric.Locked" xml:space="preserve"><value>Verrouillés</value></data>
   <data name="Users.Directory.Title" xml:space="preserve"><value>Répertoire des utilisateurs</value></data>
   <data name="Users.Directory.Description" xml:space="preserve"><value>Accès direct pour gérer la liste avec des actions contextuelles.</value></data>
@@ -23,6 +23,11 @@
   <data name="Users.Table.Phone" xml:space="preserve"><value>Téléphone</value></data>
   <data name="Users.Table.Status" xml:space="preserve"><value>Statut</value></data>
   <data name="Users.Table.Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Users.Pagination.Aria" xml:space="preserve"><value>Pagination de la liste des utilisateurs</value></data>
+  <data name="Users.Pagination.Summary" xml:space="preserve"><value>Affichage {0}-{1} sur {2} utilisateurs</value></data>
+  <data name="Users.Pagination.Previous" xml:space="preserve"><value>Précédent</value></data>
+  <data name="Users.Pagination.Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Users.Pagination.Page" xml:space="preserve"><value>Page {0} sur {1}</value></data>
   <data name="Users.Status.EmailConfirmed" xml:space="preserve"><value>Courriel confirmé</value></data>
   <data name="Users.Status.PendingConfirmation" xml:space="preserve"><value>Confirmation en attente</value></data>
   <data name="Users.Status.LockedOut" xml:space="preserve"><value>Verrouillé</value></data>

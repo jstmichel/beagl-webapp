@@ -169,6 +169,7 @@ Repositories must include:
 - Use meaningful motion (page entrance, staggered reveal, panel transitions) rather than excessive micro-animations.
 - Preserve existing visual language when updating an established surface; only apply broad redesign when explicitly requested.
 - Keep style logic centralized (global stylesheet/design tokens) and avoid scattered one-off inline styles.
+- All data lists must include pagination by default with a consistent interaction pattern (summary, current page indicator, previous/next controls, and disabled states), and pagination/filtering must be query-level (server-side) by default rather than client-side over full datasets.
 - For data-heavy CRUD screens, avoid permanent narrow side panes and avoid long inline bottom detail editors; prefer modal dialogs for quick create/edit/details and dedicated routes/pages for complex or long forms.
 - For list row actions in CRUD tables, prefer icon-only, borderless action buttons; keep them accessible with explicit `aria-label` and `title` attributes.
 - For icon-only action buttons, use the primary brand color for neutral actions and a red destructive variant for delete actions.

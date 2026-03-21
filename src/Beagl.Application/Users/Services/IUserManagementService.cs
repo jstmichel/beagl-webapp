@@ -11,11 +11,19 @@ namespace Beagl.Application.Users.Services;
 public interface IUserManagementService
 {
     /// <summary>
-    /// Retrieves all users.
+    /// Retrieves global users metrics.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The collection of users.</returns>
-    public Task<IReadOnlyList<UserListItemDto>> GetUsersAsync(CancellationToken cancellationToken);
+    /// <returns>The global users metrics.</returns>
+    public Task<UsersMetricsDto> GetUsersMetricsAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Retrieves a paginated users list.
+    /// </summary>
+    /// <param name="request">The paginated request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The paginated users result.</returns>
+    public Task<UsersPageDto> GetUsersPageAsync(GetUsersPageRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves a user by identifier.
