@@ -7,6 +7,16 @@ description: Generate a new C# file (class, record, interface, etc.) strictly fo
 ## Purpose
 Generate a new C# file (class, record, interface, etc.) strictly following Beagl coding guidelines, best practices, SOLID principles, Clean Architecture, and ensuring testability.
 
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+- `.github/instructions/async.instructions.md`
+- `.github/instructions/error-handling.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/testing.instructions.md`
+- `.github/instructions/efcore.instructions.md` when creating Infrastructure persistence code
+- `.github/instructions/ui-design.instructions.md` when creating WebApp UI files
+- `.github/instructions/localization.instructions.md` for user-facing strings and resources
+
 ---
 
 ## Workflow
@@ -17,9 +27,7 @@ Generate a new C# file (class, record, interface, etc.) strictly following Beagl
 3. **Generate:**
     - Create the implementation file in the correct project and folder structure based on context (e.g., Domain, Application, Infrastructure, WebApp).
     - Generate the corresponding unit test file in the proper test project and folder structure (e.g., tests/Beagl.Domain.Tests, tests/Beagl.Application.Tests).
-    - Follow all coding guidelines from `.github/copilot-instructions.md` (single source of truth) for both files.
-    - For UI files, follow the centralized UI design system in `.github/copilot-instructions.md` section "UI Design System".
-   - For localization requirements, use `.github/copilot-instructions.md` section "Localization (i18n)" as the single source of truth.
+    - Follow the relevant scoped instruction files from `.github/instructions/` for both implementation and tests.
     - Mark methods as static when they do not use instance data.
     - If a class only contains static methods and holds no state, define the class as static.
     - Unit test file:
@@ -59,7 +67,14 @@ output: generated file content + summary
 ---
 
 ## References
-- .github/copilot-instructions.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/async.instructions.md
+- .github/instructions/error-handling.instructions.md
+- .github/instructions/csharp.instructions.md
+- .github/instructions/testing.instructions.md
+- .github/instructions/efcore.instructions.md
+- .github/instructions/ui-design.instructions.md
+- .github/instructions/localization.instructions.md
 - .editorconfig
 - Beagl coding guidelines
 

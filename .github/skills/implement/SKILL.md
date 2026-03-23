@@ -21,9 +21,17 @@ Automates the implementation of a GitHub issue in the current codebase. Triggere
 5. **Completion**: Mark todos as completed and confirm implementation.
 
 ## Guidelines
-Refer to [copilot-instructions.md](../../copilot-instructions.md) for all coding, architecture, testing, and quality standards. All implementation must strictly follow these instructions.
-For frontend changes, use the "UI Design System" section in that file as the single source of truth.
-For localization requirements, use the "Localization (i18n)" section in that file as the single source of truth.
+Refer to the scoped instruction files under `.github/instructions/` for coding, architecture, testing, data access, UI, and localization standards.
+
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+- `.github/instructions/async.instructions.md`
+- `.github/instructions/error-handling.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/testing.instructions.md`
+- `.github/instructions/efcore.instructions.md` when Infrastructure persistence is involved
+- `.github/instructions/ui-design.instructions.md` for WebApp UI changes
+- `.github/instructions/localization.instructions.md` for localization and resource changes
 
 ## Invocation
 - `/implement #XX`

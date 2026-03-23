@@ -18,6 +18,11 @@ If neither exists: output exactly `No code selected or staged changes detected.`
 - Application tests must mock repositories/external services
 - Avoid testing implementation details; focus on behavior
 
+## Relevant Instruction Files
+- `.github/instructions/error-handling.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/testing.instructions.md`
+
 ## Coverage requirements
 - Happy path
 - Edge cases

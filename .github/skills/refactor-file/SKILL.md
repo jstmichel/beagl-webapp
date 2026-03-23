@@ -8,6 +8,16 @@ description: Refactor a single file in context to enforce Beagl coding guideline
 ## Purpose
 Refactor a single file in context to strictly follow Beagl coding guidelines, best practices, SOLID principles, Clean Architecture, and ensure testability. No changes are made to other files.
 
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+- `.github/instructions/async.instructions.md`
+- `.github/instructions/error-handling.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/testing.instructions.md` when refactoring tests
+- `.github/instructions/efcore.instructions.md` when refactoring Infrastructure persistence code
+- `.github/instructions/ui-design.instructions.md` when refactoring WebApp UI files
+- `.github/instructions/localization.instructions.md` when refactoring user-facing strings or resources
+
 ---
 
 ## Workflow
@@ -17,9 +27,7 @@ Refactor a single file in context to strictly follow Beagl coding guidelines, be
    - Identify unused code, static state, poor separation of concerns, and non-testable patterns.
 3. **Refactor:**
    - Apply changes only within the specified file.
-   - Enforce all coding and architecture guidelines from `.github/copilot-instructions.md` (single source of truth).
-   - For UI files, enforce the centralized UI design system from `.github/copilot-instructions.md` section "UI Design System".
-    - For localization requirements, enforce `.github/copilot-instructions.md` section "Localization (i18n)".
+   - Enforce the relevant scoped instruction files from `.github/instructions/`.
    - Make the file testable:
      - Decouple dependencies
      - Use interfaces for external services
@@ -54,7 +62,14 @@ output: refactored file content + summary
 ---
 
 ## References
-- .github/copilot-instructions.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/async.instructions.md
+- .github/instructions/error-handling.instructions.md
+- .github/instructions/csharp.instructions.md
+- .github/instructions/testing.instructions.md
+- .github/instructions/efcore.instructions.md
+- .github/instructions/ui-design.instructions.md
+- .github/instructions/localization.instructions.md
 - .editorconfig
 - Beagl coding guidelines
 

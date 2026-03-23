@@ -24,9 +24,15 @@ This skill launches an agent that scans the entire codebase and suggests what sh
   - Reason for testing (business logic, validation, error handling, etc.)
   - Suggested test types
 
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+- `.github/instructions/error-handling.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/testing.instructions.md`
+
 ## Implementation
 - Use search_subagent to explore the workspace for public classes, methods, and business logic
-- Apply Beagl's testing guidelines (see .github/copilot-instructions.md)
+- Apply Beagl's scoped testing and coding instructions from `.github/instructions/`
 - Exclude Infrastructure implementations and WebApp UI code from unit test suggestions
 - Prioritize Domain and Application layers
 - For each suggestion, automatically generate xUnit + FluentAssertions unit test skeletons
@@ -38,7 +44,7 @@ This skill launches an agent that scans the entire codebase and suggests what sh
 - Create new test files if needed, or append to existing files
 - Use file-scoped namespace declarations matching the folder structure (e.g., tests/Beagl.Infrastructure.Tests/Users/Entities → namespace Beagl.Infrastructure.Tests.Users.Entities;)
 - Use explicit types instead of var for all variable declarations
-- Add the file header as defined in .editorconfig to every generated file: MIT License - Copyright (c) 2025 Jonathan St-Michel
+- Add the file header as defined in `.editorconfig` to every generated file: MIT License - Copyright (c) 2025 Jonathan St-Michel
 - Ensure proper namespace and class naming conventions
 - Do not overwrite existing tests unless explicitly requested
 

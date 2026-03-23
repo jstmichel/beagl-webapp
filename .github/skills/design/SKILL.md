@@ -7,6 +7,9 @@ description: Generate PlantUML diagram code in chat for a user-provided descript
 ## Purpose
 Generate PlantUML diagram code in chat for a user-provided description, following Beagl guidelines for clarity and structure.
 
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+
 ---
 
 ## Workflow
@@ -45,7 +48,7 @@ output: PlantUML code in chat + summary
 ---
 
 ## References
-- Beagl architecture documentation
+- `.github/instructions/architecture.instructions.md`
 
 ---
 

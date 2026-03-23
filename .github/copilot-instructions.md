@@ -1,300 +1,69 @@
-# Beagl – Copilot Instructions (C# / .NET 10)
+# Beagl – Copilot Instructions
 
 Beagl is a modern CRM for animal centers.
 
-This file is the single source of truth for coding guidelines used by skills.
+This file is the always-on orientation document for the repository. Keep it short and stable. Put detailed guidance in scoped files under `.github/instructions/` so the AI receives only the rules relevant to the current task.
 
 ---
 
-# 1. Architecture
+# Project Overview
 
-- Follow Clean Architecture with strict layer separation:
-  - Domain
-  - Application
-  - Infrastructure
-  - WebApp
-- Respect SOLID principles.
-- Prefer composition over inheritance.
-- Avoid static state.
-- Use dependency injection for all services.
-
-## Layer Boundaries
-
-- Domain must not reference Infrastructure or WebApp.
-- Application must not reference WebApp.
-- Infrastructure may reference Domain and Application.
-- Mapping between layers must occur in Application.
-- Do not expose EF Core entities outside Infrastructure.
-- Repository interfaces live in Domain.
-- Repository implementations live in Infrastructure.
+- Primary stack: C# / .NET 10
+- Architecture style: Clean Architecture
+- Main projects:
+    - `src/Beagl.Domain`
+    - `src/Beagl.Application`
+    - `src/Beagl.Infrastructure`
+    - `src/Beagl.WebApp`
+- Tests mirror the source structure under `tests/`
+- Repository layout should continue to include `README.md`, `src/`, `tests/`, and required configuration files.
 
 ---
 
-# 2. Async and Concurrency
+# Instruction Map
 
-- All I/O operations must be asynchronous.
-- Do not use `.Result`, `.Wait()`, or blocking calls.
-- Avoid `async void`.
-- Use `CancellationToken` in application services and handlers.
-- Async must flow from WebApp down to Infrastructure.
+Use these scoped instruction files as the source of truth for detailed guidance:
 
----
-
-# 3. Error Handling
-
-- Use the `Result<T>` pattern for expected errors in all layers.
-- Do not use exceptions for validation or business errors.
-- Only throw exceptions in Domain aggregates/entities/value objects for invariant violations.
-- Domain exceptions must inherit from `DomainException`.
-- Only catch exceptions when explicitly handling them.
-- Use custom exception types when relevant.
-
----
-
-# 4. Validation
-
-- Input validation belongs in Application layer.
-- Domain enforces invariants only.
-- Do not mix validation logic with UI concerns.
+- `.github/instructions/architecture.instructions.md`
+    - Clean Architecture boundaries, layering rules, repository placement, project structure
+- `.github/instructions/async.instructions.md`
+    - Async flow, cancellation, non-blocking rules
+- `.github/instructions/error-handling.instructions.md`
+    - `Result<T>`, validation ownership, exception rules, error-code expectations
+- `.github/instructions/csharp.instructions.md`
+    - C# conventions, code quality, file headers, logging, static guidance
+- `.github/instructions/efcore.instructions.md`
+    - EF Core and Infrastructure data access rules
+- `.github/instructions/testing.instructions.md`
+    - xUnit, FluentAssertions, test coverage expectations, test-layer boundaries
+- `.github/instructions/ui-design.instructions.md`
+    - Brand tokens, CRUD UI patterns, detail panel structure, accessibility expectations
+- `.github/instructions/localization.instructions.md`
+    - i18n rules, resource organization, bilingual requirements, localization key patterns
 
 ---
 
-# 5. Entity Framework Core
-
-- DbContext must remain in Infrastructure.
-- Use Fluent API for configuration.
-- Do not use lazy loading.
-- Use `AsNoTracking()` for read-only queries.
-- Do not leak DbContext outside Infrastructure.
-- Keep queries efficient and explicit.
-
----
-
-
-
-# 6. C# Conventions
-
-- Do not suppress nullable warnings without reason.
-- Always use file-scoped namespace declarations for all C# files (not block-scoped).
-- Always use C# primary constructor syntax for classes unless custom logic is required in the constructor body.
-- Always use explicit types instead of `var` for all variable declarations.
-- When using explicit types, simplify variable creation using the new type() syntax (IDE0090), e.g., `MyType myVar = new();`.
-- Prefer collection expressions over explicit collection initializers (IDE0300–IDE0305), e.g., `[..items]` instead of `items.ToArray()`.
-- Add the file header as defined in `.editorconfig` to every generated file:
-  - `MIT License - Copyright (c) 2025 Jonathan St-Michel`
-- Use explicit access modifiers on all types and members, including interface members (IDE0040).
-- Remove unused `using` statements.
-- Prefer records for immutable DTOs.
-- Use PascalCase for types/members.
-- Use camelCase for locals/parameters.
-- Prefix all private fields (including `static readonly`) with `_` and use camelCase (IDE1006), e.g., `_myField`.
-- Prefix interfaces with `I`.
-- Keep methods small and cohesive.
-- Limit file and function size.
-
----
-
-# 7. Logging
-
-- Use `ILogger<T>` for logging.
-- Use structured logging.
-- Do not log sensitive information.
-
----
-
-# 8. Testing
-
-- Use xUnit + FluentAssertions.
-- Add unit tests for all critical logic.
-- Cover:
-  - Happy path
-  - Edge cases
-  - Failure cases
-- Domain tests must not depend on Infrastructure.
-- Application tests must mock repositories.
-
----
-
-# 9. Code Quality
+# Universal Rules
 
 - Follow `.editorconfig` strictly.
-- All analyzer warnings are treated as errors.
-- Use spaces for indentation (4 spaces per `.editorconfig`).
-- Max line length: 120.
-- Braces on new line.
-- XML documentation required for public members.
-- Code must be written in English (identifiers, comments, documentation).
+- Keep changes minimal, focused, and consistent with the existing codebase.
+- Code must be written in English, including identifiers, comments, and documentation.
+- Repository changes should respect existing project boundaries and folder structure.
 
 ---
 
-# 10. Folder Structure
+# Commit Messages
 
-Projects:
-
-- `src/Beagl.WebApp`
-- `src/Beagl.Infrastructure`
-- `src/Beagl.Application`
-- `src/Beagl.Domain`
-
-Tests mirror source structure under `tests/`.
-
-Repositories must include:
-- `README.md`
-- `src/`
-- `tests/`
-- Required config files
+- Use Conventional Commits in lowercase.
+- Use a single header line.
+- Keep the title under 72 characters.
+- Add bullet points in the body for grouped changes when useful.
+- Add `BREAKING CHANGE:` in the body if applicable.
 
 ---
 
-# 11. Commit Messages
+# Skill Authoring Guidance
 
-- Use Conventional Commits (lowercase).
-- Single header per commit.
-- Keep title under 72 characters.
-- Summarize related changes in bullet points in body.
-- Add `BREAKING CHANGE:` in body if applicable.
-
----
-
-# 12. UI Design System
-
-- UI/UX guidance is centralized in this file and is the single source of truth for frontend decisions.
-- Use the official Beagl logo asset at `src/Beagl.WebApp/wwwroot/images/beagl_logo.png` for brand marks in the UI.
-- Primary brand color is RGB(78, 170, 171) (`#4EAAAB`) and must be represented as the main design token for accents and primary actions.
-- Build interfaces with a clear visual direction and reusable design tokens.
-- Define and use CSS variables for color, spacing, radii, shadows, and motion timings.
-- Prefer expressive type stacks and intentional hierarchy; avoid default-looking layouts.
-- Keep accessibility first: color contrast, focus states, semantic structure, and keyboard navigation.
-- Use responsive layouts by default with mobile-first breakpoints.
-- Use meaningful motion (page entrance, staggered reveal, panel transitions) rather than excessive micro-animations.
-- Preserve existing visual language when updating an established surface; only apply broad redesign when explicitly requested.
-- Keep style logic centralized (global stylesheet/design tokens) and avoid scattered one-off inline styles.
-- All data lists must include pagination by default with a consistent interaction pattern (summary, current page indicator, previous/next controls, and disabled states), and pagination/filtering must be query-level (server-side) by default rather than client-side over full datasets.
-- For data-heavy CRUD screens, avoid permanent narrow side panes and avoid long inline bottom detail editors; prefer modal dialogs for quick create/edit/details and dedicated routes/pages for complex or long forms.
-- For list row actions in CRUD tables, prefer icon-only, borderless action buttons; keep them accessible with explicit `aria-label` and `title` attributes.
-- For icon-only action buttons, use the primary brand color for neutral actions and a red destructive variant for delete actions.
-- In CRUD dialogs, avoid duplicate dismissal controls: do not show both a top close button and a footer cancel/close button at the same time; keep a single secondary dismissal action in the footer.
-
----
-
-# 13. Localization (i18n)
-
-- All backend errors and UI text (excluding database content) must be localization-ready.
-- Always provide English (default) and French resource entries for every user-facing string.
-- Backend/domain/application failures must expose stable error codes (e.g., `users.invalid_email`) so UI can localize by code.
-- UI should resolve backend error codes through localization resources, with backend message as fallback only.
-- The app must select language from browser preferences via request localization with supported cultures `en` and `fr`.
-- Keep localized text centralized in resource files organized by concern (e.g., layout, home, users, errors) rather than one large shared file; avoid hardcoded user-facing strings in components/pages/services.
-
-## Localization Resource Convention
-
-- Use concern-specific marker classes in `src/Beagl.WebApp/Resources/` (e.g., `LayoutResource`, `HomeResource`, `UsersResource`, `ErrorResource`).
-- Use `IStringLocalizer<TConcernResource>` in each page/component/service, matching the concern of that file.
-- Resource file naming must follow this pattern:
-  - Default culture: `Resources.{Concern}Resource.resx`
-  - French culture: `Resources.{Concern}Resource.fr.resx`
-- Add new keys to the smallest relevant concern file; do not place all keys in a global shared file.
-- If a string changes in one language, update the corresponding key in both English and French in the same change.
-- Keep backend error code keys (e.g., `users.invalid_email`) in the users/domain concern resources used by the UI.
-- French translations must use proper French orthography with accents (e.g., `é`, `à`, `è`, `ç`) in UTF-8 resource files; do not strip accents.
-
----
-
-# 14. Detail Panel Structure
-
-Detail (read-only) panels in CRUD modules must use the grouped section pattern defined below. This is the standard for all modules.
-
-## Markup Pattern
-
-Wrap the entire panel in a `<div class="users-detail-sections">` (replace the prefix with the module name, e.g. `animals-detail-sections`). Inside, use one `<section class="{module}-detail-section">` per logical group. Each section has:
-- A `<h3 class="{module}-detail-section__heading">` with a localized group label.
-- A `<dl class="{module}-detail-grid">` containing `<div>` / `<dt>` / `<dd>` triplets, one per field.
-
-```html
-<div class="users-detail-sections" data-testid="details-panel">
-    <section class="users-detail-section">
-        <h3 class="users-detail-section__heading">@L["Users.Details.Section.Identity"]</h3>
-        <dl class="users-detail-grid">
-            <div>
-                <dt>@L["Users.Form.UserName"]</dt>
-                <dd>@user.UserName</dd>
-            </div>
-        </dl>
-    </section>
-</div>
-```
-
-## CSS Pattern
-
-Each module must define its own scoped BEM classes that reuse the shared `users-detail-*` rules as a reference. The CSS rules required are:
-
-```css
-/* Outer wrapper — vertical stack of sections */
-.{module}-detail-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* Section heading with full-width trailing rule */
-.{module}-detail-section__heading {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0 0 0.75rem;
-    color: var(--ink-soft);
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-.{module}-detail-section__heading::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--surface-border);
-}
-
-/* Tile grid inside each section */
-.{module}-detail-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-}
-.{module}-detail-grid > div {
-    padding: 1rem;
-    border-radius: 1rem;
-    background: color-mix(in srgb, var(--surface-solid) 82%, #edf2fa 18%);
-}
-.{module}-detail-grid dt {
-    margin-bottom: 0.35rem;
-    color: var(--ink-soft);
-    font-size: 0.82rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
-.{module}-detail-grid dd {
-    margin-bottom: 0;
-    font-weight: 600;
-}
-```
-
-## Grouping Convention
-
-Group fields by concern in this order (omit groups that are not applicable to the module):
-1. **Identity / Profile** — name, role, type, or primary identifiers
-2. **Contact** — email, phone, address
-3. **Dates** — birthdate, creation date, last updated
-4. **Status / Account** — confirmation, lockout, flags, states
-5. **Relations** — linked entities (owner, organization, etc.)
-6. **System** — technical identifiers (ID, timestamps) — always last; consider collapsing by default for long IDs
-
-## Localization Keys
-
-Add section heading keys under `{Module}.Details.Section.{GroupName}` in both EN and FR resource files. Example:
-```
-Users.Details.Section.Identity  → "Identity" / "Identité"
-Users.Details.Section.Contact   → "Contact"  / "Contact"
-Users.Details.Section.Account   → "Account"  / "Compte"
-Users.Details.Section.System    → "System"   / "Système"
-```
+- Skills should reference only the smallest relevant instruction files instead of treating this file as a monolith.
+- Put reusable domain knowledge in scoped instruction files, not duplicated across many skills.
+- Keep skill files focused on workflow and trigger behavior; keep coding standards in `.github/instructions/`.

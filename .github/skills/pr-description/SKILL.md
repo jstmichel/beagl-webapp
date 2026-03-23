@@ -29,12 +29,7 @@ and stop.
 
 ## Project constraints (Beagl)
 - Clean Architecture layers: Domain, Application, Infrastructure, WebApp
-- Expected errors use Result<T> (not exceptions)
-- Exceptions only for domain invariant violations (DomainException)
-- EF Core + DbContext remain in Infrastructure; no lazy loading
-- Async end-to-end; no `.Result` / `.Wait()`
-- Tests: xUnit + FluentAssertions
-- Follow `.editorconfig`
+- Follow the relevant scoped instruction files in `.github/instructions/` when interpreting architectural impact, testing impact, UI impact, or localization impact.
 
 ## Output format (STRICT)
 - Output the PR description only.
