@@ -1,10 +1,10 @@
 ---
 name: pr-description
-description: Use this skill when the user asks to generate, write, or create a pull request (PR) title/body/summary from commits not yet merged into a base branch (for example current branch vs develop).
+description: Generate a pull request (PR) title and description from unmerged commits, with optional direct creation on GitHub if `gh` CLI is installed. Use when the user asks to generate, write, or create a PR from commits on the current branch not yet merged into a base branch (for example current branch vs develop).
 ---
 
 ## Purpose
-Generate a high-quality GitHub Pull Request title and description from the set of commits that exist on the current branch but are not yet merged into a chosen base branch.
+Generate a high-quality GitHub Pull Request title and description from the set of commits that exist on the current branch but are not yet merged into a chosen base branch. Optionally create the PR directly on GitHub if `gh` CLI is available.
 
 ## Input behavior (MUST FOLLOW)
 1. Determine the base branch in this priority order:
@@ -84,3 +84,45 @@ and stop.
 - Keep under 72 characters when possible.
 - Mention primary scope/component.
 - Avoid vague words like "update" or "changes" without context.
+
+## Create PR on GitHub (optional)
+After outputting the PR preview, the skill automatically detects the GitHub repository from your current git remote and offers to create the PR.
+
+1. **Check if `gh` CLI is installed:**
+   ```bash
+   which gh
+   ```
+   - If found: Continue to step 2
+   - If not found: Output the helper message below and stop
+
+2. **If `gh` CLI is NOT installed, output exactly:**
+   ```
+   GitHub CLI (`gh`) is not installed. To create the PR directly:
+
+   Option 1 (Recommended): Install GitHub CLI
+   - macOS: brew install gh
+   - Linux: https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+   - Windows: choco install gh
+   - Then authenticate: gh auth login
+
+   Option 2: Create PR manually
+   - Go to https://github.com/{owner}/{repo}/compare/{base}...{current-branch}
+   - Copy the above PR content and paste it into GitHub's web UI
+   ```
+
+3. **If `gh` CLI IS installed, after showing the preview, ask:**
+   ```
+   Would you like to create this PR on GitHub now? (yes/no)
+   ```
+
+4. **If user answers "yes", run:**
+   ```bash
+   gh pr create \
+     --title "{title from PR content}" \
+     --body "{body - everything after title}" \
+     --base {base branch}
+   ```
+
+5. **Output the result:**
+   - Success: Show PR URL from `gh` output
+   - Failure: Show error message and instructions to create manually
