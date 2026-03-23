@@ -474,6 +474,31 @@ body {
 }
 
 .users-form-grid,
+.users-detail-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.users-detail-section__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.75rem;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.users-detail-section__heading::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--surface-border);
+}
+
 .users-detail-grid {
     display: grid;
     gap: 1rem;

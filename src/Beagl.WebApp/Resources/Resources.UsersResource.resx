@@ -50,6 +50,10 @@
   <data name="Users.Details.EmailConfirmation" xml:space="preserve"><value>Email confirmation</value></data>
   <data name="Users.Details.Lockout" xml:space="preserve"><value>Lockout</value></data>
   <data name="Users.Details.Identifier" xml:space="preserve"><value>Identifier</value></data>
+  <data name="Users.Details.Section.Identity" xml:space="preserve"><value>Identity</value></data>
+  <data name="Users.Details.Section.Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Users.Details.Section.Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Users.Details.Section.System" xml:space="preserve"><value>System</value></data>
   <data name="Users.Details.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
   <data name="Users.Details.Pending" xml:space="preserve"><value>Pending</value></data>
   <data name="Users.Details.Locked" xml:space="preserve"><value>Locked</value></data>

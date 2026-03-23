@@ -236,36 +236,56 @@
                             </EditForm>
                             break;
                         case UserPanelMode.Details when _selectedUser is not null:
-                            <dl class="users-detail-grid" data-testid="details-panel">
-                                <div>
-                                    <dt>@L["Users.Form.UserName"]</dt>
-                                    <dd>@_selectedUser.UserName</dd>
-                                </div>
-                                <div>
-                                    <dt>@L["Users.Form.Email"]</dt>
-                                    <dd>@_selectedUser.Email</dd>
-                                </div>
-                                <div>
-                                    <dt>@L["Users.Form.Role"]</dt>
-                                    <dd>@LocalizeRole(_selectedUser.Role)</dd>
-                                </div>
-                                <div>
-                                    <dt>@L["Users.Form.Phone"]</dt>
-                                    <dd>@FormatOptionalValue(_selectedUser.PhoneNumber)</dd>
-                                </div>
-                                <div>
-                                    <dt>@L["Users.Details.EmailConfirmation"]</dt>
-                                    <dd>@(_selectedUser.EmailConfirmed ? L["Users.Details.Confirmed"] : L["Users.Details.Pending"])</dd>
-                                </div>
-                                <div>
-                                    <dt>@L["Users.Details.Lockout"]</dt>
-                                    <dd>@(_selectedUser.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
-                                </div>
-                                <div>
-                                    <dt>@L["Users.Details.Identifier"]</dt>
-                                    <dd><code>@_selectedUser.Id</code></dd>
-                                </div>
-                            </dl>
+                            <div class="users-detail-sections" data-testid="details-panel">
+                                <section class="users-detail-section">
+                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.Identity"]</h3>
+                                    <dl class="users-detail-grid">
+                                        <div>
+                                            <dt>@L["Users.Form.UserName"]</dt>
+                                            <dd>@_selectedUser.UserName</dd>
+                                        </div>
+                                        <div>
+                                            <dt>@L["Users.Form.Role"]</dt>
+                                            <dd>@LocalizeRole(_selectedUser.Role)</dd>
+                                        </div>
+                                    </dl>
+                                </section>
+                                <section class="users-detail-section">
+                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.Contact"]</h3>
+                                    <dl class="users-detail-grid">
+                                        <div>
+                                            <dt>@L["Users.Form.Email"]</dt>
+                                            <dd>@FormatOptionalValue(_selectedUser.Email)</dd>
+                                        </div>
+                                        <div>
+                                            <dt>@L["Users.Form.Phone"]</dt>
+                                            <dd>@FormatOptionalValue(_selectedUser.PhoneNumber)</dd>
+                                        </div>
+                                    </dl>
+                                </section>
+                                <section class="users-detail-section">
+                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.Account"]</h3>
+                                    <dl class="users-detail-grid">
+                                        <div>
+                                            <dt>@L["Users.Details.EmailConfirmation"]</dt>
+                                            <dd>@(_selectedUser.EmailConfirmed ? L["Users.Details.Confirmed"] : L["Users.Details.Pending"])</dd>
+                                        </div>
+                                        <div>
+                                            <dt>@L["Users.Details.Lockout"]</dt>
+                                            <dd>@(_selectedUser.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
+                                        </div>
+                                    </dl>
+                                </section>
+                                <section class="users-detail-section">
+                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.System"]</h3>
+                                    <dl class="users-detail-grid">
+                                        <div>
+                                            <dt>@L["Users.Details.Identifier"]</dt>
+                                            <dd><code>@_selectedUser.Id</code></dd>
+                                        </div>
+                                    </dl>
+                                </section>
+                            </div>
                             <div class="users-panel__actions">
                                 <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Close"]</button>
                                 <button type="button" class="btn btn-outline-primary" @onclick="() => OpenEditPanelAsync(_selectedUser.Id)">@L["Users.Action.EditUser"]</button>

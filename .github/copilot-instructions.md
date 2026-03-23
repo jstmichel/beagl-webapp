@@ -197,3 +197,104 @@ Repositories must include:
 - If a string changes in one language, update the corresponding key in both English and French in the same change.
 - Keep backend error code keys (e.g., `users.invalid_email`) in the users/domain concern resources used by the UI.
 - French translations must use proper French orthography with accents (e.g., `é`, `à`, `è`, `ç`) in UTF-8 resource files; do not strip accents.
+
+---
+
+# 14. Detail Panel Structure
+
+Detail (read-only) panels in CRUD modules must use the grouped section pattern defined below. This is the standard for all modules.
+
+## Markup Pattern
+
+Wrap the entire panel in a `<div class="users-detail-sections">` (replace the prefix with the module name, e.g. `animals-detail-sections`). Inside, use one `<section class="{module}-detail-section">` per logical group. Each section has:
+- A `<h3 class="{module}-detail-section__heading">` with a localized group label.
+- A `<dl class="{module}-detail-grid">` containing `<div>` / `<dt>` / `<dd>` triplets, one per field.
+
+```html
+<div class="users-detail-sections" data-testid="details-panel">
+    <section class="users-detail-section">
+        <h3 class="users-detail-section__heading">@L["Users.Details.Section.Identity"]</h3>
+        <dl class="users-detail-grid">
+            <div>
+                <dt>@L["Users.Form.UserName"]</dt>
+                <dd>@user.UserName</dd>
+            </div>
+        </dl>
+    </section>
+</div>
+```
+
+## CSS Pattern
+
+Each module must define its own scoped BEM classes that reuse the shared `users-detail-*` rules as a reference. The CSS rules required are:
+
+```css
+/* Outer wrapper — vertical stack of sections */
+.{module}-detail-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Section heading with full-width trailing rule */
+.{module}-detail-section__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.75rem;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.{module}-detail-section__heading::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--surface-border);
+}
+
+/* Tile grid inside each section */
+.{module}-detail-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+.{module}-detail-grid > div {
+    padding: 1rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--surface-solid) 82%, #edf2fa 18%);
+}
+.{module}-detail-grid dt {
+    margin-bottom: 0.35rem;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.{module}-detail-grid dd {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+```
+
+## Grouping Convention
+
+Group fields by concern in this order (omit groups that are not applicable to the module):
+1. **Identity / Profile** — name, role, type, or primary identifiers
+2. **Contact** — email, phone, address
+3. **Dates** — birthdate, creation date, last updated
+4. **Status / Account** — confirmation, lockout, flags, states
+5. **Relations** — linked entities (owner, organization, etc.)
+6. **System** — technical identifiers (ID, timestamps) — always last; consider collapsing by default for long IDs
+
+## Localization Keys
+
+Add section heading keys under `{Module}.Details.Section.{GroupName}` in both EN and FR resource files. Example:
+```
+Users.Details.Section.Identity  → "Identity" / "Identité"
+Users.Details.Section.Contact   → "Contact"  / "Contact"
+Users.Details.Section.Account   → "Account"  / "Compte"
+Users.Details.Section.System    → "System"   / "Système"
+```
