@@ -8,6 +8,16 @@ description: Refactor a single file in context to enforce Beagl coding guideline
 ## Purpose
 Refactor a single file in context to strictly follow Beagl coding guidelines, best practices, SOLID principles, Clean Architecture, and ensure testability. No changes are made to other files.
 
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+- `.github/instructions/async.instructions.md`
+- `.github/instructions/error-handling.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/testing.instructions.md` when refactoring tests
+- `.github/instructions/efcore.instructions.md` when refactoring Infrastructure persistence code
+- `.github/instructions/ui-design.instructions.md` when refactoring WebApp UI files
+- `.github/instructions/localization.instructions.md` when refactoring user-facing strings or resources
+
 ---
 
 ## Workflow
@@ -17,30 +27,7 @@ Refactor a single file in context to strictly follow Beagl coding guidelines, be
    - Identify unused code, static state, poor separation of concerns, and non-testable patterns.
 3. **Refactor:**
    - Apply changes only within the specified file.
-   - Enforce:
-     - File-scoped namespace
-     - Use C# primary constructor syntax for classes unless custom logic is required in the constructor body
-     - Explicit types (no `var`)
-     - Remove unused `using` statements
-     - Use dependency injection for services
-     - No static state
-     - Small, cohesive methods
-     - Mark methods as static when they do not use instance data
-     - If a class only contains static methods and holds no state, define the class as static.
-     - PascalCase for types/members, camelCase for locals/parameters
-     - XML documentation for public members
-     - File header as per `.editorconfig`
-     - Spaces for indentation (4 spaces)
-     - Max line length: 120
-     - Braces on new line
-     - Nullable reference types enabled
-     - No EF Core entities outside Infrastructure
-     - No blocking calls, all I/O async
-     - Result<T> for expected errors
-     - No exceptions for validation/business errors
-     - Prefer records for immutable DTOs
-     - Remove UI concerns from validation
-     - Structured logging with `ILogger<T>`
+   - Enforce the relevant scoped instruction files from `.github/instructions/`.
    - Make the file testable:
      - Decouple dependencies
      - Use interfaces for external services
@@ -75,7 +62,14 @@ output: refactored file content + summary
 ---
 
 ## References
-- .github/copilot-instructions.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/async.instructions.md
+- .github/instructions/error-handling.instructions.md
+- .github/instructions/csharp.instructions.md
+- .github/instructions/testing.instructions.md
+- .github/instructions/efcore.instructions.md
+- .github/instructions/ui-design.instructions.md
+- .github/instructions/localization.instructions.md
 - .editorconfig
 - Beagl coding guidelines
 

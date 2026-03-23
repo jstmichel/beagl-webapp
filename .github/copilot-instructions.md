@@ -1,151 +1,69 @@
-# Beagl – Copilot Instructions (C# / .NET 10)
+# Beagl – Copilot Instructions
 
 Beagl is a modern CRM for animal centers.
 
----
-
-# 1. Architecture
-
-- Follow Clean Architecture with strict layer separation:
-  - Domain
-  - Application
-  - Infrastructure
-  - WebApp
-- Respect SOLID principles.
-- Prefer composition over inheritance.
-- Avoid static state.
-- Use dependency injection for all services.
-
-## Layer Boundaries
-
-- Domain must not reference Infrastructure or WebApp.
-- Application must not reference WebApp.
-- Infrastructure may reference Domain and Application.
-- Mapping between layers must occur in Application.
-- Do not expose EF Core entities outside Infrastructure.
-- Repository interfaces live in Domain.
-- Repository implementations live in Infrastructure.
+This file is the always-on orientation document for the repository. Keep it short and stable. Put detailed guidance in scoped files under `.github/instructions/` so the AI receives only the rules relevant to the current task.
 
 ---
 
-# 2. Async and Concurrency
+# Project Overview
 
-- All I/O operations must be asynchronous.
-- Do not use `.Result`, `.Wait()`, or blocking calls.
-- Avoid `async void`.
-- Use `CancellationToken` in application services and handlers.
-- Async must flow from WebApp down to Infrastructure.
-
----
-
-# 3. Error Handling
-
-- Use the `Result<T>` pattern for expected errors in all layers.
-- Do not use exceptions for validation or business errors.
-- Only throw exceptions in Domain aggregates/entities/value objects for invariant violations.
-- Domain exceptions must inherit from `DomainException`.
-- Only catch exceptions when explicitly handling them.
-- Use custom exception types when relevant.
+- Primary stack: C# / .NET 10
+- Architecture style: Clean Architecture
+- Main projects:
+    - `src/Beagl.Domain`
+    - `src/Beagl.Application`
+    - `src/Beagl.Infrastructure`
+    - `src/Beagl.WebApp`
+- Tests mirror the source structure under `tests/`
+- Repository layout should continue to include `README.md`, `src/`, `tests/`, and required configuration files.
 
 ---
 
-# 4. Validation
+# Instruction Map
 
-- Input validation belongs in Application layer.
-- Domain enforces invariants only.
-- Do not mix validation logic with UI concerns.
+Use these scoped instruction files as the source of truth for detailed guidance:
 
----
-
-# 5. Entity Framework Core
-
-- DbContext must remain in Infrastructure.
-- Use Fluent API for configuration.
-- Do not use lazy loading.
-- Use `AsNoTracking()` for read-only queries.
-- Do not leak DbContext outside Infrastructure.
-- Keep queries efficient and explicit.
-
----
-
-
-
-# 6. C# Conventions
-
-- Do not suppress nullable warnings without reason.
-- Always use file-scoped namespace declarations for all C# files (not block-scoped).
-- Always use C# primary constructor syntax for classes unless custom logic is required in the constructor body.
-- Always use explicit types instead of `var` for all variable declarations.
-- When using explicit types, simplify variable creation using the new type() syntax (IDE0090), e.g., `MyType myVar = new();`.
-- Add the file header as defined in `.editorconfig` to every generated file:
-  - `MIT License - Copyright (c) 2025 Jonathan St-Michel`
-- Use explicit access modifiers.
-- Remove unused `using` statements.
-- Prefer records for immutable DTOs.
-- Use PascalCase for types/members.
-- Use camelCase for locals/parameters.
-- Prefix interfaces with `I`.
-- Keep methods small and cohesive.
-- Limit file and function size.
+- `.github/instructions/architecture.instructions.md`
+    - Clean Architecture boundaries, layering rules, repository placement, project structure
+- `.github/instructions/async.instructions.md`
+    - Async flow, cancellation, non-blocking rules
+- `.github/instructions/error-handling.instructions.md`
+    - `Result<T>`, validation ownership, exception rules, error-code expectations
+- `.github/instructions/csharp.instructions.md`
+    - C# conventions, code quality, file headers, logging, static guidance
+- `.github/instructions/efcore.instructions.md`
+    - EF Core and Infrastructure data access rules
+- `.github/instructions/testing.instructions.md`
+    - xUnit, FluentAssertions, test coverage expectations, test-layer boundaries
+- `.github/instructions/ui-design.instructions.md`
+    - Brand tokens, CRUD UI patterns, detail panel structure, accessibility expectations
+- `.github/instructions/localization.instructions.md`
+    - i18n rules, resource organization, bilingual requirements, localization key patterns
 
 ---
 
-# 7. Logging
-
-- Use `ILogger<T>` for logging.
-- Use structured logging.
-- Do not log sensitive information.
-
----
-
-# 8. Testing
-
-- Use xUnit + FluentAssertions.
-- Add unit tests for all critical logic.
-- Cover:
-  - Happy path
-  - Edge cases
-  - Failure cases
-- Domain tests must not depend on Infrastructure.
-- Application tests must mock repositories.
-
----
-
-# 9. Code Quality
+# Universal Rules
 
 - Follow `.editorconfig` strictly.
-- All analyzer warnings are treated as errors.
-- Use spaces for indentation (4 spaces per `.editorconfig`).
-- Max line length: 120.
-- Braces on new line.
-- XML documentation required for public members.
-- Code must be written in English (identifiers, comments, documentation).
+- Keep changes minimal, focused, and consistent with the existing codebase.
+- Code must be written in English, including identifiers, comments, and documentation.
+- Repository changes should respect existing project boundaries and folder structure.
 
 ---
 
-# 10. Folder Structure
+# Commit Messages
 
-Projects:
-
-- `src/Beagl.WebApp`
-- `src/Beagl.Infrastructure`
-- `src/Beagl.Application`
-- `src/Beagl.Domain`
-
-Tests mirror source structure under `tests/`.
-
-Repositories must include:
-- `README.md`
-- `src/`
-- `tests/`
-- Required config files
+- Use Conventional Commits in lowercase.
+- Use a single header line.
+- Keep the title under 72 characters.
+- Add bullet points in the body for grouped changes when useful.
+- Add `BREAKING CHANGE:` in the body if applicable.
 
 ---
 
-# 11. Commit Messages
+# Skill Authoring Guidance
 
-- Use Conventional Commits (lowercase).
-- Single header per commit.
-- Keep title under 72 characters.
-- Summarize related changes in bullet points in body.
-- Add `BREAKING CHANGE:` in body if applicable.
+- Skills should reference only the smallest relevant instruction files instead of treating this file as a monolith.
+- Put reusable domain knowledge in scoped instruction files, not duplicated across many skills.
+- Keep skill files focused on workflow and trigger behavior; keep coding standards in `.github/instructions/`.

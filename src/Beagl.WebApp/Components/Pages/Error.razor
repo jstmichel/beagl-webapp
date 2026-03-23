@@ -1,36 +1,22 @@
-﻿@page "/error"
-@using System.Diagnostics
+@page "/error"
+@inject IStringLocalizer<ErrorResource> L
 
-<PageTitle>Error</PageTitle>
+<PageTitle>@L["Error.PageTitle"]</PageTitle>
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<section class="users-page-shell">
+    <div class="container py-5">
+        <div class="users-surface mx-auto p-4 p-lg-5" style="max-width: 820px;">
+            <h1 class="text-danger">@L["Error.Heading"]</h1>
+            <h2 class="text-danger h5">@L["Error.Subheading"]</h2>
 
-@if (ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@RequestId</code>
-    </p>
-}
+            <h3 class="mt-4">@L["Error.DevelopmentMode"]</h3>
+            <p>@L["Error.DevelopmentMode.Description"]</p>
+            <p>
+                <strong>@L["Error.DevelopmentMode.Warning"]</strong>
+                @L["Error.DevelopmentMode.Body"]
+            </p>
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
-
-@code{
-    [CascadingParameter]
-    private HttpContext? HttpContext { get; set; }
-
-    private string? RequestId { get; set; }
-    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-    protected override void OnInitialized() =>
-        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-}
+            <a class="btn btn-primary mt-2" href="/employee/users">@L["NotFound.Action.Users"]</a>
+        </div>
+    </div>
+</section>

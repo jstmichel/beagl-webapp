@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="Users.PageTitle" xml:space="preserve"><value>Users</value></data>
+  <data name="Users.Kicker" xml:space="preserve"><value>Staff access</value></data>
+  <data name="Users.Title" xml:space="preserve"><value>Manage employee accounts with one responsive workspace.</value></data>
+  <data name="Users.Copy" xml:space="preserve"><value>Browse employee accounts, inspect account health, and handle create, update, or delete workflows without leaving the page.</value></data>
+  <data name="Users.Action.Create" xml:space="preserve"><value>Create user</value></data>
+  <data name="Users.Metric.Total" xml:space="preserve"><value>Total users</value></data>
+  <data name="Users.Metric.PendingConfirmation" xml:space="preserve"><value>Unconfirmed emails</value></data>
+  <data name="Users.Metric.Locked" xml:space="preserve"><value>Locked out</value></data>
+  <data name="Users.Directory.Title" xml:space="preserve"><value>User directory</value></data>
+  <data name="Users.Directory.Description" xml:space="preserve"><value>Direct URL access for list management with contextual actions.</value></data>
+  <data name="Users.Search.Label" xml:space="preserve"><value>Search users</value></data>
+  <data name="Users.Search.Placeholder" xml:space="preserve"><value>Search by user name or email</value></data>
+  <data name="Users.Loading" xml:space="preserve"><value>Loading users</value></data>
+  <data name="Users.Empty.Title" xml:space="preserve"><value>No users match the current view.</value></data>
+  <data name="Users.Empty.Description" xml:space="preserve"><value>Create a new user or adjust your search criteria.</value></data>
+  <data name="Users.Table.User" xml:space="preserve"><value>User</value></data>
+  <data name="Users.Table.Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Users.Table.Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Users.Table.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Users.Table.Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Users.Pagination.Aria" xml:space="preserve"><value>Users list pagination</value></data>
+  <data name="Users.Pagination.Summary" xml:space="preserve"><value>Showing {0}-{1} of {2} users</value></data>
+  <data name="Users.Pagination.Previous" xml:space="preserve"><value>Previous</value></data>
+  <data name="Users.Pagination.Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Users.Pagination.Page" xml:space="preserve"><value>Page {0} of {1}</value></data>
+  <data name="Users.Status.EmailConfirmed" xml:space="preserve"><value>Email confirmed</value></data>
+  <data name="Users.Status.PendingConfirmation" xml:space="preserve"><value>Pending confirmation</value></data>
+  <data name="Users.Status.LockedOut" xml:space="preserve"><value>Locked out</value></data>
+  <data name="Users.Action.Details" xml:space="preserve"><value>Details</value></data>
+  <data name="Users.Action.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Users.Action.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Users.Action.EditUser" xml:space="preserve"><value>Edit user</value></data>
+  <data name="Users.Action.DeleteUser" xml:space="preserve"><value>Delete user</value></data>
+  <data name="Users.Action.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Users.Panel.Kicker" xml:space="preserve"><value>Workspace</value></data>
+  <data name="Users.Form.UserName" xml:space="preserve"><value>User name</value></data>
+  <data name="Users.Form.Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Users.Form.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Users.Form.Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Users.Form.TempPassword" xml:space="preserve"><value>Temporary password</value></data>
+  <data name="Users.Form.TempPasswordHint" xml:space="preserve"><value>Use at least 8 characters. Identity rules will enforce any stricter policy.</value></data>
+  <data name="Users.Action.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Users.Action.SaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Users.Details.EmailConfirmation" xml:space="preserve"><value>Email confirmation</value></data>
+  <data name="Users.Details.Lockout" xml:space="preserve"><value>Lockout</value></data>
+  <data name="Users.Details.Identifier" xml:space="preserve"><value>Identifier</value></data>
+  <data name="Users.Details.Section.Identity" xml:space="preserve"><value>Identity</value></data>
+  <data name="Users.Details.Section.Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Users.Details.Section.Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Users.Details.Section.System" xml:space="preserve"><value>System</value></data>
+  <data name="Users.Details.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Users.Details.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Users.Details.Locked" xml:space="preserve"><value>Locked</value></data>
+  <data name="Users.Details.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Users.Delete.Warning" xml:space="preserve"><value>You are about to remove {0} from the staff directory.</value></data>
+  <data name="Users.Delete.Description" xml:space="preserve"><value>This action cannot be undone and will revoke future sign-in access for this account.</value></data>
+  <data name="Users.Panel.Title.Create" xml:space="preserve"><value>Create a new user</value></data>
+  <data name="Users.Panel.Title.Details" xml:space="preserve"><value>User details</value></data>
+  <data name="Users.Panel.Title.Edit" xml:space="preserve"><value>Edit user</value></data>
+  <data name="Users.Panel.Title.Delete" xml:space="preserve"><value>Delete user</value></data>
+  <data name="Users.Panel.Description.Create" xml:space="preserve"><value>Add a new employee account to the shelter system.</value></data>
+  <data name="Users.Panel.Description.Details" xml:space="preserve"><value>Inspect the current account state before taking action.</value></data>
+  <data name="Users.Panel.Description.Edit" xml:space="preserve"><value>Update profile information without leaving the directory.</value></data>
+  <data name="Users.Panel.Description.Delete" xml:space="preserve"><value>Confirm permanent removal from the staff directory.</value></data>
+  <data name="Users.Error.LoadFailed" xml:space="preserve"><value>The user directory could not be loaded.</value></data>
+  <data name="Users.Success.Created" xml:space="preserve"><value>User created successfully.</value></data>
+  <data name="Users.Success.Updated" xml:space="preserve"><value>User updated successfully.</value></data>
+  <data name="Users.Success.Deleted" xml:space="preserve"><value>User deleted successfully.</value></data>
+  <data name="Users.Optional.NotProvided" xml:space="preserve"><value>Not provided</value></data>
+  <data name="users.invalid_id" xml:space="preserve"><value>A user identifier is required.</value></data>
+  <data name="users.not_found" xml:space="preserve"><value>The requested user could not be found.</value></data>
+  <data name="users.user_name_required" xml:space="preserve"><value>A user name is required.</value></data>
+  <data name="users.user_name_too_long" xml:space="preserve"><value>The user name must contain at most 256 characters.</value></data>
+  <data name="Users.Role.Citizen" xml:space="preserve"><value>Citizen</value></data>
+  <data name="Users.Role.Employee" xml:space="preserve"><value>Employee</value></data>
+  <data name="Users.Role.Administrator" xml:space="preserve"><value>Administrator</value></data>
+  <data name="users.phone_required" xml:space="preserve"><value>A phone number is required.</value></data>
+  <data name="users.invalid_role" xml:space="preserve"><value>The specified user role is not valid.</value></data>
+  <data name="users.email_required" xml:space="preserve"><value>An email address is required.</value></data>
+  <data name="users.invalid_email" xml:space="preserve"><value>The email address is not valid.</value></data>
+  <data name="users.password_required" xml:space="preserve"><value>A password is required.</value></data>
+  <data name="users.password_too_short" xml:space="preserve"><value>The password must contain at least 8 characters.</value></data>
+  <data name="users.identity_error" xml:space="preserve"><value>The user operation could not be completed.</value></data>
+  <data name="users.role_not_found" xml:space="preserve"><value>The requested role does not exist.</value></data>
+  <data name="users.duplicate_user_name" xml:space="preserve"><value>The user name is already in use.</value></data>
+  <data name="users.duplicate_email" xml:space="preserve"><value>The email address is already in use.</value></data>
+</root>

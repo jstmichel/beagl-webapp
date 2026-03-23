@@ -4,14 +4,14 @@ about: Propose a new feature using the Beagl specification template
 labels: enhancement
 ---
 
-## 1. Feature Title
+## Overview
 
-## 2. Overview / Goal
+- Summarize the feature in 1-2 sentences.
 
-## 3. Business Requirements
+## Specs
 
-## 4. Functional Requirements
-
-## 5. Non-Functional Requirements (optional)
-
-## 6. Open Questions / Risks
+- List the key specifications as bullet points.
+- Each bullet should describe a requirement, behavior, or outcome.
+- Example:
+  - User can register with email
+  - Admin can view user activity

@@ -7,6 +7,11 @@ description: Create a new Entity Framework Core migration in the workspace using
 ## Purpose
 Create a new Entity Framework Core migration in the workspace using the dotnet CLI, following Beagl coding guidelines and project conventions.
 
+## Relevant Instruction Files
+- `.github/instructions/architecture.instructions.md`
+- `.github/instructions/csharp.instructions.md`
+- `.github/instructions/efcore.instructions.md`
+
 ---
 
 ## Workflow
@@ -45,7 +50,9 @@ description: Create a new Entity Framework Core migration in the workspace using
 ---
 
 ## References
-- .github/copilot-instructions.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/csharp.instructions.md
+- .github/instructions/efcore.instructions.md
 - .editorconfig
 - Beagl migration documentation
 
