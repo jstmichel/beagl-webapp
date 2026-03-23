@@ -97,4 +97,29 @@ public class ResultTests
         result.Error.Should().Be(error);
         result.Value.Should().Be(0);
     }
+
+    [Fact]
+    public void Constructor_WhenSuccessContainsError_ShouldThrowArgumentException()
+    {
+        // Arrange
+        ResultError error = new("users.invalid", "Invalid result state.");
+
+        // Act
+        Action act = () => _ = new ResultProbe(true, error);
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void Constructor_WhenFailureHasNoError_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new ResultProbe(false, null);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    private sealed class ResultProbe(bool isSuccess, ResultError? error) : Result(isSuccess, error);
 }

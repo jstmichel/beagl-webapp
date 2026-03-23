@@ -129,6 +129,36 @@ public class IdentityUserRepositoryQueryTests
         user.Should().BeNull();
     }
 
+    [Fact]
+    public async Task GetByIdAsync_WithNullFieldsAndActiveLockout_ShouldMapFallbackValues()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(
+            new ApplicationUser
+            {
+                Id = "u-lock",
+                UserName = null,
+                NormalizedUserName = null,
+                Email = null,
+                NormalizedEmail = null,
+                EmailConfirmed = false,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                LockoutEnabled = true,
+                LockoutEnd = DateTimeOffset.UtcNow.AddHours(1),
+            });
+
+        // Act
+        UserAccount? user = await harness.Repository.GetByIdAsync("u-lock", CancellationToken.None);
+
+        // Assert
+        user.Should().NotBeNull();
+        user!.UserName.Should().Be(string.Empty);
+        user.Email.Should().Be(string.Empty);
+        user.IsLockedOut.Should().BeTrue();
+        user.Role.Should().Be(UserRole.None);
+    }
+
     private static ApplicationUser MakeUser(string id, string username, bool confirmed, bool lockedOut) =>
         new()
         {

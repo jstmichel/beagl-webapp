@@ -1,10 +1,12 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using Beagl.Application.Tests.Utilities;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
@@ -337,6 +339,24 @@ public class UserManagementServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_ForEmployeeWithoutEmail_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        CreateUserRequest request = new("employee", null, "555-0100", "Password123!", UserRole.Employee);
+
+        // Act
+        Result<UserDetailsDto> result = await service.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.email_required");
+        userRepositoryMock.Verify(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task CreateAsync_WithMissingPassword_ShouldReturnFailureWithoutCallingRepository()
     {
         // Arrange
@@ -585,6 +605,42 @@ public class UserManagementServiceTests
     }
 
     [Fact]
+    public async Task UpdateAsync_ForAdministratorWithoutEmail_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        UpdateUserRequest request = new("user-1", "admin", null, "555-0100", UserRole.Administrator);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.email_required");
+        userRepositoryMock.Verify(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ForEmployeeWithoutEmail_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        UpdateUserRequest request = new("user-1", "employee", null, "555-0100", UserRole.Employee);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.email_required");
+        userRepositoryMock.Verify(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task UpdateAsync_WhenRepositorySucceeds_ShouldReturnMappedUser()
     {
         // Arrange
@@ -729,5 +785,76 @@ public class UserManagementServiceTests
 
         // Assert
         userRepositoryMock.Verify(repository => repository.DeleteAsync("user-1", cancellationToken), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WhenSucceeds_ShouldLogUserCreatedWithEventId1001()
+    {
+        // Arrange
+        FakeLogger<UserManagementService> fakeLogger = new();
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new UserAccount("user-123", "alex", "alex@example.com", "+1234567890", false, false, UserRole.Employee)));
+
+        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+        CreateUserRequest request = new("alex", "alex@example.com", "+1234567890", "Password123!", UserRole.Employee);
+
+        // Act
+        _ = await service.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        fakeLogger.Logs.Should().NotBeEmpty();
+        fakeLogger.Logs.Should().ContainSingle(log =>
+            log.Level == LogLevel.Information
+            && log.EventId.Id == 1001
+            && log.Message.Contains("user-123"));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenSucceeds_ShouldLogUserUpdatedWithEventId1002()
+    {
+        // Arrange
+        FakeLogger<UserManagementService> fakeLogger = new();
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new UserAccount("user-456", "bob", "bob@example.com", "555-0100", true, false, UserRole.Employee)));
+
+        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+        UpdateUserRequest request = new("user-456", "bob", "bob@example.com", "555-0100", UserRole.Employee);
+
+        // Act
+        _ = await service.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        fakeLogger.Logs.Should().NotBeEmpty();
+        fakeLogger.Logs.Should().ContainSingle(log =>
+            log.Level == LogLevel.Information
+            && log.EventId.Id == 1002
+            && log.Message.Contains("user-456"));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenSucceeds_ShouldLogUserDeletedWithEventId1003()
+    {
+        // Arrange
+        FakeLogger<UserManagementService> fakeLogger = new();
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.DeleteAsync("user-789", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+
+        // Act
+        _ = await service.DeleteAsync("user-789", CancellationToken.None);
+
+        // Assert
+        fakeLogger.Logs.Should().NotBeEmpty();
+        fakeLogger.Logs.Should().ContainSingle(log =>
+            log.Level == LogLevel.Information
+            && log.EventId.Id == 1003
+            && log.Message.Contains("user-789"));
     }
 }
