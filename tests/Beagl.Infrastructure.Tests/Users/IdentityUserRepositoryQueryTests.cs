@@ -73,6 +73,34 @@ public class IdentityUserRepositoryQueryTests
     }
 
     [Fact]
+    public async Task GetPageAsync_WithAssignedRoles_ShouldMapRolesFromBatchQuery()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedRolesAsync(
+            new ApplicationRole { Id = "role-admin", Name = UserRole.Administrator.ToString(), NormalizedName = UserRole.Administrator.ToString().ToUpperInvariant() },
+            new ApplicationRole { Id = "role-employee", Name = UserRole.Employee.ToString(), NormalizedName = UserRole.Employee.ToString().ToUpperInvariant() });
+        await harness.SeedUsersAsync(
+            MakeUser("u1", "alice", confirmed: true, lockedOut: false),
+            MakeUser("u2", "bob", confirmed: true, lockedOut: false),
+            MakeUser("u3", "charlie", confirmed: true, lockedOut: false));
+        await harness.SeedUserRolesAsync(
+            new IdentityUserRole<string> { UserId = "u1", RoleId = "role-admin" },
+            new IdentityUserRole<string> { UserId = "u2", RoleId = "role-employee" });
+
+        GetUsersPageQuery query = new(null, 1, 10);
+
+        // Act
+        UsersPage page = await harness.Repository.GetPageAsync(query, CancellationToken.None);
+
+        // Assert
+        page.Users.Should().HaveCount(3);
+        page.Users[0].Role.Should().Be(UserRole.Administrator);
+        page.Users[1].Role.Should().Be(UserRole.Employee);
+        page.Users[2].Role.Should().Be(UserRole.None);
+    }
+
+    [Fact]
     public async Task GetPageAsync_WithPagination_ShouldReturnCorrectPage()
     {
         // Arrange
@@ -186,7 +214,7 @@ public class IdentityUserRepositoryQueryTests
         {
             _context = context;
             _userManager = userManager;
-            Repository = new IdentityUserRepository(userManager);
+            Repository = new IdentityUserRepository(userManager, context);
         }
 
         public static EfTestHarness Create()
@@ -215,6 +243,18 @@ public class IdentityUserRepositoryQueryTests
         public async Task SeedUsersAsync(params ApplicationUser[] users)
         {
             _context.Users.AddRange(users);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SeedRolesAsync(params ApplicationRole[] roles)
+        {
+            _context.Roles.AddRange(roles);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SeedUserRolesAsync(params IdentityUserRole<string>[] userRoles)
+        {
+            _context.Set<IdentityUserRole<string>>().AddRange(userRoles);
             await _context.SaveChangesAsync();
         }
 

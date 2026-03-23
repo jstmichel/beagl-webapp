@@ -5,6 +5,8 @@ using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -17,7 +19,17 @@ public class IdentityUserRepositoryTests
     public void Constructor_WithNullUserManager_ShouldThrowArgumentNullException()
     {
         // Act
-        Action act = () => _ = new IdentityUserRepository(null!);
+        Action act = () => _ = new IdentityUserRepository(null!, CreateDbContext());
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullApplicationDbContext_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new IdentityUserRepository(CreateUserManagerMock().Object, null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -45,7 +57,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync([UserRole.Employee.ToString()]);
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         CreateUserAccount request = new("alex", "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -79,7 +91,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = identityCode, Description = identityDescription }));
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         CreateUserAccount request = new("alex", "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -102,7 +114,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         CreateUserAccount request = new("alex", "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -130,7 +142,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.DeleteAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         CreateUserAccount request = new("alex", "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -163,7 +175,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.RemoveFromRolesAsync(identityUser, It.IsAny<IEnumerable<string>>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidEmail", Description = "bad email" }));
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Employee);
 
         // Act
@@ -199,7 +211,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.AddToRoleAsync(identityUser, UserRole.Employee.ToString()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "RoleNotFound", Description = "role missing" }));
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Employee);
 
         // Act
@@ -220,7 +232,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.FindByIdAsync("missing-id"))
             .ReturnsAsync((ApplicationUser?)null);
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         UpdateUserAccount request = new("missing-id", "bob", "bob@example.com", "555-0200", UserRole.Citizen);
 
         // Act
@@ -246,7 +258,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.UpdateAsync(identityUser))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateEmail", Description = "duplicate email" }));
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Citizen);
 
         // Act
@@ -283,7 +295,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.AddToRoleAsync(identityUser, UserRole.Administrator.ToString()))
             .ReturnsAsync(IdentityResult.Success);
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
         UpdateUserAccount request = new("user-1", "alex-updated", "alex-updated@example.com", "555-9999", UserRole.Administrator);
 
         // Act
@@ -308,7 +320,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.FindByIdAsync("missing-id"))
             .ReturnsAsync((ApplicationUser?)null);
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
 
         // Act
         Beagl.Domain.Results.Result result = await repository.DeleteAsync("missing-id", CancellationToken.None);
@@ -333,7 +345,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.DeleteAsync(identityUser))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "SomeError", Description = "delete failed" }));
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
 
         // Act
         Beagl.Domain.Results.Result result = await repository.DeleteAsync("user-1", CancellationToken.None);
@@ -358,7 +370,7 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.DeleteAsync(identityUser))
             .ReturnsAsync(IdentityResult.Success);
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
 
         // Act
         Beagl.Domain.Results.Result result = await repository.DeleteAsync("user-1", CancellationToken.None);
@@ -368,64 +380,57 @@ public class IdentityUserRepositoryTests
     }
 
     [Fact]
-    public async Task GetPageAsync_WithSearchTermInUserName_ShouldFilterByILikePatternAndReturnMatches()
+    public async Task GetPageAsync_ShouldMapRolesWithoutCallingUserManagerGetRolesAsync()
     {
-        // This test verifies the search term matching behavior in GetPageAsync
-        // when query.SearchTerm is not null or empty.
-        // The actual filtering uses EF.Functions.ILike which requires a real DbContext,
-        // so we verify the behavior indirectly by testing the method signature and parameter requirements.
-
         // Arrange
-        ApplicationUser user1 = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com" };
-        ApplicationUser user2 = new() { Id = "user-2", UserName = "alexander", Email = "alexander@example.com" };
+        ApplicationDbContext context = CreateDbContext();
+        context.Roles.AddRange(
+            new ApplicationRole { Id = "role-admin", Name = UserRole.Administrator.ToString(), NormalizedName = UserRole.Administrator.ToString().ToUpperInvariant() },
+            new ApplicationRole { Id = "role-employee", Name = UserRole.Employee.ToString(), NormalizedName = UserRole.Employee.ToString().ToUpperInvariant() });
+        context.Users.AddRange(
+            new ApplicationUser
+            {
+                Id = "user-1",
+                UserName = "alex",
+                NormalizedUserName = "ALEX",
+                Email = "alex@example.com",
+                NormalizedEmail = "ALEX@EXAMPLE.COM",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+            },
+            new ApplicationUser
+            {
+                Id = "user-2",
+                UserName = "bob",
+                NormalizedUserName = "BOB",
+                Email = "bob@example.com",
+                NormalizedEmail = "BOB@EXAMPLE.COM",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+            });
+        context.Set<IdentityUserRole<string>>().AddRange(
+            new IdentityUserRole<string> { UserId = "user-1", RoleId = "role-admin" },
+            new IdentityUserRole<string> { UserId = "user-2", RoleId = "role-employee" });
+        await context.SaveChangesAsync();
 
         Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
-
-        // Setup: Mock returns users that would match the search criteria
         userManagerMock
-            .Setup(manager => manager.Users)
-            .Returns(new[] { user1, user2 }.AsQueryable());
+            .SetupGet(manager => manager.Users)
+            .Returns(context.Users);
         userManagerMock
             .Setup(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()))
-            .ReturnsAsync(new[] { UserRole.Employee.ToString() });
+            .ThrowsAsync(new InvalidOperationException("GetRolesAsync should not be called for paged queries."));
 
-        IdentityUserRepository repository = new(userManagerMock.Object);
-        GetUsersPageQuery query = new("alex", 1, 10);
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
 
-        // Act & Assert: Verify the method accepts search terms correctly
-        // Full integration testing of ILike filtering requires a real database context
-        query.SearchTerm.Should().Be("alex");
-    }
+        // Act
+        UsersPage result = await repository.GetPageAsync(new GetUsersPageQuery(null, 1, 10), CancellationToken.None);
 
-    [Fact]
-    public async Task MapAsync_WithDifferentRoleScenarios_ShouldMapRoleCorrectly()
-    {
-        // This test verifies the MapAsync method's role mapping behavior.
-        // The actual UserManager.GetRolesAsync call requires a real database context,
-        // so we test the mapping logic through the complete flow.
-
-        // Arrange
-        ApplicationUser identityUser = new()
-        {
-            Id = "user-1",
-            UserName = "testuser",
-            Email = "test@example.com",
-            PhoneNumber = "555-0100",
-            EmailConfirmed = true,
-            LockoutEnd = null,
-        };
-
-        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
-        userManagerMock
-            .Setup(manager => manager.GetRolesAsync(identityUser))
-            .ReturnsAsync(new[] { UserRole.Employee.ToString() });
-
-        IdentityUserRepository repository = new(userManagerMock.Object);
-
-        // Verify the setup is correct
-        IList<string> rolesResult = await userManagerMock.Object.GetRolesAsync(identityUser);
-        rolesResult.Should().NotBeEmpty();
-        rolesResult.First().Should().Be(UserRole.Employee.ToString());
+        // Assert
+        result.Users.Should().HaveCount(2);
+        result.Users[0].Role.Should().Be(UserRole.Administrator);
+        result.Users[1].Role.Should().Be(UserRole.Employee);
+        userManagerMock.Verify(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
@@ -442,5 +447,14 @@ public class IdentityUserRepositoryTests
             new IdentityErrorDescriber(),
             new Mock<IServiceProvider>().Object,
             new Logger<UserManager<ApplicationUser>>(new LoggerFactory()));
+    }
+
+    private static ApplicationDbContext CreateDbContext()
+    {
+        DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new ApplicationDbContext(options);
     }
 }

@@ -4,6 +4,7 @@ using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Beagl.Infrastructure.Users;
@@ -12,10 +13,13 @@ namespace Beagl.Infrastructure.Users;
 /// Persists managed users through ASP.NET Core Identity.
 /// </summary>
 /// <param name="userManager">The identity user manager.</param>
+/// <param name="applicationDbContext">The application database context.</param>
 public sealed class IdentityUserRepository(
-    UserManager<ApplicationUser> userManager) : IUserRepository
+    UserManager<ApplicationUser> userManager,
+    ApplicationDbContext applicationDbContext) : IUserRepository
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+    private readonly ApplicationDbContext _applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
 
     /// <inheritdoc />
     public async Task<UsersMetrics> GetMetricsAsync(CancellationToken cancellationToken)
@@ -59,10 +63,16 @@ public sealed class IdentityUserRepository(
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
+        Dictionary<string, UserRole> rolesByUserId = await GetPrimaryRolesByUserIdAsync(
+                identityUsers.Select(user => user.Id),
+                cancellationToken)
+            .ConfigureAwait(false);
+
         List<UserAccount> users = new(identityUsers.Count);
         foreach (ApplicationUser identityUser in identityUsers)
         {
-            users.Add(await MapAsync(identityUser).ConfigureAwait(false));
+            UserRole role = rolesByUserId.GetValueOrDefault(identityUser.Id, UserRole.None);
+            users.Add(MapUser(identityUser, role));
         }
 
         return new UsersPage(users, totalCount, currentPage, query.PageSize);
@@ -176,6 +186,48 @@ public sealed class IdentityUserRepository(
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);
 
+        return MapUser(user, role);
+    }
+
+    private async Task<Dictionary<string, UserRole>> GetPrimaryRolesByUserIdAsync(
+        IEnumerable<string> userIds,
+        CancellationToken cancellationToken)
+    {
+        List<string> distinctUserIds = [.. userIds.Where(static userId => !string.IsNullOrWhiteSpace(userId)).Distinct()];
+        if (distinctUserIds.Count == 0)
+        {
+            return [];
+        }
+
+        List<UserRoleAssignment> roleAssignments = await (
+            from userRole in _applicationDbContext.Set<IdentityUserRole<string>>().AsNoTracking()
+            join role in _applicationDbContext.Roles.AsNoTracking() on userRole.RoleId equals role.Id
+            where distinctUserIds.Contains(userRole.UserId)
+            orderby userRole.UserId, role.Name
+            select new UserRoleAssignment(userRole.UserId, role.Name))
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        Dictionary<string, UserRole> rolesByUserId = [];
+        foreach (UserRoleAssignment roleAssignment in roleAssignments)
+        {
+            if (rolesByUserId.ContainsKey(roleAssignment.UserId))
+            {
+                continue;
+            }
+
+            if (Enum.TryParse<UserRole>(roleAssignment.RoleName, out UserRole role))
+            {
+                rolesByUserId[roleAssignment.UserId] = role;
+            }
+        }
+
+        return rolesByUserId;
+    }
+
+    private static UserAccount MapUser(ApplicationUser user, UserRole role)
+    {
+
         return new UserAccount(
             user.Id,
             user.UserName ?? string.Empty,
@@ -227,4 +279,6 @@ public sealed class IdentityUserRepository(
             _ => new ResultError("users.identity_error", identityError.Description),
         };
     }
+
+    private sealed record UserRoleAssignment(string UserId, string? RoleName);
 }
