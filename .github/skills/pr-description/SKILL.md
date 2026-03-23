@@ -1,10 +1,10 @@
 ---
 name: pr-description
-description: Generate a pull request (PR) title and description from unmerged commits, with optional direct creation on GitHub if `gh` CLI is installed. Use when the user asks to generate, write, or create a PR from commits on the current branch not yet merged into a base branch (for example current branch vs develop).
+description: Generate copyable pull request (PR) title and description from unmerged commits on the current branch not yet merged into a base branch (for example current branch vs main). Outputs are in two separate markdown blocks for easy copying to GitHub.
 ---
 
 ## Purpose
-Generate a high-quality GitHub Pull Request title and description from the set of commits that exist on the current branch but are not yet merged into a chosen base branch. Optionally create the PR directly on GitHub if `gh` CLI is available.
+Generate a high-quality, copyable GitHub Pull Request title and description from the set of commits that exist on the current branch but are not yet merged into a chosen base branch. Output is formatted as two separate markdown blocks (title and description) that you can easily copy and paste into GitHub.
 
 ## Input behavior (MUST FOLLOW)
 1. Determine the base branch in this priority order:
@@ -23,7 +23,8 @@ and stop.
 ## Rules
 - Do NOT summarize these instructions.
 - Do NOT restate these rules.
-- Output only the PR content (title + description), no extra commentary.
+- Output only two copyable markdown blocks: title block, then description block.
+- Do NOT include any explanation, preamble, or follow-up text.
 - Do NOT use staged/unstaged working tree as the primary source.
 - Do NOT include already merged commits.
 - Base all content strictly on the unmerged commit range.
@@ -34,13 +35,17 @@ and stop.
 - Follow relevant scoped instruction files in `.github/instructions/` when inferring architecture, testing, UI, and localization impacts.
 
 ## Output format (STRICT)
-- Output the result inside exactly one fenced markdown block.
-- Use `markdown` as the fence language.
-- Do not add text before or after the code block.
-- Inside the markdown block, use this template exactly.
+Output two copyable markdown blocks:
 
-# PR Title
-<single line, conventional and concise>
+### Block 1: PR Title
+- Output exactly one fenced markdown block with language identifier `text`
+- Contain only the PR title (single line, no additional text)
+- Title follows conventional commits format and best practices below
+
+### Block 2: PR Description
+- Output exactly one fenced markdown block with language identifier `markdown`
+- Contain only the description (no title repeated)
+- Use this template exactly for the description:
 
 ## Summary
 <2-4 concise bullets of main outcomes>
@@ -84,45 +89,3 @@ and stop.
 - Keep under 72 characters when possible.
 - Mention primary scope/component.
 - Avoid vague words like "update" or "changes" without context.
-
-## Create PR on GitHub (optional)
-After outputting the PR preview, the skill automatically detects the GitHub repository from your current git remote and offers to create the PR.
-
-1. **Check if `gh` CLI is installed:**
-   ```bash
-   which gh
-   ```
-   - If found: Continue to step 2
-   - If not found: Output the helper message below and stop
-
-2. **If `gh` CLI is NOT installed, output exactly:**
-   ```
-   GitHub CLI (`gh`) is not installed. To create the PR directly:
-
-   Option 1 (Recommended): Install GitHub CLI
-   - macOS: brew install gh
-   - Linux: https://github.com/cli/cli/blob/trunk/docs/install_linux.md
-   - Windows: choco install gh
-   - Then authenticate: gh auth login
-
-   Option 2: Create PR manually
-   - Go to https://github.com/{owner}/{repo}/compare/{base}...{current-branch}
-   - Copy the above PR content and paste it into GitHub's web UI
-   ```
-
-3. **If `gh` CLI IS installed, after showing the preview, ask:**
-   ```
-   Would you like to create this PR on GitHub now? (yes/no)
-   ```
-
-4. **If user answers "yes", run:**
-   ```bash
-   gh pr create \
-     --title "{title from PR content}" \
-     --body "{body - everything after title}" \
-     --base {base branch}
-   ```
-
-5. **Output the result:**
-   - Success: Show PR URL from `gh` output
-   - Failure: Show error message and instructions to create manually
