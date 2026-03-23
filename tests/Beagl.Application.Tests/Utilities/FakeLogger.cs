@@ -22,7 +22,7 @@ public class FakeLogger<T> : ILogger<T>
         Func<TState, Exception?, string> formatter)
     {
         ArgumentNullException.ThrowIfNull(formatter);
-        var message = formatter(state, exception);
+        string message = formatter(state, exception);
         _logs.Add(new LogEntry(logLevel, eventId, message, exception));
     }
 

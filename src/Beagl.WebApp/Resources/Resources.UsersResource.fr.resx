@@ -74,7 +74,7 @@
   <data name="Users.Success.Deleted" xml:space="preserve"><value>Utilisateur supprimé avec succès.</value></data>
   <data name="Users.Optional.NotProvided" xml:space="preserve"><value>Non fourni</value></data>
   <data name="users.invalid_id" xml:space="preserve"><value>Un identifiant utilisateur est requis.</value></data>
-  <data name="users.not_found" xml:space="preserve"><value>L'utilisateur demande est introuvable.</value></data>
+  <data name="users.not_found" xml:space="preserve"><value>L'utilisateur demandé est introuvable.</value></data>
   <data name="users.user_name_required" xml:space="preserve"><value>Un nom d'utilisateur est requis.</value></data>
   <data name="users.user_name_too_long" xml:space="preserve"><value>Le nom d'utilisateur doit contenir au maximum 256 caractères.</value></data>
   <data name="Users.Role.Citizen" xml:space="preserve"><value>Citoyen</value></data>

@@ -398,7 +398,7 @@ public class IdentityUserRepositoryTests
     }
 
     [Fact]
-    public async Task MapAsync_WithDifferentRoleScenarios_ShouldMappRoleCorrectly()
+    public async Task MapAsync_WithDifferentRoleScenarios_ShouldMapRoleCorrectly()
     {
         // This test verifies the MapAsync method's role mapping behavior.
         // The actual UserManager.GetRolesAsync call requires a real database context,
@@ -423,7 +423,7 @@ public class IdentityUserRepositoryTests
         IdentityUserRepository repository = new(userManagerMock.Object);
 
         // Verify the setup is correct
-        var rolesResult = await userManagerMock.Object.GetRolesAsync(identityUser);
+        IList<string> rolesResult = await userManagerMock.Object.GetRolesAsync(identityUser);
         rolesResult.Should().NotBeEmpty();
         rolesResult.First().Should().Be(UserRole.Employee.ToString());
     }
