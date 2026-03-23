@@ -14,7 +14,7 @@ Beagl-WebApp is an open source application designed for animal centers. It centr
 
 ## Technologies
 
-- .NET 10 / ASP.NET Core / Razor Pages
+- .NET 10 / ASP.NET Core / Razor Components (Blazor Server)
 - Entity Framework Core / PostgreSQL
 - Docker (deployment)
 - Identity with EF Core
