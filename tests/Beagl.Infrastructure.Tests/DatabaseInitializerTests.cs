@@ -106,6 +106,21 @@ public class DatabaseInitializerTests
     }
 
     [Fact]
+    public async Task InitializeAsync_NullRoleManager_ThrowsArgumentNullException()
+    {
+        // Arrange
+        Mock<IDatabaseMigrator> migratorMock = new();
+        Mock<IConfiguration> configurationMock = new();
+        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, null!);
+
+        // Act
+        Func<Task> act = async () => await initializer.InitializeAsync();
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Fact]
     public async Task InitializeAsync_MissingRoles_CreatesAllDefaultRoles()
     {
         // Arrange
@@ -126,5 +141,71 @@ public class DatabaseInitializerTests
         roleManagerMock.Verify(m => m.CreateAsync(It.Is<ApplicationRole>(r => r.Name == "Citizen")), Times.Once);
         roleManagerMock.Verify(m => m.CreateAsync(It.Is<ApplicationRole>(r => r.Name == "Employee")), Times.Once);
         roleManagerMock.Verify(m => m.CreateAsync(It.Is<ApplicationRole>(r => r.Name == "Administrator")), Times.Once);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WhenRoleAlreadyExists_ShouldNotCreateRole()
+    {
+        // Arrange
+        Mock<IDatabaseMigrator> migratorMock = new();
+        migratorMock.Setup(m => m.MigrateAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
+        roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        Mock<IConfiguration> configurationMock = new();
+        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+
+        // Act
+        await initializer.InitializeAsync(migrate: false);
+
+        // Assert
+        roleManagerMock.Verify(m => m.CreateAsync(It.IsAny<ApplicationRole>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WhenRoleCreationFails_ShouldThrowInvalidOperationException()
+    {
+        // Arrange
+        Mock<IDatabaseMigrator> migratorMock = new();
+        migratorMock.Setup(m => m.MigrateAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
+        roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+        roleManagerMock
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "RoleCreationFailed", Description = "failed" }));
+
+        Mock<IConfiguration> configurationMock = new();
+        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+
+        // Act
+        Func<Task> act = async () => await initializer.InitializeAsync(migrate: false);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*Citizen*");
+    }
+
+    [Fact]
+    public async Task InitializeAsync_ShouldForwardCancellationTokenToMigrator()
+    {
+        // Arrange
+        CancellationTokenSource cancellationTokenSource = new();
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+        Mock<IDatabaseMigrator> migratorMock = new();
+        migratorMock.Setup(m => m.MigrateAsync(cancellationToken)).Returns(Task.CompletedTask);
+
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
+        roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        Mock<IConfiguration> configurationMock = new();
+        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+
+        // Act
+        await initializer.InitializeAsync(migrate: true, cancellationToken);
+
+        // Assert
+        migratorMock.Verify(m => m.MigrateAsync(cancellationToken), Times.Once);
     }
 }

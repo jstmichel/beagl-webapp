@@ -36,6 +36,15 @@ Apply these conventions to all C# files.
 - Use structured logging.
 - Do not log sensitive information.
 
+## Testability by Design
+
+- Design code to be unit-testable by default.
+- Depend on abstractions for external concerns (persistence, time, random, network, file system).
+- Inject collaborators through constructors instead of creating them directly in business logic.
+- Keep validation and decision logic in methods with clear inputs/outputs and minimal side effects.
+- When behavior is added or changed, add or update unit tests in the same change.
+- Do not automatically create integration tests; add them only when explicitly requested.
+
 ## Quality Bar
 
 - Follow `.editorconfig` strictly.
