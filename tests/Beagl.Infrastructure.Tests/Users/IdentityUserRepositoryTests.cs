@@ -164,6 +164,54 @@ public class IdentityUserRepositoryTests
     }
 
     [Fact]
+    public async Task UpdateAsync_WhenUserNotFound_ShouldReturnFailureResult()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("missing-id"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object);
+        UpdateUserAccount request = new("missing-id", "bob", "bob@example.com", "555-0200", UserRole.Citizen);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenUpdateFails_ShouldMapIdentityError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.UpdateAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateEmail", Description = "duplicate email" }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object);
+        UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Citizen);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.duplicate_email");
+        userManagerMock.Verify(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
     public async Task UpdateAsync_WhenRoleReplacementSucceeds_ShouldReturnUpdatedMappedUser()
     {
         // Arrange
@@ -201,6 +249,74 @@ public class IdentityUserRepositoryTests
         result.Value.Email.Should().Be("alex-updated@example.com");
         result.Value.PhoneNumber.Should().Be("555-9999");
         result.Value.Role.Should().Be(UserRole.Administrator);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenUserNotFound_ShouldReturnFailureResult()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("missing-id"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object);
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.DeleteAsync("missing-id", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenDeleteFails_ShouldMapIdentityError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.DeleteAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "SomeError", Description = "delete failed" }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object);
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.DeleteAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.identity_error");
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenSucceeds_ShouldReturnSuccess()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.DeleteAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Success);
+
+        IdentityUserRepository repository = new(userManagerMock.Object);
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.DeleteAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
     }
 
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()

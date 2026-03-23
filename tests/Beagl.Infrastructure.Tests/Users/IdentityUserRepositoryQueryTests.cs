@@ -1,0 +1,197 @@
+// MIT License - Copyright (c) 2025 Jonathan St-Michel
+
+using Beagl.Domain.Users;
+using Beagl.Infrastructure.Users;
+using Beagl.Infrastructure.Users.Entities;
+using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Moq;
+
+namespace Beagl.Infrastructure.Tests.Users;
+
+public class IdentityUserRepositoryQueryTests
+{
+    [Fact]
+    public async Task GetMetricsAsync_WithNoUsers_ShouldReturnZeroCounts()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+
+        // Act
+        UsersMetrics metrics = await harness.Repository.GetMetricsAsync(CancellationToken.None);
+
+        // Assert
+        metrics.TotalUsers.Should().Be(0);
+        metrics.PendingConfirmationUsers.Should().Be(0);
+        metrics.LockedOutUsers.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetMetricsAsync_WithMixedUsers_ShouldReturnCorrectCounts()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(
+            MakeUser("u1", "alice", confirmed: true, lockedOut: false),
+            MakeUser("u2", "bob", confirmed: false, lockedOut: false),
+            MakeUser("u3", "charlie", confirmed: true, lockedOut: true));
+
+        // Act
+        UsersMetrics metrics = await harness.Repository.GetMetricsAsync(CancellationToken.None);
+
+        // Assert
+        metrics.TotalUsers.Should().Be(3);
+        metrics.PendingConfirmationUsers.Should().Be(1);
+        metrics.LockedOutUsers.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task GetPageAsync_WithMultipleUsers_ShouldReturnOrderedByUserName()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(
+            MakeUser("u3", "charlie", confirmed: true, lockedOut: false),
+            MakeUser("u1", "alice", confirmed: true, lockedOut: false),
+            MakeUser("u2", "bob", confirmed: true, lockedOut: false));
+
+        GetUsersPageQuery query = new(null, 1, 10);
+
+        // Act
+        UsersPage page = await harness.Repository.GetPageAsync(query, CancellationToken.None);
+
+        // Assert
+        page.TotalCount.Should().Be(3);
+        page.Users.Should().HaveCount(3);
+        page.Users[0].UserName.Should().Be("alice");
+        page.Users[1].UserName.Should().Be("bob");
+        page.Users[2].UserName.Should().Be("charlie");
+    }
+
+    [Fact]
+    public async Task GetPageAsync_WithPagination_ShouldReturnCorrectPage()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(
+            MakeUser("u1", "alice", confirmed: true, lockedOut: false),
+            MakeUser("u2", "bob", confirmed: true, lockedOut: false),
+            MakeUser("u3", "charlie", confirmed: true, lockedOut: false),
+            MakeUser("u4", "diana", confirmed: true, lockedOut: false));
+
+        GetUsersPageQuery query = new(null, 2, 2);
+
+        // Act
+        UsersPage page = await harness.Repository.GetPageAsync(query, CancellationToken.None);
+
+        // Assert
+        page.TotalCount.Should().Be(4);
+        page.PageNumber.Should().Be(2);
+        page.PageSize.Should().Be(2);
+        page.Users.Should().HaveCount(2);
+        page.Users[0].UserName.Should().Be("charlie");
+        page.Users[1].UserName.Should().Be("diana");
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenUserExists_ShouldReturnMappedUser()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: true, lockedOut: false));
+
+        // Act
+        UserAccount? user = await harness.Repository.GetByIdAsync("u1", CancellationToken.None);
+
+        // Assert
+        user.Should().NotBeNull();
+        user!.Id.Should().Be("u1");
+        user.UserName.Should().Be("alice");
+        user.EmailConfirmed.Should().BeTrue();
+        user.IsLockedOut.Should().BeFalse();
+        user.Role.Should().Be(UserRole.None);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenUserNotFound_ShouldReturnNull()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+
+        // Act
+        UserAccount? user = await harness.Repository.GetByIdAsync("non-existent", CancellationToken.None);
+
+        // Assert
+        user.Should().BeNull();
+    }
+
+    private static ApplicationUser MakeUser(string id, string username, bool confirmed, bool lockedOut) =>
+        new()
+        {
+            Id = id,
+            UserName = username,
+            NormalizedUserName = username.ToUpperInvariant(),
+            Email = $"{username}@example.com",
+            NormalizedEmail = $"{username}@example.com".ToUpperInvariant(),
+            EmailConfirmed = confirmed,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            LockoutEnabled = lockedOut,
+            LockoutEnd = lockedOut ? DateTimeOffset.UtcNow.AddHours(1) : null,
+        };
+
+    private sealed class EfTestHarness : IAsyncDisposable
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public IdentityUserRepository Repository { get; }
+
+        private EfTestHarness(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+            Repository = new IdentityUserRepository(userManager);
+        }
+
+        public static EfTestHarness Create()
+        {
+            DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+
+            ApplicationDbContext context = new(options);
+
+            UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext> store = new(context);
+            UserManager<ApplicationUser> userManager = new(
+                store,
+                Options.Create(new IdentityOptions()),
+                new PasswordHasher<ApplicationUser>(),
+                Array.Empty<IUserValidator<ApplicationUser>>(),
+                Array.Empty<IPasswordValidator<ApplicationUser>>(),
+                new UpperInvariantLookupNormalizer(),
+                new IdentityErrorDescriber(),
+                new Mock<IServiceProvider>().Object,
+                new Logger<UserManager<ApplicationUser>>(new LoggerFactory()));
+
+            return new EfTestHarness(context, userManager);
+        }
+
+        public async Task SeedUsersAsync(params ApplicationUser[] users)
+        {
+            _context.Users.AddRange(users);
+            await _context.SaveChangesAsync();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            _userManager.Dispose();
+            await _context.DisposeAsync();
+        }
+    }
+}
