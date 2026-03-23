@@ -44,7 +44,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add ASP.NET Core Identity (without default UI), using EF Core for storage
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     {
-        options.User.RequireUniqueEmail = true;
+        options.User.RequireUniqueEmail = false;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();

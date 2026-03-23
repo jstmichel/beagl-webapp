@@ -1,4 +1,4 @@
-@page "/users"
+@page "/employee/users"
 @rendermode InteractiveServer
 @inject IUserManagementService UserManagementService
 @inject ILogger<Users> Logger
@@ -91,6 +91,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">@L["Users.Table.User"]</th>
+                                    <th scope="col">@L["Users.Table.Role"]</th>
                                     <th scope="col">@L["Users.Table.Phone"]</th>
                                     <th scope="col">@L["Users.Table.Status"]</th>
                                     <th scope="col" class="text-end">@L["Users.Table.Actions"]</th>
@@ -109,6 +110,7 @@
                                                 </div>
                                             </div>
                                         </td>
+                                        <td>@LocalizeRole(user.Role)</td>
                                         <td>@FormatOptionalValue(user.PhoneNumber)</td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2">
@@ -204,6 +206,15 @@
                                         <InputText id="createUserName" class="form-control" @bind-Value="_createForm.UserName" />
                                     </div>
                                     <div>
+                                        <label class="form-label" for="createRole">@L["Users.Form.Role"]</label>
+                                        <InputSelect id="createRole" class="form-select" @bind-Value="_createForm.Role">
+                                            @foreach (UserRole role in SelectableRoles)
+                                            {
+                                                <option value="@role">@LocalizeRole(role)</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+                                    <div>
                                         <label class="form-label" for="createEmail">@L["Users.Form.Email"]</label>
                                         <InputText id="createEmail" class="form-control" @bind-Value="_createForm.Email" />
                                     </div>
@@ -233,6 +244,10 @@
                                 <div>
                                     <dt>@L["Users.Form.Email"]</dt>
                                     <dd>@_selectedUser.Email</dd>
+                                </div>
+                                <div>
+                                    <dt>@L["Users.Form.Role"]</dt>
+                                    <dd>@LocalizeRole(_selectedUser.Role)</dd>
                                 </div>
                                 <div>
                                     <dt>@L["Users.Form.Phone"]</dt>
@@ -277,6 +292,15 @@
                                     <div>
                                         <label class="form-label" for="editUserName">@L["Users.Form.UserName"]</label>
                                         <InputText id="editUserName" class="form-control" @bind-Value="_editForm.UserName" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="editRole">@L["Users.Form.Role"]</label>
+                                        <InputSelect id="editRole" class="form-select" @bind-Value="_editForm.Role">
+                                            @foreach (UserRole role in SelectableRoles)
+                                            {
+                                                <option value="@role">@LocalizeRole(role)</option>
+                                            }
+                                        </InputSelect>
                                     </div>
                                     <div>
                                         <label class="form-label" for="editEmail">@L["Users.Form.Email"]</label>
@@ -458,7 +482,8 @@
             _createForm.UserName,
             _createForm.Email,
             _createForm.PhoneNumber,
-            _createForm.Password);
+            _createForm.Password,
+            _createForm.Role);
 
         Result<UserDetailsDto> result = await UserManagementService.CreateAsync(request, CancellationToken.None).ConfigureAwait(false);
         await HandleMutationResultAsync(result, L["Users.Success.Created"], UserPanelMode.Details).ConfigureAwait(false);
@@ -474,7 +499,8 @@
             _editForm.Id,
             _editForm.UserName,
             _editForm.Email,
-            _editForm.PhoneNumber);
+            _editForm.PhoneNumber,
+            _editForm.Role);
 
         Result<UserDetailsDto> result = await UserManagementService.UpdateAsync(request, CancellationToken.None).ConfigureAwait(false);
         await HandleMutationResultAsync(result, L["Users.Success.Updated"], UserPanelMode.Details).ConfigureAwait(false);
@@ -558,6 +584,19 @@
         return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
     }
 
+    private static IReadOnlyList<UserRole> SelectableRoles =>
+    [
+        UserRole.Citizen,
+        UserRole.Employee,
+        UserRole.Administrator,
+    ];
+
+    private string LocalizeRole(UserRole role)
+    {
+        LocalizedString localizedRole = L[$"Users.Role.{role}"];
+        return localizedRole.ResourceNotFound ? role.ToString() : localizedRole.Value;
+    }
+
     private async Task OnSearchInputAsync(ChangeEventArgs args)
     {
         _searchText = args.Value?.ToString() ?? string.Empty;
@@ -603,58 +642,76 @@
         Delete,
     }
 
-    private sealed class CreateUserFormModel
+    private sealed class CreateUserFormModel : IValidatableObject
     {
-        [Required(ErrorMessage = "users.user_name_required")]
-        [StringLength(256, ErrorMessage = "users.user_name_too_long")]
         public string UserName { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "users.email_required")]
-        [EmailAddress(ErrorMessage = "users.invalid_email")]
-        [StringLength(256)]
-        public string Email { get; set; } = string.Empty;
-
-        [Phone]
-        [StringLength(32)]
+        public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-
-        [Required(ErrorMessage = "users.password_required")]
-        [StringLength(100, MinimumLength = 8, ErrorMessage = "users.password_too_short")]
         public string Password { get; set; } = string.Empty;
+        public UserRole Role { get; set; } = UserRole.Employee;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(UserName))
+                yield return new ValidationResult("users.user_name_required", [nameof(UserName)]);
+            else if (UserName.Trim().Length > 256)
+                yield return new ValidationResult("users.user_name_too_long", [nameof(UserName)]);
+
+            if (Role is UserRole.Employee or UserRole.Administrator && string.IsNullOrWhiteSpace(Email))
+                yield return new ValidationResult("users.email_required", [nameof(Email)]);
+            else if (!string.IsNullOrWhiteSpace(Email) && !new EmailAddressAttribute().IsValid(Email.Trim()))
+                yield return new ValidationResult("users.invalid_email", [nameof(Email)]);
+
+            if (string.IsNullOrWhiteSpace(PhoneNumber))
+                yield return new ValidationResult("users.phone_required", [nameof(PhoneNumber)]);
+
+            if (string.IsNullOrWhiteSpace(Password))
+                yield return new ValidationResult("users.password_required", [nameof(Password)]);
+            else if (Password.Length < 8)
+                yield return new ValidationResult("users.password_too_short", [nameof(Password)]);
+        }
 
         public void Reset()
         {
             UserName = string.Empty;
-            Email = string.Empty;
+            Email = null;
             PhoneNumber = null;
             Password = string.Empty;
+            Role = UserRole.Employee;
         }
     }
 
-    private sealed class EditUserFormModel
+    private sealed class EditUserFormModel : IValidatableObject
     {
-        [Required(ErrorMessage = "users.invalid_id")]
         public string Id { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "users.user_name_required")]
-        [StringLength(256, ErrorMessage = "users.user_name_too_long")]
         public string UserName { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "users.email_required")]
-        [EmailAddress(ErrorMessage = "users.invalid_email")]
-        [StringLength(256)]
-        public string Email { get; set; } = string.Empty;
-
-        [Phone]
-        [StringLength(32)]
+        public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
+        public UserRole Role { get; set; } = UserRole.Employee;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(UserName))
+                yield return new ValidationResult("users.user_name_required", [nameof(UserName)]);
+            else if (UserName.Trim().Length > 256)
+                yield return new ValidationResult("users.user_name_too_long", [nameof(UserName)]);
+
+            if (Role is UserRole.Employee or UserRole.Administrator && string.IsNullOrWhiteSpace(Email))
+                yield return new ValidationResult("users.email_required", [nameof(Email)]);
+            else if (!string.IsNullOrWhiteSpace(Email) && !new EmailAddressAttribute().IsValid(Email.Trim()))
+                yield return new ValidationResult("users.invalid_email", [nameof(Email)]);
+
+            if (string.IsNullOrWhiteSpace(PhoneNumber))
+                yield return new ValidationResult("users.phone_required", [nameof(PhoneNumber)]);
+        }
 
         public void Load(UserDetailsDto user)
         {
             Id = user.Id;
             UserName = user.UserName;
-            Email = user.Email;
+            Email = string.IsNullOrEmpty(user.Email) ? null : user.Email;
             PhoneNumber = user.PhoneNumber;
+            Role = user.Role;
         }
     }
 }

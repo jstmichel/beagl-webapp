@@ -51,20 +51,19 @@ public sealed class IdentityUserRepository(
         int totalPages = Math.Max(1, (int)Math.Ceiling((double)totalCount / query.PageSize));
         int currentPage = Math.Min(query.PageNumber, totalPages);
 
-        IReadOnlyList<UserAccount> users = await usersQuery
+        List<ApplicationUser> identityUsers = await usersQuery
             .OrderBy(user => user.UserName)
             .ThenBy(user => user.Email)
             .Skip((currentPage - 1) * query.PageSize)
             .Take(query.PageSize)
-            .Select(user => new UserAccount(
-                user.Id,
-                user.UserName ?? string.Empty,
-                user.Email ?? string.Empty,
-                user.PhoneNumber,
-                user.EmailConfirmed,
-                user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
+
+        List<UserAccount> users = new(identityUsers.Count);
+        foreach (ApplicationUser identityUser in identityUsers)
+        {
+            users.Add(await MapAsync(identityUser).ConfigureAwait(false));
+        }
 
         return new UsersPage(users, totalCount, currentPage, query.PageSize);
     }
@@ -72,18 +71,25 @@ public sealed class IdentityUserRepository(
     /// <inheritdoc />
     public async Task<UserAccount?> GetByIdAsync(string userId, CancellationToken cancellationToken)
     {
-        return await _userManager.Users
+        ApplicationUser? identityUser = await _userManager.Users
             .AsNoTracking()
-            .Where(user => user.Id == userId)
-            .Select(user => new UserAccount(
-                user.Id,
-                user.UserName ?? string.Empty,
-                user.Email ?? string.Empty,
-                user.PhoneNumber,
-                user.EmailConfirmed,
-                user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow))
-            .SingleOrDefaultAsync(cancellationToken)
+            .SingleOrDefaultAsync(user => user.Id == userId, cancellationToken)
             .ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return null;
+        }
+
+        UserRole role = await GetPrimaryRoleAsync(identityUser).ConfigureAwait(false);
+
+        return new UserAccount(
+            identityUser.Id,
+            identityUser.UserName ?? string.Empty,
+            identityUser.Email ?? string.Empty,
+            identityUser.PhoneNumber,
+            identityUser.EmailConfirmed,
+            identityUser.LockoutEnd.HasValue && identityUser.LockoutEnd.Value > DateTimeOffset.UtcNow,
+            role);
     }
 
     /// <inheritdoc />
@@ -105,7 +111,14 @@ public sealed class IdentityUserRepository(
             return Result.Failure<UserAccount>(MapIdentityError(createResult));
         }
 
-        return Result.Success(Map(identityUser));
+        IdentityResult addToRoleResult = await _userManager.AddToRoleAsync(identityUser, user.Role.ToString()).ConfigureAwait(false);
+        if (!addToRoleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(identityUser).ConfigureAwait(false);
+            return Result.Failure<UserAccount>(MapIdentityError(addToRoleResult));
+        }
+
+        return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
     }
 
     /// <inheritdoc />
@@ -130,7 +143,13 @@ public sealed class IdentityUserRepository(
             return Result.Failure<UserAccount>(MapIdentityError(updateResult));
         }
 
-        return Result.Success(Map(identityUser));
+        IdentityResult roleUpdateResult = await ReplaceRolesAsync(identityUser, user.Role).ConfigureAwait(false);
+        if (!roleUpdateResult.Succeeded)
+        {
+            return Result.Failure<UserAccount>(MapIdentityError(roleUpdateResult));
+        }
+
+        return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
     }
 
     /// <inheritdoc />
@@ -153,15 +172,41 @@ public sealed class IdentityUserRepository(
         return Result.Success();
     }
 
-    private static UserAccount Map(ApplicationUser user)
+    private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
+        UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);
+
         return new UserAccount(
             user.Id,
             user.UserName ?? string.Empty,
             user.Email ?? string.Empty,
             user.PhoneNumber,
             user.EmailConfirmed,
-            user.LockoutEnd is not null && user.LockoutEnd > DateTimeOffset.UtcNow);
+            user.LockoutEnd is not null && user.LockoutEnd > DateTimeOffset.UtcNow,
+            role);
+    }
+
+    private async Task<UserRole> GetPrimaryRoleAsync(ApplicationUser user)
+    {
+        IList<string> roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+        string? roleName = roles.FirstOrDefault();
+
+        return Enum.TryParse<UserRole>(roleName, out UserRole role) ? role : UserRole.None;
+    }
+
+    private async Task<IdentityResult> ReplaceRolesAsync(ApplicationUser user, UserRole newRole)
+    {
+        IList<string> existingRoles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+        if (existingRoles.Count > 0)
+        {
+            IdentityResult removeResult = await _userManager.RemoveFromRolesAsync(user, existingRoles).ConfigureAwait(false);
+            if (!removeResult.Succeeded)
+            {
+                return removeResult;
+            }
+        }
+
+        return await _userManager.AddToRoleAsync(user, newRole.ToString()).ConfigureAwait(false);
     }
 
     private static ResultError MapIdentityError(IdentityResult identityResult)
@@ -177,6 +222,7 @@ public sealed class IdentityUserRepository(
             "DuplicateUserName" => new ResultError("users.duplicate_user_name", "The user name is already in use."),
             "DuplicateEmail" => new ResultError("users.duplicate_email", "The email address is already in use."),
             "InvalidEmail" => new ResultError("users.invalid_email", "The email address is not valid."),
+            "RoleNotFound" => new ResultError("users.role_not_found", "The requested role does not exist."),
             "PasswordTooShort" => new ResultError("users.password_too_short", identityError.Description),
             _ => new ResultError("users.identity_error", identityError.Description),
         };

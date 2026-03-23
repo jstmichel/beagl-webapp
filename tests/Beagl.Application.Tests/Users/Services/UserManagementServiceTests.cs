@@ -18,7 +18,7 @@ public class UserManagementServiceTests
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
         UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
-        CreateUserRequest request = new("alex", "invalid-email", null, "Password123!");
+        CreateUserRequest request = new("alex", "invalid-email", null, "Password123!", UserRole.Employee);
 
         // Act
         Result<UserDetailsDto> result = await service.CreateAsync(request, CancellationToken.None);
@@ -37,10 +37,10 @@ public class UserManagementServiceTests
         Mock<IUserRepository> userRepositoryMock = new();
         userRepositoryMock
             .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", null, false, false)));
+            .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "+1234567890", false, false, UserRole.Employee)));
 
         UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
-        CreateUserRequest request = new("alex", "alex@example.com", null, "Password123!");
+        CreateUserRequest request = new("alex", "alex@example.com", "+1234567890", "Password123!", UserRole.Employee);
 
         // Act
         Result<UserDetailsDto> result = await service.CreateAsync(request, CancellationToken.None);
@@ -54,6 +54,42 @@ public class UserManagementServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_ForCitizenWithoutPhone_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        CreateUserRequest request = new("citizen-1", null, null, "Password123!", UserRole.Citizen);
+
+        // Act
+        Result<UserDetailsDto> result = await service.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.phone_required");
+        userRepositoryMock.Verify(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ForEmployeeWithoutPhone_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        CreateUserRequest request = new("emp-1", "emp@example.com", null, "Password123!", UserRole.Employee);
+
+        // Act
+        Result<UserDetailsDto> result = await service.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.phone_required");
+        userRepositoryMock.Verify(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task UpdateAsync_WhenRepositoryReturnsNotFound_ShouldPropagateFailure()
     {
         // Arrange
@@ -63,7 +99,7 @@ public class UserManagementServiceTests
             .ReturnsAsync(Result.Failure<UserAccount>(new ResultError("users.not_found", "The requested user could not be found.")));
 
         UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
-        UpdateUserRequest request = new("missing", "alex", "alex@example.com", null);
+        UpdateUserRequest request = new("missing", "alex", "alex@example.com", "+1234567890", UserRole.Employee);
 
         // Act
         Result<UserDetailsDto> result = await service.UpdateAsync(request, CancellationToken.None);

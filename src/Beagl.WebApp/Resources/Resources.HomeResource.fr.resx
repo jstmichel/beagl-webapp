@@ -6,15 +6,15 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
   <data name="Home.Title" xml:space="preserve"><value>Accueil</value></data>
   <data name="Home.Kicker" xml:space="preserve"><value>Centre de contrôle Beagl</value></data>
-  <data name="Home.Hero.Title" xml:space="preserve"><value>Une façon plus claire de gérer l'identité et les opérations des centres animaliers.</value></data>
-  <data name="Home.Hero.Copy" xml:space="preserve"><value>Beagl offre aux équipes un espace opérationnel focalisé pour la gestion des comptes et l'administration quotidienne. Accédez directement aux utilisateurs, gardez des flux cohérents et maintenez la visibilité sur la santé des comptes.</value></data>
+  <data name="Home.Hero.Title" xml:space="preserve"><value>La plateforme de gestion conçue pour les équipes de refuges animaliers et les animaux dont elles prennent soin.</value></data>
+  <data name="Home.Hero.Copy" xml:space="preserve"><value>Beagl offre au personnel et aux gestionnaires de refuges un espace unifié pour les opérations quotidiennes. Gérez les comptes des employés, suivez les soins aux animaux et gardez une vue d'ensemble sur votre refuge — le tout en un seul endroit.</value></data>
   <data name="Home.Action.Users" xml:space="preserve"><value>Ouvrir l'espace utilisateurs</value></data>
   <data name="Home.Action.Overview" xml:space="preserve"><value>Voir l'aperçu du tableau de bord</value></data>
   <data name="Home.Highlights.Aria" xml:space="preserve"><value>Points forts de la plateforme</value></data>
-  <data name="Home.Highlight.Workspace.Title" xml:space="preserve"><value>Un seul espace</value></data>
-  <data name="Home.Highlight.Workspace.Copy" xml:space="preserve"><value>Créer, consulter, modifier et supprimer des utilisateurs sans changer de contexte.</value></data>
+  <data name="Home.Highlight.Workspace.Title" xml:space="preserve"><value>Espace unifié</value></data>
+  <data name="Home.Highlight.Workspace.Copy" xml:space="preserve"><value>Gérez les comptes du personnel, les dossiers des animaux et les flux du refuge sans changer de contexte.</value></data>
   <data name="Home.Highlight.Clarity.Title" xml:space="preserve"><value>Clarté opérationnelle</value></data>
-  <data name="Home.Highlight.Clarity.Copy" xml:space="preserve"><value>Des indicateurs de statut et des panneaux cibles rendent les actions critiques plus lisibles.</value></data>
-  <data name="Home.Highlight.Teams.Title" xml:space="preserve"><value>Pensé pour les équipes</value></data>
-  <data name="Home.Highlight.Teams.Copy" xml:space="preserve"><value>Des interactions responsives pour desktop et mobile dans les centres occupés.</value></data>
+  <data name="Home.Highlight.Clarity.Copy" xml:space="preserve"><value>Des indicateurs de statut et des panneaux contextuels rendent les opérations du refuge lisibles et actionnables.</value></data>
+  <data name="Home.Highlight.Teams.Title" xml:space="preserve"><value>Pensé pour les équipes de refuge</value></data>
+  <data name="Home.Highlight.Teams.Copy" xml:space="preserve"><value>Responsive et accessible sur desktop et mobile, pour le personnel sur le terrain comme au bureau.</value></data>
 </root>

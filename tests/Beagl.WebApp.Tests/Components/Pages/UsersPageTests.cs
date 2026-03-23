@@ -4,6 +4,7 @@ using Bunit;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Results;
+using Beagl.Domain.Users;
 using Beagl.WebApp.Components.Pages;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +37,7 @@ public sealed class UsersPageTests : TestContext
         // Arrange
         FakeUserManagementService fakeService = new()
         {
-            Users = [new UserListItemDto("user-1", "alex", "alex@example.com", null, true, false)],
+            Users = [new UserListItemDto("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee)],
         };
         Services.AddSingleton<IUserManagementService>(fakeService);
         Services.AddLogging();
@@ -57,8 +58,8 @@ public sealed class UsersPageTests : TestContext
         // Arrange
         FakeUserManagementService fakeService = new()
         {
-            Users = [new UserListItemDto("user-1", "alex", "alex@example.com", "555-0100", true, false)],
-            SelectedUser = new UserDetailsDto("user-1", "alex", "alex@example.com", "555-0100", true, false),
+            Users = [new UserListItemDto("user-1", "alex", "alex@example.com", "555-0100", true, false, UserRole.Employee)],
+            SelectedUser = new UserDetailsDto("user-1", "alex", "alex@example.com", "555-0100", true, false, UserRole.Employee),
         };
         Services.AddSingleton<IUserManagementService>(fakeService);
         Services.AddLogging();
@@ -92,10 +93,11 @@ public sealed class UsersPageTests : TestContext
             UserDetailsDto createdUser = new(
                 "created-user",
                 request.UserName,
-                request.Email,
+                request.Email ?? string.Empty,
                 request.PhoneNumber,
                 false,
-                false);
+                false,
+                request.Role);
 
             return Task.FromResult(Result.Success(createdUser));
         }
@@ -107,7 +109,7 @@ public sealed class UsersPageTests : TestContext
 
         public Task<Result<UserDetailsDto>> GetUserByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            UserDetailsDto user = SelectedUser ?? new UserDetailsDto(userId, "alex", "alex@example.com", null, false, false);
+            UserDetailsDto user = SelectedUser ?? new UserDetailsDto(userId, "alex", "alex@example.com", null, false, false, UserRole.Employee);
             return Task.FromResult(Result.Success(user));
         }
 
@@ -122,10 +124,11 @@ public sealed class UsersPageTests : TestContext
             UserDetailsDto updatedUser = new(
                 request.Id,
                 request.UserName,
-                request.Email,
+                request.Email ?? string.Empty,
                 request.PhoneNumber,
                 false,
-                false);
+                false,
+                request.Role);
 
             return Task.FromResult(Result.Success(updatedUser));
         }

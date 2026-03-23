@@ -87,9 +87,10 @@ public sealed partial class UserManagementService(
 
         CreateUserAccount createUser = new(
             request.UserName.Trim(),
-            request.Email.Trim(),
+            NormalizeOptionalValue(request.Email),
             NormalizeOptionalValue(request.PhoneNumber),
-            request.Password);
+            request.Password,
+            request.Role);
 
         Result<UserAccount> result = await _userRepository.CreateAsync(createUser, cancellationToken).ConfigureAwait(false);
         if (result.IsFailure)
@@ -115,8 +116,9 @@ public sealed partial class UserManagementService(
         UpdateUserAccount updateUser = new(
             request.Id.Trim(),
             request.UserName.Trim(),
-            request.Email.Trim(),
-            NormalizeOptionalValue(request.PhoneNumber));
+            NormalizeOptionalValue(request.Email),
+            NormalizeOptionalValue(request.PhoneNumber),
+            request.Role);
 
         Result<UserAccount> result = await _userRepository.UpdateAsync(updateUser, cancellationToken).ConfigureAwait(false);
         if (result.IsFailure)
@@ -153,7 +155,8 @@ public sealed partial class UserManagementService(
             user.Email,
             user.PhoneNumber,
             user.EmailConfirmed,
-            user.IsLockedOut);
+            user.IsLockedOut,
+            user.Role);
     }
 
     private static UserDetailsDto MapDetails(UserAccount user)
@@ -164,11 +167,17 @@ public sealed partial class UserManagementService(
             user.Email,
             user.PhoneNumber,
             user.EmailConfirmed,
-            user.IsLockedOut);
+            user.IsLockedOut,
+            user.Role);
     }
 
     private static Result ValidateCreateRequest(CreateUserRequest request)
     {
+        if (!Enum.IsDefined(request.Role) || request.Role == UserRole.None)
+        {
+            return Result.Failure(new ResultError("users.invalid_role", "The specified user role is not valid."));
+        }
+
         if (string.IsNullOrWhiteSpace(request.UserName))
         {
             return Result.Failure(new ResultError("users.user_name_required", "A user name is required."));
@@ -179,14 +188,21 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.user_name_too_long", "The user name must contain at most 256 characters."));
         }
 
-        if (string.IsNullOrWhiteSpace(request.Email))
+        if (request.Role is UserRole.Employee or UserRole.Administrator
+            && string.IsNullOrWhiteSpace(request.Email))
         {
             return Result.Failure(new ResultError("users.email_required", "An email address is required."));
         }
 
-        if (!_emailValidator.IsValid(request.Email.Trim()))
+        if (!string.IsNullOrWhiteSpace(request.Email)
+            && !_emailValidator.IsValid(request.Email.Trim()))
         {
             return Result.Failure(new ResultError("users.invalid_email", "The email address is not valid."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+        {
+            return Result.Failure(new ResultError("users.phone_required", "A phone number is required."));
         }
 
         if (string.IsNullOrWhiteSpace(request.Password))
@@ -209,6 +225,11 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.invalid_id", "A user identifier is required."));
         }
 
+        if (!Enum.IsDefined(request.Role) || request.Role == UserRole.None)
+        {
+            return Result.Failure(new ResultError("users.invalid_role", "The specified user role is not valid."));
+        }
+
         if (string.IsNullOrWhiteSpace(request.UserName))
         {
             return Result.Failure(new ResultError("users.user_name_required", "A user name is required."));
@@ -219,14 +240,21 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.user_name_too_long", "The user name must contain at most 256 characters."));
         }
 
-        if (string.IsNullOrWhiteSpace(request.Email))
+        if (request.Role is UserRole.Employee or UserRole.Administrator
+            && string.IsNullOrWhiteSpace(request.Email))
         {
             return Result.Failure(new ResultError("users.email_required", "An email address is required."));
         }
 
-        if (!_emailValidator.IsValid(request.Email.Trim()))
+        if (!string.IsNullOrWhiteSpace(request.Email)
+            && !_emailValidator.IsValid(request.Email.Trim()))
         {
             return Result.Failure(new ResultError("users.invalid_email", "The email address is not valid."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+        {
+            return Result.Failure(new ResultError("users.phone_required", "A phone number is required."));
         }
 
         return Result.Success();

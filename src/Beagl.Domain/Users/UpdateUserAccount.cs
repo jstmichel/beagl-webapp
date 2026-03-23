@@ -9,8 +9,10 @@ namespace Beagl.Domain.Users;
 /// <param name="UserName">The user name.</param>
 /// <param name="Email">The email address.</param>
 /// <param name="PhoneNumber">The phone number.</param>
+/// <param name="Role">The user role.</param>
 public sealed record UpdateUserAccount(
     string Id,
     string UserName,
-    string Email,
-    string? PhoneNumber);
+    string? Email,
+    string? PhoneNumber,
+    UserRole Role);

@@ -2,6 +2,8 @@
 
 namespace Beagl.Application.Users.Dtos;
 
+using Beagl.Domain.Users;
+
 /// <summary>
 /// Represents the application request to update a user.
 /// </summary>
@@ -9,8 +11,10 @@ namespace Beagl.Application.Users.Dtos;
 /// <param name="UserName">The user name.</param>
 /// <param name="Email">The email address.</param>
 /// <param name="PhoneNumber">The phone number.</param>
+/// <param name="Role">The user role.</param>
 public sealed record UpdateUserRequest(
     string Id,
     string UserName,
-    string Email,
-    string? PhoneNumber);
+    string? Email,
+    string? PhoneNumber,
+    UserRole Role);

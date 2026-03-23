@@ -5,9 +5,9 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
   <data name="Users.PageTitle" xml:space="preserve"><value>Utilisateurs</value></data>
-  <data name="Users.Kicker" xml:space="preserve"><value>Gestion de l'identité</value></data>
-  <data name="Users.Title" xml:space="preserve"><value>Gérez l'accès du personnel dans un espace unique et responsive.</value></data>
-  <data name="Users.Copy" xml:space="preserve"><value>Parcourez les comptes actifs, inspectez leur état et effectuez création, mise à jour ou suppression sans quitter la page.</value></data>
+  <data name="Users.Kicker" xml:space="preserve"><value>Accès du personnel</value></data>
+  <data name="Users.Title" xml:space="preserve"><value>Gérez les comptes des employés dans un espace unique et responsive.</value></data>
+  <data name="Users.Copy" xml:space="preserve"><value>Parcourez les comptes des employés, inspectez leur état et effectuez création, mise à jour ou suppression sans quitter la page.</value></data>
   <data name="Users.Action.Create" xml:space="preserve"><value>Créer un utilisateur</value></data>
   <data name="Users.Metric.Total" xml:space="preserve"><value>Total des utilisateurs</value></data>
   <data name="Users.Metric.PendingConfirmation" xml:space="preserve"><value>Courriels non confirmés</value></data>
@@ -20,6 +20,7 @@
   <data name="Users.Empty.Title" xml:space="preserve"><value>Aucun utilisateur ne correspond à la vue actuelle.</value></data>
   <data name="Users.Empty.Description" xml:space="preserve"><value>Créez un nouvel utilisateur ou ajustez vos critères de recherche.</value></data>
   <data name="Users.Table.User" xml:space="preserve"><value>Utilisateur</value></data>
+  <data name="Users.Table.Role" xml:space="preserve"><value>Rôle</value></data>
   <data name="Users.Table.Phone" xml:space="preserve"><value>Téléphone</value></data>
   <data name="Users.Table.Status" xml:space="preserve"><value>Statut</value></data>
   <data name="Users.Table.Actions" xml:space="preserve"><value>Actions</value></data>
@@ -39,6 +40,7 @@
   <data name="Users.Action.Close" xml:space="preserve"><value>Fermer</value></data>
   <data name="Users.Panel.Kicker" xml:space="preserve"><value>Espace de travail</value></data>
   <data name="Users.Form.UserName" xml:space="preserve"><value>Nom d'utilisateur</value></data>
+  <data name="Users.Form.Role" xml:space="preserve"><value>Rôle</value></data>
   <data name="Users.Form.Email" xml:space="preserve"><value>Courriel</value></data>
   <data name="Users.Form.Phone" xml:space="preserve"><value>Téléphone</value></data>
   <data name="Users.Form.TempPassword" xml:space="preserve"><value>Mot de passe temporaire</value></data>
@@ -52,16 +54,16 @@
   <data name="Users.Details.Pending" xml:space="preserve"><value>En attente</value></data>
   <data name="Users.Details.Locked" xml:space="preserve"><value>Verrouillé</value></data>
   <data name="Users.Details.Active" xml:space="preserve"><value>Actif</value></data>
-  <data name="Users.Delete.Warning" xml:space="preserve"><value>Vous êtes sur le point de supprimer {0} du magasin d'identité.</value></data>
-  <data name="Users.Delete.Description" xml:space="preserve"><value>Cette action est irreversible et revoquera les prochaines tentatives de connexion pour ce compte.</value></data>
+  <data name="Users.Delete.Warning" xml:space="preserve"><value>Vous êtes sur le point de supprimer {0} du répertoire du personnel.</value></data>
+  <data name="Users.Delete.Description" xml:space="preserve"><value>Cette action est irréversible et révoquera l'accès aux connexions futures pour ce compte.</value></data>
   <data name="Users.Panel.Title.Create" xml:space="preserve"><value>Créer un nouvel utilisateur</value></data>
   <data name="Users.Panel.Title.Details" xml:space="preserve"><value>Détails utilisateur</value></data>
   <data name="Users.Panel.Title.Edit" xml:space="preserve"><value>Modifier l'utilisateur</value></data>
   <data name="Users.Panel.Title.Delete" xml:space="preserve"><value>Supprimer l'utilisateur</value></data>
-  <data name="Users.Panel.Description.Create" xml:space="preserve"><value>Ajoutez un nouveau compte basé sur l'identité au système.</value></data>
+  <data name="Users.Panel.Description.Create" xml:space="preserve"><value>Ajoutez un nouveau compte d'employé au système du refuge.</value></data>
   <data name="Users.Panel.Description.Details" xml:space="preserve"><value>Inspectez l'état actuel du compte avant d'agir.</value></data>
   <data name="Users.Panel.Description.Edit" xml:space="preserve"><value>Mettez à jour le profil sans quitter le répertoire.</value></data>
-  <data name="Users.Panel.Description.Delete" xml:space="preserve"><value>Confirmez la suppression définitive du magasin d'identité.</value></data>
+  <data name="Users.Panel.Description.Delete" xml:space="preserve"><value>Confirmez la suppression définitive du répertoire du personnel.</value></data>
   <data name="Users.Error.LoadFailed" xml:space="preserve"><value>Le répertoire des utilisateurs n'a pas pu être chargé.</value></data>
   <data name="Users.Success.Created" xml:space="preserve"><value>Utilisateur créé avec succès.</value></data>
   <data name="Users.Success.Updated" xml:space="preserve"><value>Utilisateur mis à jour avec succès.</value></data>
@@ -71,11 +73,17 @@
   <data name="users.not_found" xml:space="preserve"><value>L'utilisateur demande est introuvable.</value></data>
   <data name="users.user_name_required" xml:space="preserve"><value>Un nom d'utilisateur est requis.</value></data>
   <data name="users.user_name_too_long" xml:space="preserve"><value>Le nom d'utilisateur doit contenir au maximum 256 caractères.</value></data>
+  <data name="Users.Role.Citizen" xml:space="preserve"><value>Citoyen</value></data>
+  <data name="Users.Role.Employee" xml:space="preserve"><value>Employé</value></data>
+  <data name="Users.Role.Administrator" xml:space="preserve"><value>Administrateur</value></data>
+  <data name="users.phone_required" xml:space="preserve"><value>Un numéro de téléphone est requis.</value></data>
+  <data name="users.invalid_role" xml:space="preserve"><value>Le rôle utilisateur spécifié n'est pas valide.</value></data>
   <data name="users.email_required" xml:space="preserve"><value>Une adresse courriel est requise.</value></data>
   <data name="users.invalid_email" xml:space="preserve"><value>L'adresse courriel n'est pas valide.</value></data>
   <data name="users.password_required" xml:space="preserve"><value>Un mot de passe est requis.</value></data>
   <data name="users.password_too_short" xml:space="preserve"><value>Le mot de passe doit contenir au moins 8 caractères.</value></data>
   <data name="users.identity_error" xml:space="preserve"><value>L'opération utilisateur n'a pas pu être complétée.</value></data>
+  <data name="users.role_not_found" xml:space="preserve"><value>Le rôle demandé n'existe pas.</value></data>
   <data name="users.duplicate_user_name" xml:space="preserve"><value>Le nom d'utilisateur est déjà utilisé.</value></data>
   <data name="users.duplicate_email" xml:space="preserve"><value>L'adresse courriel est déjà utilisée.</value></data>
 </root>
