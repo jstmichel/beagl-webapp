@@ -138,10 +138,11 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.invalid_id", "A user identifier is required."));
         }
 
-        Result result = await _userRepository.DeleteAsync(userId.Trim(), cancellationToken).ConfigureAwait(false);
+        string trimmedUserId = userId.Trim();
+        Result result = await _userRepository.DeleteAsync(trimmedUserId, cancellationToken).ConfigureAwait(false);
         if (result.IsSuccess)
         {
-            LogUserDeleted(_logger, userId.Trim());
+            LogUserDeleted(_logger, trimmedUserId);
         }
 
         return result;
