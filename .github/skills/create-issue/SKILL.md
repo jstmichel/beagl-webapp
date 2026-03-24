@@ -165,7 +165,7 @@ tests
 - Prefer `enhancement` for new features unless the request is actually a refactor, documentation change, chore, or bug.
 - Suggest one layer label when the affected area is clear:
   - `layer:blazor`
-  - `layer: application`
+  - `layer:application`
   - `layer:domain`
   - `layer:infrastructure`
 - Add other labels only when justified, such as:
