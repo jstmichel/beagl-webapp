@@ -1,11 +1,21 @@
 ---
-applyTo: "src/Beagl.WebApp/**/*.{razor,razor.cs,css}"
+applyTo: "src/Beagl.WebApp/**/*.{razor,razor.cs,css,cshtml,cshtml.cs}"
 description: "UI design system, brand tokens, CRUD interaction patterns, and detail panel structure for the WebApp."
 ---
 
 # UI Design Instructions
 
 Use these rules for WebApp UI changes.
+
+## UI Surface Selection
+
+- Default to Blazor components and pages for application UI in `Components/`, including dashboards, CRUD workflows, reusable widgets, and interactive business screens.
+- Prefer Blazor when the feature belongs to the main app shell, shares component state, or should follow the same navigation and composition model as the rest of the WebApp.
+- Use Razor Pages only for thin request/response endpoints that benefit from the standard ASP.NET Core HTTP pipeline, especially authentication and account flows such as sign-in, sign-out, access denied, external login callbacks, email confirmation, and password reset.
+- Prefer Razor Pages when the flow is naturally form-post plus redirect and does not need rich component interactivity.
+- Do not introduce Razor Pages for regular business CRUD or reporting screens unless there is a clear technical need that Blazor does not satisfy.
+- Avoid splitting a single feature across Blazor and Razor Pages unless the Razor Pages portion is limited to a narrow account or authentication boundary.
+- When both technologies coexist, keep business UI in Blazor and keep Razor Pages small, isolated, and infrastructure-oriented.
 
 ## Brand and Design System
 

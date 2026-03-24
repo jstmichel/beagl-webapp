@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Infrastructure;
 using Beagl.Infrastructure.Database;
 using Beagl.Infrastructure.Users.Entities;
@@ -17,6 +18,7 @@ internal static class WebApplicationExtensions
     /// </summary>
     /// <param name="app">The web application instance.</param>
     /// <param name="configuration">The application configuration containing seed data and other settings.</param>
+    [ExcludeFromCodeCoverage]
     internal static async Task ExecuteMigrationsAsync(this WebApplication app, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(app);

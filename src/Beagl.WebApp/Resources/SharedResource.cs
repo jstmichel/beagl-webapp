@@ -29,3 +29,10 @@ internal sealed class UsersResource
 internal sealed class ErrorResource
 {
 }
+
+/// <summary>
+/// Marker type for shared authentication localization resources.
+/// </summary>
+internal sealed class AuthResource
+{
+}
