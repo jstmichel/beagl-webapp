@@ -1,6 +1,8 @@
 # Beagl – Copilot Instructions
 
-Beagl is a modern CRM for animal centers.
+Beagl-WebApp is an open source application for animal centers.
+
+Use the first two sections of `README.md` (project description and main features) as the source of truth for product scope. If this file and `README.md` differ, follow `README.md` and update this file accordingly.
 
 This file is the always-on orientation document for the repository. Keep it short and stable. Put detailed guidance in scoped files under `.github/instructions/` so the AI receives only the rules relevant to the current task.
 
@@ -8,6 +10,15 @@ This file is the always-on orientation document for the repository. Keep it shor
 
 # Project Overview
 
+- Product purpose: open source application for animal centers that centralizes operations for animals, owners, employees, adoption, payments, and reporting.
+- Main functional domains:
+    - Employee and profile management
+    - Owner and animal tracking
+    - Adoption workflow
+    - Owner self-service portal, including annual fee payment
+    - Reporting and statistics
+    - Authentication and role management
+    - Fee payment and centralized data management
 - Primary stack: C# / .NET 10
 - Architecture style: Clean Architecture
 - Main projects:
