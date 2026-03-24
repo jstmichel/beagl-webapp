@@ -48,7 +48,7 @@ Use these scoped instruction files as the source of truth for detailed guidance:
 - `.github/instructions/testing.instructions.md`
     - xUnit, FluentAssertions, test coverage expectations, test-layer boundaries
 - `.github/instructions/ui-design.instructions.md`
-    - Brand tokens, CRUD UI patterns, detail panel structure, accessibility expectations
+    - Brand tokens, CRUD UI patterns, detail panel structure, accessibility expectations, and Blazor versus Razor Pages selection guidance for the WebApp
 - `.github/instructions/localization.instructions.md`
     - i18n rules, resource organization, bilingual requirements, localization key patterns
 

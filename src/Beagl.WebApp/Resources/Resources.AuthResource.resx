@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="Auth.Login.PageTitle" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.Login.Brand.Alt" xml:space="preserve"><value>Beagl logo</value></data>
+  <data name="Auth.Login.Brand.Name" xml:space="preserve"><value>Beagl CRM</value></data>
+  <data name="Auth.Login.Kicker" xml:space="preserve"><value>Shared access</value></data>
+  <data name="Auth.Login.Title" xml:space="preserve"><value>One login for every account</value></data>
+  <data name="Auth.Login.Description" xml:space="preserve"><value>Sign in with your username or configured email address.</value></data>
+  <data name="Auth.Login.Identifier.Label" xml:space="preserve"><value>Username or email</value></data>
+  <data name="Auth.Login.Identifier.Placeholder" xml:space="preserve"><value>Enter your username or email</value></data>
+  <data name="Auth.Login.Password.Label" xml:space="preserve"><value>Password</value></data>
+  <data name="Auth.Login.RememberMe" xml:space="preserve"><value>Remember me</value></data>
+  <data name="Auth.Login.Action.Submit" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.Login.Error.InvalidCredentials" xml:space="preserve"><value>Invalid username/email or password.</value></data>
+  <data name="Auth.Login.Error.LockedOut" xml:space="preserve"><value>This account is locked.</value></data>
+  <data name="Auth.Login.Error.NotAllowed" xml:space="preserve"><value>This account is not confirmed yet.</value></data>
+  <data name="Auth.Login.Validation.IdentifierRequired" xml:space="preserve"><value>Enter your username or email.</value></data>
+  <data name="Auth.Login.Validation.PasswordRequired" xml:space="preserve"><value>Enter your password.</value></data>
+</root>

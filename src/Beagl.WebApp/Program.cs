@@ -6,6 +6,7 @@ using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Users;
+using Beagl.WebApp.Authentication;
 using Beagl.WebApp.Extensions;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddRazorPages();
 
 CultureInfo[] supportedCultures =
 [
@@ -45,12 +47,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     {
         options.User.RequireUniqueEmail = false;
+        options.SignIn.RequireConfirmedAccount = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/account/login";
+    options.AccessDeniedPath = "/account/login";
+});
+
 builder.Services.AddScoped<IUserRepository, IdentityUserRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
 
 builder.Services.AddHsts(options =>
 {
@@ -82,6 +92,7 @@ app.UseAuthorization();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+app.MapRazorPages();
 app.MapRazorComponents<Beagl.WebApp.Components.App>()
     .AddInteractiveServerRenderMode();
 
