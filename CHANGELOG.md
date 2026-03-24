@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.2.0"></a>
+## [0.2.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.2.0) (2026-03-24)
+
+### Features
+
+* **webapp:** add shared login flow, tests, and squash commit skill ([6955ae7](https://www.github.com/jstmichel/beagl-webapp/commit/6955ae788f54c7eef524beb6fea31e6516bb30ba))
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.1.1) (2026-03-24)
 
