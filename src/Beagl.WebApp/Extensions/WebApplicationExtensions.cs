@@ -1,6 +1,9 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using Beagl.Infrastructure;
+using Beagl.Infrastructure.Database;
+using Beagl.Infrastructure.Users.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Beagl.WebApp.Extensions;
 
@@ -19,8 +22,12 @@ internal static class WebApplicationExtensions
         ArgumentNullException.ThrowIfNull(app);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        await DatabaseInitializer
-            .InitializeAsync(app.Services, configuration)
-            .ConfigureAwait(false);
+        using IServiceScope scope = app.Services.CreateScope();
+        ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        RoleManager<ApplicationRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+        EfCoreDatabaseMigrator migrator = new(dbContext);
+
+        DatabaseInitializer initializer = new(migrator, configuration, roleManager);
+        await initializer.InitializeAsync().ConfigureAwait(false);
     }
 }

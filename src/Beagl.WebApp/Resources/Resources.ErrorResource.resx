@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="NotFound.Kicker" xml:space="preserve"><value>User management</value></data>
+  <data name="NotFound.Title" xml:space="preserve"><value>Page not found</value></data>
+  <data name="NotFound.Description" xml:space="preserve"><value>The requested management page does not exist.</value></data>
+  <data name="NotFound.Action.Users" xml:space="preserve"><value>Return to users</value></data>
+  <data name="NotFound.PageTitle" xml:space="preserve"><value>Not Found</value></data>
+  <data name="NotFound.Page.Content" xml:space="preserve"><value>Sorry, the content you are looking for does not exist.</value></data>
+  <data name="Error.PageTitle" xml:space="preserve"><value>Error</value></data>
+  <data name="Error.Heading" xml:space="preserve"><value>Error.</value></data>
+  <data name="Error.Subheading" xml:space="preserve"><value>An error occurred while processing your request.</value></data>
+  <data name="Error.RequestId" xml:space="preserve"><value>Request ID:</value></data>
+  <data name="Error.DevelopmentMode" xml:space="preserve"><value>Development Mode</value></data>
+  <data name="Error.DevelopmentMode.Description" xml:space="preserve"><value>Swapping to the Development environment will display more detailed information about the error that occurred.</value></data>
+  <data name="Error.DevelopmentMode.Warning" xml:space="preserve"><value>The Development environment should not be enabled for deployed applications.</value></data>
+  <data name="Error.DevelopmentMode.Body" xml:space="preserve"><value>It can result in displaying sensitive information from exceptions to end users. For local debugging, enable the Development environment by setting the ASPNETCORE_ENVIRONMENT environment variable to Development and restarting the app.</value></data>
+</root>

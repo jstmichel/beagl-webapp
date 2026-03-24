@@ -35,7 +35,7 @@ All notable changes to this project will be documented in this file. See [versio
 * **docs:** add security policy and guidelines and more files ([ba128da](https://www.github.com/jstmichel/beagl-webapp/commit/ba128da747a4752712ccd93ae33d2864651e87f1))
 * **service:** add service defaults and health checks ([5a6cd27](https://www.github.com/jstmichel/beagl-webapp/commit/5a6cd2795b86d85da54be445ec98cc7428513006))
 * **tests:** add initial test projects and UI tests ([a896fde](https://www.github.com/jstmichel/beagl-webapp/commit/a896fde1b34aa35bc289701def9a0391501e3d02))
-* **webapp:** initialize blazor web application structure ([1f24cf8](https://www.github.com/jstmichel/beagl-webapp/commit/1f24cf83159d2d5e3019b9eec6110946a71651d6))
+* **webapp:** initialize razor pages web application structure ([1f24cf8](https://www.github.com/jstmichel/beagl-webapp/commit/1f24cf83159d2d5e3019b9eec6110946a71651d6))
 
 ### Bug Fixes
 
