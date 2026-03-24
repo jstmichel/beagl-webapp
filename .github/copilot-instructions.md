@@ -2,7 +2,7 @@
 
 Beagl-WebApp is an open source application for animal centers.
 
-Use the first two sections of `README.md` (project description and main features) as the source of truth for product scope. If this file and `README.md` differ, follow `README.md` and update this file accordingly.
+Use the first two sections of `README.md` (project description and main features) as the source of truth for product scope. If this file and `README.md` differ, follow `README.md`.
 
 This file is the always-on orientation document for the repository. Keep it short and stable. Put detailed guidance in scoped files under `.github/instructions/` so the AI receives only the rules relevant to the current task.
 
@@ -18,7 +18,7 @@ This file is the always-on orientation document for the repository. Keep it shor
     - Owner self-service portal, including annual fee payment
     - Reporting and statistics
     - Authentication and role management
-    - Fee payment and centralized data management
+    - Centralized data management and integrations
 - Primary stack: C# / .NET 10
 - Architecture style: Clean Architecture
 - Main projects:
