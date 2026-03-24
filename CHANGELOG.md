@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.0"></a>
+## [0.1.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.1.0) (2026-03-24)
+
+### Features
+
+* enhance user management, testing, and issue creation skills ([#43](https://www.github.com/jstmichel/beagl-webapp/issues/43)) ([3b751cd](https://www.github.com/jstmichel/beagl-webapp/commit/3b751cd96728089aa980291ff6c44c492810d756))
+
 <a name="0.0.8"></a>
 ## [0.0.8](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.0.8) (2026-01-13)
 
