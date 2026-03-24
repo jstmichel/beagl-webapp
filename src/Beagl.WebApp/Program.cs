@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Beagl.Infrastructure;
 using Beagl.Infrastructure.Users;
@@ -97,3 +98,11 @@ app.MapRazorComponents<Beagl.WebApp.Components.App>()
     .AddInteractiveServerRenderMode();
 
 await app.RunAsync();
+
+/// <summary>
+/// The main entry point for the Beagl web application.
+/// </summary>
+[ExcludeFromCodeCoverage]
+internal partial class Program
+{
+}
