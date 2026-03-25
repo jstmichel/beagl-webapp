@@ -10,6 +10,7 @@ using Beagl.Application.Users.Services;
 using Beagl.Domain.Users;
 using Beagl.WebApp.Authentication;
 using Beagl.WebApp.Extensions;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -57,8 +59,17 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/account/login";
-    options.AccessDeniedPath = "/account/login";
+    options.AccessDeniedPath = "/account/access-denied";
 });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(
+        AuthorizationPolicies.EmployeeAccess,
+        policy => policy
+            .RequireAuthenticatedUser()
+            .RequireRole(
+                AuthorizationPolicies.EmployeeRole,
+                AuthorizationPolicies.AdministratorRole));
 
 builder.Services.AddScoped<IUserRepository, IdentityUserRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();

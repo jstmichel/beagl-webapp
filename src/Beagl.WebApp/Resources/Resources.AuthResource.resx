@@ -7,9 +7,9 @@
   <data name="Auth.Login.PageTitle" xml:space="preserve"><value>Sign in</value></data>
   <data name="Auth.Login.Brand.Alt" xml:space="preserve"><value>Beagl logo</value></data>
   <data name="Auth.Login.Brand.Name" xml:space="preserve"><value>Beagl CRM</value></data>
-  <data name="Auth.Login.Kicker" xml:space="preserve"><value>Shared access</value></data>
-  <data name="Auth.Login.Title" xml:space="preserve"><value>One login for every account</value></data>
-  <data name="Auth.Login.Description" xml:space="preserve"><value>Sign in with your username or configured email address.</value></data>
+  <data name="Auth.Login.Kicker" xml:space="preserve"><value>Employee workspace</value></data>
+  <data name="Auth.Login.Title" xml:space="preserve"><value>Sign in to continue working</value></data>
+  <data name="Auth.Login.Description" xml:space="preserve"><value>Use your employee or administrator account to access the application.</value></data>
   <data name="Auth.Login.Identifier.Label" xml:space="preserve"><value>Username or email</value></data>
   <data name="Auth.Login.Identifier.Placeholder" xml:space="preserve"><value>Enter your username or email</value></data>
   <data name="Auth.Login.Password.Label" xml:space="preserve"><value>Password</value></data>
@@ -20,4 +20,9 @@
   <data name="Auth.Login.Error.NotAllowed" xml:space="preserve"><value>This account is not confirmed yet.</value></data>
   <data name="Auth.Login.Validation.IdentifierRequired" xml:space="preserve"><value>Enter your username or email.</value></data>
   <data name="Auth.Login.Validation.PasswordRequired" xml:space="preserve"><value>Enter your password.</value></data>
+  <data name="Auth.AccessDenied.PageTitle" xml:space="preserve"><value>Access denied</value></data>
+  <data name="Auth.AccessDenied.Kicker" xml:space="preserve"><value>Administrator access</value></data>
+  <data name="Auth.AccessDenied.Title" xml:space="preserve"><value>You do not have permission to view this page</value></data>
+  <data name="Auth.AccessDenied.Description" xml:space="preserve"><value>Ask an administrator to grant the required access, or return to the home page.</value></data>
+  <data name="Auth.AccessDenied.Action.Home" xml:space="preserve"><value>Return home</value></data>
 </root>

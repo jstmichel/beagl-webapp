@@ -1,4 +1,5 @@
 @page "/"
+@attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess)]
 @inject IStringLocalizer<HomeResource> L
 
 <PageTitle>@L["Home.Title"]</PageTitle>

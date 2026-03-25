@@ -7,9 +7,9 @@
   <data name="Auth.Login.PageTitle" xml:space="preserve"><value>Connexion</value></data>
   <data name="Auth.Login.Brand.Alt" xml:space="preserve"><value>Logo Beagl</value></data>
   <data name="Auth.Login.Brand.Name" xml:space="preserve"><value>Beagl CRM</value></data>
-  <data name="Auth.Login.Kicker" xml:space="preserve"><value>Accès partagé</value></data>
-  <data name="Auth.Login.Title" xml:space="preserve"><value>Une connexion pour tous les comptes</value></data>
-  <data name="Auth.Login.Description" xml:space="preserve"><value>Connectez-vous avec votre nom d'utilisateur ou votre courriel configuré.</value></data>
+  <data name="Auth.Login.Kicker" xml:space="preserve"><value>Espace employé</value></data>
+  <data name="Auth.Login.Title" xml:space="preserve"><value>Connectez-vous pour continuer</value></data>
+  <data name="Auth.Login.Description" xml:space="preserve"><value>Utilisez votre compte employé ou administrateur pour accéder à l'application.</value></data>
   <data name="Auth.Login.Identifier.Label" xml:space="preserve"><value>Nom d'utilisateur ou courriel</value></data>
   <data name="Auth.Login.Identifier.Placeholder" xml:space="preserve"><value>Saisissez votre nom d'utilisateur ou votre courriel</value></data>
   <data name="Auth.Login.Password.Label" xml:space="preserve"><value>Mot de passe</value></data>
@@ -20,4 +20,9 @@
   <data name="Auth.Login.Error.NotAllowed" xml:space="preserve"><value>Ce compte n'est pas encore confirmé.</value></data>
   <data name="Auth.Login.Validation.IdentifierRequired" xml:space="preserve"><value>Saisissez votre nom d'utilisateur ou votre courriel.</value></data>
   <data name="Auth.Login.Validation.PasswordRequired" xml:space="preserve"><value>Saisissez votre mot de passe.</value></data>
+  <data name="Auth.AccessDenied.PageTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="Auth.AccessDenied.Kicker" xml:space="preserve"><value>Accès administrateur</value></data>
+  <data name="Auth.AccessDenied.Title" xml:space="preserve"><value>Vous n'avez pas l'autorisation de voir cette page</value></data>
+  <data name="Auth.AccessDenied.Description" xml:space="preserve"><value>Demandez à un administrateur de vous accorder l'accès requis ou retournez à l'accueil.</value></data>
+  <data name="Auth.AccessDenied.Action.Home" xml:space="preserve"><value>Retour à l'accueil</value></data>
 </root>
