@@ -16,6 +16,49 @@ namespace Beagl.Infrastructure.Tests.Users;
 public class IdentityUserRepositoryQueryTests
 {
     [Fact]
+    public async Task HasAnyAdministratorAsync_WhenNoAdministratorRoleAssignmentExists_ShouldReturnFalse()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedRolesAsync(
+            new ApplicationRole
+            {
+                Id = "role-employee",
+                Name = UserRole.Employee.ToString(),
+                NormalizedName = UserRole.Employee.ToString().ToUpperInvariant(),
+            });
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: true, lockedOut: false));
+
+        // Act
+        bool hasAdministrator = await harness.Repository.HasAnyAdministratorAsync(CancellationToken.None);
+
+        // Assert
+        hasAdministrator.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task HasAnyAdministratorAsync_WhenAdministratorRoleAssignmentExists_ShouldReturnTrue()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedRolesAsync(
+            new ApplicationRole
+            {
+                Id = "role-admin",
+                Name = UserRole.Administrator.ToString(),
+                NormalizedName = UserRole.Administrator.ToString().ToUpperInvariant(),
+            });
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: true, lockedOut: false));
+        await harness.SeedUserRolesAsync(new IdentityUserRole<string> { UserId = "u1", RoleId = "role-admin" });
+
+        // Act
+        bool hasAdministrator = await harness.Repository.HasAnyAdministratorAsync(CancellationToken.None);
+
+        // Assert
+        hasAdministrator.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task GetMetricsAsync_WithNoUsers_ShouldReturnZeroCounts()
     {
         // Arrange

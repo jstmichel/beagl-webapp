@@ -1,0 +1,232 @@
+@page "/setup"
+@rendermode InteractiveServer
+@using Beagl.Application.Setup.Dtos
+@using Beagl.Application.Setup.Services
+@inject IInitialSetupService InitialSetupService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<SetupResource> L
+
+<PageTitle>@L["Setup.PageTitle"]</PageTitle>
+
+<section class="setup-page-shell">
+    <div class="container py-4 py-lg-5">
+        <article class="setup-surface mx-auto">
+            <header class="setup-header">
+                <p class="setup-kicker mb-2">@L["Setup.Kicker"]</p>
+                <h1 class="setup-title">@L["Setup.Title"]</h1>
+                <p class="setup-copy mb-0">@L["Setup.Copy"]</p>
+            </header>
+
+            @if (_isCheckingSetup)
+            {
+                <div class="setup-loading" role="status" aria-live="polite">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">@L["Setup.Loading"]</span>
+                    </div>
+                </div>
+            }
+            else if (!_isSetupRequired)
+            {
+                <div class="alert alert-success mb-0" role="status">@L["Setup.AlreadyCompleted"]</div>
+            }
+            else
+            {
+                <ol class="setup-steps" aria-label="@L["Setup.Steps.Aria"]">
+                    <li class="@(CurrentStep == SetupStep.Account ? "is-active" : "")">@L["Setup.Step.Account"]</li>
+                    <li class="@(CurrentStep == SetupStep.Confirmation ? "is-active" : "")">@L["Setup.Step.Confirmation"]</li>
+                </ol>
+
+                @if (!string.IsNullOrWhiteSpace(_errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">@_errorMessage</div>
+                }
+
+                @if (CurrentStep == SetupStep.Account)
+                {
+                    <EditForm EditContext="_editContext" OnValidSubmit="GoToConfirmationStepAsync" class="setup-form">
+                        <DataAnnotationsValidator />
+
+                        @if (_editContext.GetValidationMessages().Any())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                <ul class="mb-0 ps-3">
+                                    @foreach (string message in _editContext.GetValidationMessages().Distinct())
+                                    {
+                                        <li>@LocalizeValidationMessage(message)</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <div class="setup-form-grid">
+                            <div>
+                                <label class="form-label" for="setupUserName">@L["Setup.Form.UserName"]</label>
+                                <InputText id="setupUserName" class="form-control" @bind-Value="_form.UserName" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="setupEmail">@L["Setup.Form.Email"]</label>
+                                <InputText id="setupEmail" class="form-control" @bind-Value="_form.Email" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="setupPassword">@L["Setup.Form.Password"]</label>
+                                <InputText id="setupPassword" type="password" class="form-control" @bind-Value="_form.Password" />
+                                <div class="form-text">@L["Setup.Form.PasswordHint"]</div>
+                            </div>
+                        </div>
+
+                        <div class="setup-actions">
+                            <button type="submit" class="btn btn-primary">@L["Setup.Action.Next"]</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="setup-summary" data-testid="setup-confirmation">
+                        <p class="mb-2">@L["Setup.Confirmation.Description"]</p>
+                        <dl class="setup-summary-grid mb-0">
+                            <div>
+                                <dt>@L["Setup.Form.UserName"]</dt>
+                                <dd>@_form.UserName</dd>
+                            </div>
+                            <div>
+                                <dt>@L["Setup.Form.Email"]</dt>
+                                <dd>@_form.Email</dd>
+                            </div>
+                            <div>
+                                <dt>@L["Setup.Confirmation.Role"]</dt>
+                                <dd>@L["Setup.Confirmation.Role.Administrator"]</dd>
+                            </div>
+                            <div>
+                                <dt>@L["Setup.Confirmation.Verification"]</dt>
+                                <dd>@L["Setup.Confirmation.Verified"]</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <div class="setup-actions">
+                        <button type="button" class="btn btn-outline-secondary" @onclick="GoToAccountStep">@L["Setup.Action.Back"]</button>
+                        <button type="button" class="btn btn-primary" @onclick="CompleteSetupAsync" disabled="@_isSubmitting">@L["Setup.Action.Submit"]</button>
+                    </div>
+                }
+            }
+        </article>
+    </div>
+</section>
+
+@code {
+    private readonly SetupFormModel _form = new();
+    private EditContext _editContext = default!;
+    private bool _isCheckingSetup = true;
+    private bool _isSetupRequired;
+    private bool _isSubmitting;
+    private string? _errorMessage;
+
+    private SetupStep CurrentStep { get; set; } = SetupStep.Account;
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        _editContext = new EditContext(_form);
+        _isSetupRequired = await InitialSetupService.IsSetupRequiredAsync(CancellationToken.None).ConfigureAwait(false);
+        _isCheckingSetup = false;
+
+        if (!_isSetupRequired)
+        {
+            NavigationManager.NavigateTo("/", replace: true);
+        }
+    }
+
+    private Task GoToConfirmationStepAsync()
+    {
+        _errorMessage = null;
+        CurrentStep = SetupStep.Confirmation;
+        return Task.CompletedTask;
+    }
+
+    private void GoToAccountStep()
+    {
+        _errorMessage = null;
+        CurrentStep = SetupStep.Account;
+    }
+
+    private async Task CompleteSetupAsync()
+    {
+        _isSubmitting = true;
+        _errorMessage = null;
+
+        CompleteInitialSetupRequest request = new(
+            _form.UserName,
+            _form.Email,
+            _form.Password);
+
+        Beagl.Domain.Results.Result result = await InitialSetupService
+            .CompleteInitialSetupAsync(request, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (result.IsFailure)
+        {
+            _errorMessage = LocalizeError(result.Error!);
+            _isSubmitting = false;
+            return;
+        }
+
+        NavigationManager.NavigateTo("/", replace: true);
+    }
+
+    private string LocalizeError(Beagl.Domain.Results.ResultError error)
+    {
+        LocalizedString localizedError = L[error.Code];
+        return localizedError.ResourceNotFound ? error.Message : localizedError.Value;
+    }
+
+    private string LocalizeValidationMessage(string message)
+    {
+        LocalizedString localizedMessage = L[message];
+        return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
+    }
+
+    private enum SetupStep
+    {
+        Account,
+        Confirmation,
+    }
+
+    private sealed class SetupFormModel : IValidatableObject
+    {
+        public string UserName { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(UserName))
+            {
+                yield return new ValidationResult("setup.user_name_required", [nameof(UserName)]);
+            }
+            else if (UserName.Trim().Length > 256)
+            {
+                yield return new ValidationResult("setup.user_name_too_long", [nameof(UserName)]);
+            }
+
+            if (string.IsNullOrWhiteSpace(Email))
+            {
+                yield return new ValidationResult("setup.email_required", [nameof(Email)]);
+            }
+            else if (!new EmailAddressAttribute().IsValid(Email.Trim()))
+            {
+                yield return new ValidationResult("setup.invalid_email", [nameof(Email)]);
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                yield return new ValidationResult("setup.password_required", [nameof(Password)]);
+            }
+            else if (Password.Trim().Length < 8)
+            {
+                yield return new ValidationResult("setup.password_too_short", [nameof(Password)]);
+            }
+        }
+    }
+}

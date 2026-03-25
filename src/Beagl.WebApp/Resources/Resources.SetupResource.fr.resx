@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="Setup.PageTitle" xml:space="preserve"><value>Configuration initiale</value></data>
+  <data name="Setup.Kicker" xml:space="preserve"><value>Assistant d'installation</value></data>
+  <data name="Setup.Title" xml:space="preserve"><value>Configurez votre premier compte administrateur</value></data>
+  <data name="Setup.Copy" xml:space="preserve"><value>Complétez cet assistant pour marquer l'application comme prête. Le premier compte est créé comme administrateur vérifié.</value></data>
+  <data name="Setup.Loading" xml:space="preserve"><value>Vérification du statut de configuration</value></data>
+  <data name="Setup.AlreadyCompleted" xml:space="preserve"><value>La configuration initiale est déjà complétée. Redirection vers l'accueil.</value></data>
+  <data name="Setup.Steps.Aria" xml:space="preserve"><value>Étapes de configuration</value></data>
+  <data name="Setup.Step.Account" xml:space="preserve"><value>Compte administrateur</value></data>
+  <data name="Setup.Step.Confirmation" xml:space="preserve"><value>Confirmation</value></data>
+  <data name="Setup.Form.UserName" xml:space="preserve"><value>Nom d'utilisateur</value></data>
+  <data name="Setup.Form.Email" xml:space="preserve"><value>Courriel</value></data>
+  <data name="Setup.Form.Password" xml:space="preserve"><value>Mot de passe</value></data>
+  <data name="Setup.Form.PasswordHint" xml:space="preserve"><value>Utilisez au moins 8 caractères.</value></data>
+  <data name="Setup.Action.Next" xml:space="preserve"><value>Vérifier la configuration</value></data>
+  <data name="Setup.Action.Back" xml:space="preserve"><value>Retour</value></data>
+  <data name="Setup.Action.Submit" xml:space="preserve"><value>Terminer la configuration</value></data>
+  <data name="Setup.Confirmation.Description" xml:space="preserve"><value>La soumission créera le compte administrateur vérifié et passera l'application en mode prêt.</value></data>
+  <data name="Setup.Confirmation.Role" xml:space="preserve"><value>Rôle attribué</value></data>
+  <data name="Setup.Confirmation.Role.Administrator" xml:space="preserve"><value>Administrateur</value></data>
+  <data name="Setup.Confirmation.Verification" xml:space="preserve"><value>Statut du compte</value></data>
+  <data name="Setup.Confirmation.Verified" xml:space="preserve"><value>Vérifié</value></data>
+  <data name="setup.already_completed" xml:space="preserve"><value>La configuration initiale est déjà complétée.</value></data>
+  <data name="setup.user_name_required" xml:space="preserve"><value>Un nom d'utilisateur est requis.</value></data>
+  <data name="setup.user_name_too_long" xml:space="preserve"><value>Le nom d'utilisateur doit contenir au maximum 256 caractères.</value></data>
+  <data name="setup.email_required" xml:space="preserve"><value>Une adresse courriel est requise.</value></data>
+  <data name="setup.invalid_email" xml:space="preserve"><value>L'adresse courriel n'est pas valide.</value></data>
+  <data name="setup.password_required" xml:space="preserve"><value>Un mot de passe est requis.</value></data>
+  <data name="setup.password_too_short" xml:space="preserve"><value>Le mot de passe doit contenir au moins 8 caractères.</value></data>
+</root>

@@ -1,7 +1,10 @@
 @using Beagl.WebApp.Components.Layout
+@using Beagl.Application.Setup.Services
 @inject IStringLocalizer<ErrorResource> L
+@inject IInitialSetupService InitialSetupService
+@inject NavigationManager NavigationManager
 
-<Router AppAssembly="typeof(Program).Assembly">
+<Router AppAssembly="typeof(Program).Assembly" OnNavigateAsync="HandleNavigateAsync">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
@@ -14,10 +17,33 @@
                         <p class="users-kicker mb-3">@L["NotFound.Kicker"]</p>
                         <h1 class="display-6 fw-semibold">@L["NotFound.Title"]</h1>
                         <p class="text-secondary mb-4">@L["NotFound.Description"]</p>
-                        <a class="btn btn-primary px-4" href="/employee/users">@L["NotFound.Action.Users"]</a>
+                        <a class="btn btn-primary px-4" href="/">@L["NotFound.Action.Users"]</a>
                     </div>
                 </div>
             </section>
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    private async Task HandleNavigateAsync(NavigationContext navigationContext)
+    {
+        bool setupRequired = await InitialSetupService
+            .IsSetupRequiredAsync(navigationContext.CancellationToken)
+            .ConfigureAwait(false);
+
+        string path = "/" + navigationContext.Path.Trim('/');
+        bool isSetupRoute = string.Equals(path, "/setup", StringComparison.OrdinalIgnoreCase);
+
+        if (setupRequired && !isSetupRoute)
+        {
+            NavigationManager.NavigateTo("/setup", replace: true);
+            return;
+        }
+
+        if (!setupRequired && isSetupRoute)
+        {
+            NavigationManager.NavigateTo("/", replace: true);
+        }
+    }
+}
