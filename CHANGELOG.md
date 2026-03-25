@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.3.0"></a>
+## [0.3.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.3.0) (2026-03-25)
+
+### Features
+
+* **webapp:** add first-run setup wizard for initial admin ([d5f61e5](https://www.github.com/jstmichel/beagl-webapp/commit/d5f61e546feeddfda52de6e8ccb398266f3b4b11))
+
 <a name="0.2.0"></a>
 ## [0.2.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.2.0) (2026-03-24)
 
