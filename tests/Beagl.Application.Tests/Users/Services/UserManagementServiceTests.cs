@@ -397,7 +397,7 @@ public class UserManagementServiceTests
         Mock<IUserRepository> userRepositoryMock = new();
         userRepositoryMock
             .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "+1234567890", false, false, UserRole.Employee)));
+            .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "+1234567890", false, false, UserRole.Employee, "confirmation-token")));
 
         UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "alex@example.com", "+1234567890", "Password123!", UserRole.Employee);
@@ -411,6 +411,7 @@ public class UserManagementServiceTests
         result.Value!.Id.Should().Be("user-1");
         result.Value.UserName.Should().Be("alex");
         result.Value.Email.Should().Be("alex@example.com");
+        result.Value.EmailConfirmationToken.Should().Be("confirmation-token");
     }
 
     [Fact]

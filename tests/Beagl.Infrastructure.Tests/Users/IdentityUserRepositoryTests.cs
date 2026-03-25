@@ -54,6 +54,9 @@ public class IdentityUserRepositoryTests
             .Setup(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), UserRole.Employee.ToString()))
             .ReturnsAsync(IdentityResult.Success);
         userManagerMock
+            .Setup(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync("confirmation-token");
+        userManagerMock
             .Setup(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync([UserRole.Employee.ToString()]);
 
@@ -72,6 +75,8 @@ public class IdentityUserRepositoryTests
         result.Value.PhoneNumber.Should().Be("555-0100");
         result.Value.EmailConfirmed.Should().BeFalse();
         result.Value.Role.Should().Be(UserRole.Employee);
+        result.Value.EmailConfirmationToken.Should().Be("confirmation-token");
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Once);
     }
 
     [Fact]
@@ -113,6 +118,8 @@ public class IdentityUserRepositoryTests
         capturedUser.Should().NotBeNull();
         capturedUser!.EmailConfirmed.Should().BeTrue();
         result.Value!.EmailConfirmed.Should().BeTrue();
+        result.Value.EmailConfirmationToken.Should().BeNull();
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
     [Theory]
@@ -145,6 +152,7 @@ public class IdentityUserRepositoryTests
         result.Error!.Code.Should().Be(expectedCode);
         result.Error.Message.Should().Be(expectedMessage);
         userManagerMock.Verify(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
     [Fact]
@@ -167,6 +175,7 @@ public class IdentityUserRepositoryTests
         result.Error.Should().NotBeNull();
         result.Error!.Code.Should().Be("users.identity_error");
         result.Error.Message.Should().Be("The user operation could not be completed.");
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
     [Fact]
@@ -195,6 +204,7 @@ public class IdentityUserRepositoryTests
         result.Error.Should().NotBeNull();
         result.Error!.Code.Should().Be("users.role_not_found");
         userManagerMock.Verify(manager => manager.DeleteAsync(It.IsAny<ApplicationUser>()), Times.Once);
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
     [Fact]
