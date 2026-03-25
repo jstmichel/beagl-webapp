@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="Setup.PageTitle" xml:space="preserve"><value>First-run setup</value></data>
+  <data name="Setup.Kicker" xml:space="preserve"><value>Installation onboarding</value></data>
+  <data name="Setup.Title" xml:space="preserve"><value>Configure your first administrator account</value></data>
+  <data name="Setup.Copy" xml:space="preserve"><value>Complete this wizard to mark the application as ready. The first account is created as a verified administrator.</value></data>
+  <data name="Setup.Loading" xml:space="preserve"><value>Checking setup status</value></data>
+  <data name="Setup.AlreadyCompleted" xml:space="preserve"><value>Setup is already completed. Redirecting to the home page.</value></data>
+  <data name="Setup.Steps.Aria" xml:space="preserve"><value>Setup steps</value></data>
+  <data name="Setup.Step.Account" xml:space="preserve"><value>Administrator account</value></data>
+  <data name="Setup.Step.Confirmation" xml:space="preserve"><value>Confirmation</value></data>
+  <data name="Setup.Form.UserName" xml:space="preserve"><value>User name</value></data>
+  <data name="Setup.Form.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Setup.Form.Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Setup.Form.PasswordHint" xml:space="preserve"><value>Use at least 8 characters.</value></data>
+  <data name="Setup.Action.Next" xml:space="preserve"><value>Review setup</value></data>
+  <data name="Setup.Action.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Setup.Action.Submit" xml:space="preserve"><value>Complete setup</value></data>
+  <data name="Setup.Confirmation.Description" xml:space="preserve"><value>Submitting will create the verified administrator account and switch the application to ready mode.</value></data>
+  <data name="Setup.Confirmation.Role" xml:space="preserve"><value>Assigned role</value></data>
+  <data name="Setup.Confirmation.Role.Administrator" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Setup.Confirmation.Verification" xml:space="preserve"><value>Account status</value></data>
+  <data name="Setup.Confirmation.Verified" xml:space="preserve"><value>Verified</value></data>
+  <data name="setup.already_completed" xml:space="preserve"><value>Initial setup has already been completed.</value></data>
+  <data name="setup.user_name_required" xml:space="preserve"><value>A user name is required.</value></data>
+  <data name="setup.user_name_too_long" xml:space="preserve"><value>The user name must contain at most 256 characters.</value></data>
+  <data name="setup.email_required" xml:space="preserve"><value>An email address is required.</value></data>
+  <data name="setup.invalid_email" xml:space="preserve"><value>The email address is not valid.</value></data>
+  <data name="setup.password_required" xml:space="preserve"><value>A password is required.</value></data>
+  <data name="setup.password_too_short" xml:space="preserve"><value>The password must contain at least 8 characters.</value></data>
+</root>

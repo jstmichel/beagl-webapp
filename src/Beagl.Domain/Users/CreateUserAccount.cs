@@ -10,9 +10,11 @@ namespace Beagl.Domain.Users;
 /// <param name="PhoneNumber">The phone number.</param>
 /// <param name="Password">The initial password.</param>
 /// <param name="Role">The target user role.</param>
+/// <param name="EmailConfirmed">A value indicating whether the email is confirmed at creation time.</param>
 public sealed record CreateUserAccount(
     string UserName,
     string? Email,
     string? PhoneNumber,
     string Password,
-    UserRole Role);
+    UserRole Role,
+    bool EmailConfirmed = false);

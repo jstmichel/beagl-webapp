@@ -70,7 +70,49 @@ public class IdentityUserRepositoryTests
         result.Value.UserName.Should().Be("alex");
         result.Value.Email.Should().Be("alex@example.com");
         result.Value.PhoneNumber.Should().Be("555-0100");
+        result.Value.EmailConfirmed.Should().BeFalse();
         result.Value.Role.Should().Be(UserRole.Employee);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WithEmailConfirmedRequest_ShouldCreateConfirmedUser()
+    {
+        // Arrange
+        ApplicationUser? capturedUser = null;
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .Callback<ApplicationUser, string>((user, _) =>
+            {
+                capturedUser = user;
+                capturedUser.Id = "user-1";
+            })
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), UserRole.Administrator.ToString()))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync([UserRole.Administrator.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+        CreateUserAccount request = new(
+            "admin",
+            "admin@example.com",
+            null,
+            "Password123!",
+            UserRole.Administrator,
+            EmailConfirmed: true);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        capturedUser.Should().NotBeNull();
+        capturedUser!.EmailConfirmed.Should().BeTrue();
+        result.Value!.EmailConfirmed.Should().BeTrue();
     }
 
     [Theory]

@@ -5,6 +5,7 @@ using System.Globalization;
 using Beagl.Infrastructure;
 using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
+using Beagl.Application.Setup.Services;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Users;
 using Beagl.WebApp.Authentication;
@@ -61,6 +62,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<IUserRepository, IdentityUserRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IInitialSetupService, InitialSetupService>();
 builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
 
 builder.Services.AddHsts(options =>

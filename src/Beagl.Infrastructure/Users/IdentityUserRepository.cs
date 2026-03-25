@@ -22,6 +22,20 @@ public sealed class IdentityUserRepository(
     private readonly ApplicationDbContext _applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
 
     /// <inheritdoc />
+    public async Task<bool> HasAnyAdministratorAsync(CancellationToken cancellationToken)
+    {
+        string administratorRoleName = UserRole.Administrator.ToString();
+
+        return await (
+                from userRole in _applicationDbContext.Set<IdentityUserRole<string>>().AsNoTracking()
+                join role in _applicationDbContext.Roles.AsNoTracking() on userRole.RoleId equals role.Id
+                where role.Name == administratorRoleName
+                select userRole.UserId)
+            .AnyAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<UsersMetrics> GetMetricsAsync(CancellationToken cancellationToken)
     {
         IQueryable<ApplicationUser> usersQuery = _userManager.Users.AsNoTracking();
@@ -113,6 +127,7 @@ public sealed class IdentityUserRepository(
             UserName = user.UserName,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
+            EmailConfirmed = user.EmailConfirmed,
         };
 
         IdentityResult createResult = await _userManager.CreateAsync(identityUser, user.Password).ConfigureAwait(false);

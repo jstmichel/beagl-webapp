@@ -10,6 +10,13 @@ namespace Beagl.Domain.Users;
 public interface IUserRepository
 {
     /// <summary>
+    /// Determines whether at least one administrator account exists.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns><see langword="true"/> when an administrator exists; otherwise, <see langword="false"/>.</returns>
+    public Task<bool> HasAnyAdministratorAsync(CancellationToken cancellationToken);
+
+    /// <summary>
     /// Retrieves global users metrics.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
