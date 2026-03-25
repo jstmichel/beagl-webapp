@@ -1,12 +1,13 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using Beagl.Infrastructure.Users.Entities;
+using Beagl.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace Beagl.WebApp.Authentication;
 
 /// <summary>
-/// Provides a shared sign-in workflow for employees and citizens.
+/// Provides a shared sign-in workflow for employees and administrators.
 /// </summary>
 internal sealed class SharedLoginService(
     UserManager<ApplicationUser> userManager,
@@ -21,6 +22,12 @@ internal sealed class SharedLoginService(
         string normalizedIdentifier = identifier.Trim();
         ApplicationUser? user = await FindUserByIdentifierAsync(normalizedIdentifier).ConfigureAwait(false);
         if (user is null)
+        {
+            return SharedLoginStatus.InvalidCredentials;
+        }
+
+        bool hasEmployeeAccess = await HasEmployeeAccessAsync(user).ConfigureAwait(false);
+        if (!hasEmployeeAccess)
         {
             return SharedLoginStatus.InvalidCredentials;
         }
@@ -57,5 +64,21 @@ internal sealed class SharedLoginService(
 
         ApplicationUser? emailUser = await userManager.FindByEmailAsync(identifier).ConfigureAwait(false);
         return emailUser;
+    }
+
+    private async Task<bool> HasEmployeeAccessAsync(ApplicationUser user)
+    {
+        bool isEmployee = await userManager
+            .IsInRoleAsync(user, nameof(UserRole.Employee))
+            .ConfigureAwait(false);
+
+        if (isEmployee)
+        {
+            return true;
+        }
+
+        return await userManager
+            .IsInRoleAsync(user, nameof(UserRole.Administrator))
+            .ConfigureAwait(false);
     }
 }

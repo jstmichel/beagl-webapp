@@ -1,0 +1,39 @@
+@inject NavigationManager NavigationManager
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ArgumentNullException.ThrowIfNull(AuthenticationStateTask);
+
+        AuthenticationState authenticationState = await AuthenticationStateTask.ConfigureAwait(false);
+        string destination = authenticationState.User.Identity?.IsAuthenticated == true
+            ? "/account/access-denied"
+            : BuildLoginUrl();
+
+        if (!IsCurrentDestination(destination))
+        {
+            NavigationManager.NavigateTo(destination, forceLoad: true);
+        }
+    }
+
+    private string BuildLoginUrl()
+    {
+        string relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        string returnUrl = string.IsNullOrWhiteSpace(relativePath)
+            ? "/"
+            : "/" + relativePath;
+
+        return $"/account/login?returnUrl={Uri.EscapeDataString(returnUrl)}";
+    }
+
+    private bool IsCurrentDestination(string destination)
+    {
+        string currentPath = "/" + NavigationManager.ToBaseRelativePath(NavigationManager.Uri).TrimStart('/');
+        string destinationPath = destination.Split('?', 2)[0];
+
+        return string.Equals(currentPath, destinationPath, StringComparison.OrdinalIgnoreCase);
+    }
+}

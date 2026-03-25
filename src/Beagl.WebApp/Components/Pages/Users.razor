@@ -1,5 +1,6 @@
 @page "/employee/users"
 @rendermode InteractiveServer
+@attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
 @inject IUserManagementService UserManagementService
 @inject ILogger<Users> Logger
 @inject IStringLocalizer<UsersResource> L
