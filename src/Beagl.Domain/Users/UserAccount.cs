@@ -12,6 +12,7 @@ namespace Beagl.Domain.Users;
 /// <param name="EmailConfirmed">A value indicating whether the email address is confirmed.</param>
 /// <param name="IsLockedOut">A value indicating whether the user is currently locked out.</param>
 /// <param name="Role">The user role.</param>
+/// <param name="EmailConfirmationToken">The email confirmation token produced at account creation time.</param>
 public sealed record UserAccount(
     string Id,
     string UserName,
@@ -19,4 +20,5 @@ public sealed record UserAccount(
     string? PhoneNumber,
     bool EmailConfirmed,
     bool IsLockedOut,
-    UserRole Role);
+    UserRole Role,
+    string? EmailConfirmationToken = null);

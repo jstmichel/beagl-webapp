@@ -169,7 +169,8 @@ public sealed partial class UserManagementService(
             user.PhoneNumber,
             user.EmailConfirmed,
             user.IsLockedOut,
-            user.Role);
+            user.Role,
+            user.EmailConfirmationToken);
     }
 
     private static Result ValidateCreateRequest(CreateUserRequest request)

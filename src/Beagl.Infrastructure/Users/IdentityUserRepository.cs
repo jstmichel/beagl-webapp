@@ -143,7 +143,10 @@ public sealed class IdentityUserRepository(
             return Result.Failure<UserAccount>(MapIdentityError(addToRoleResult));
         }
 
-        return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
+        string? emailConfirmationToken = await GenerateEmailConfirmationTokenAsync(identityUser).ConfigureAwait(false);
+        UserAccount createdUser = await MapAsync(identityUser).ConfigureAwait(false);
+
+        return Result.Success(createdUser with { EmailConfirmationToken = emailConfirmationToken });
     }
 
     /// <inheritdoc />
@@ -274,6 +277,16 @@ public sealed class IdentityUserRepository(
         }
 
         return await _userManager.AddToRoleAsync(user, newRole.ToString()).ConfigureAwait(false);
+    }
+
+    private async Task<string?> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
+    {
+        if (user.EmailConfirmed || string.IsNullOrWhiteSpace(user.Email))
+        {
+            return null;
+        }
+
+        return await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
     }
 
     private static ResultError MapIdentityError(IdentityResult identityResult)
