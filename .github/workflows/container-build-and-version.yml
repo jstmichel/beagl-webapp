@@ -1,9 +1,7 @@
 name: Beagl Container Build and Version
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   actions: read
