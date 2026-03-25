@@ -124,6 +124,19 @@
                                         </td>
                                         <td>
                                             <div class="users-actions justify-content-end">
+                                                @if (!user.EmailConfirmed)
+                                                {
+                                                    <button
+                                                        type="button"
+                                                        class="users-icon-action"
+                                                        @onclick="() => ConfirmUserAccountAsync(user.Id)"
+                                                        data-testid="confirm-@user.Id"
+                                                        aria-label='@L["Users.Action.ConfirmAccount"]'
+                                                        title='@L["Users.Action.ConfirmAccount"]'
+                                                        disabled="@_isSaving">
+                                                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                                                    </button>
+                                                }
                                                 <button
                                                     type="button"
                                                     class="users-icon-action"
@@ -181,6 +194,18 @@
                             <h2 id="users-panel-title" class="h4 mb-1">@PanelTitle</h2>
                             <p class="text-secondary mb-0">@PanelDescription</p>
                         </div>
+                        @if (_panelMode == UserPanelMode.Details && _selectedUser is not null && !_selectedUser.EmailConfirmed)
+                        {
+                            <AuthorizeView Roles="@AuthorizationPolicies.AdministratorRole">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success"
+                                    @onclick="ConfirmSelectedUserAccountAsync"
+                                    disabled="@_isSaving">
+                                    @L["Users.Action.ConfirmAccount"]
+                                </button>
+                            </AuthorizeView>
+                        }
                     </div>
 
                     @switch (_panelMode)
@@ -552,6 +577,50 @@
         await LoadUsersMetricsAsync().ConfigureAwait(false);
         await LoadUsersPageAsync().ConfigureAwait(false);
         _isSaving = false;
+    }
+
+    private async Task ConfirmUserAccountAsync(string userId)
+    {
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+
+        Result<UserDetailsDto> result = await UserManagementService
+            .ConfirmAccountAsync(userId, CancellationToken.None)
+            .ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            _errorMessage = LocalizeError(result.Error!);
+            _isSaving = false;
+            return;
+        }
+
+        if (_selectedUser is not null && _selectedUser.Id == result.Value!.Id)
+        {
+            _selectedUser = result.Value;
+        }
+
+        _statusMessage = L["Users.Success.AccountConfirmed"];
+        await LoadUsersMetricsAsync().ConfigureAwait(false);
+        await LoadUsersPageAsync().ConfigureAwait(false);
+        _isSaving = false;
+    }
+
+    private async Task ConfirmSelectedUserAccountAsync()
+    {
+        if (_selectedUser is null)
+        {
+            return;
+        }
+
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+
+        Result<UserDetailsDto> result = await UserManagementService
+            .ConfirmAccountAsync(_selectedUser.Id, CancellationToken.None)
+            .ConfigureAwait(false);
+        await HandleMutationResultAsync(result, L["Users.Success.AccountConfirmed"], UserPanelMode.Details).ConfigureAwait(false);
     }
 
     private async Task<bool> LoadSelectedUserAsync(string userId, UserPanelMode panelMode)

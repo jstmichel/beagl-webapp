@@ -789,6 +789,88 @@ public class UserManagementServiceTests
     }
 
     [Fact]
+    public async Task ConfirmAccountAsync_WithMissingIdentifier_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.ConfirmAccountAsync(string.Empty, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.invalid_id");
+        userRepositoryMock.Verify(repository => repository.ConfirmAccountAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ConfirmAccountAsync_WithWhitespaceIdentifier_ShouldTrimBeforeRepositoryCall()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ConfirmAccountAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "555-0100", true, false, UserRole.Employee)));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.ConfirmAccountAsync("  user-1  ", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.EmailConfirmed.Should().BeTrue();
+        userRepositoryMock.Verify(repository => repository.ConfirmAccountAsync("user-1", It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ConfirmAccountAsync_WhenRepositoryReturnsFailure_ShouldPropagateFailure()
+    {
+        // Arrange
+        ResultError expectedError = new("users.not_found", "The requested user could not be found.");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ConfirmAccountAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<UserAccount>(expectedError));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.ConfirmAccountAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(expectedError);
+    }
+
+    [Fact]
+    public async Task ConfirmAccountAsync_WhenSucceeds_ShouldLogAccountConfirmationWithEventId1004()
+    {
+        // Arrange
+        FakeLogger<UserManagementService> fakeLogger = new();
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ConfirmAccountAsync("user-123", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new UserAccount("user-123", "alex", "alex@example.com", "+1234567890", true, false, UserRole.Employee)));
+
+        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+
+        // Act
+        _ = await service.ConfirmAccountAsync("user-123", CancellationToken.None);
+
+        // Assert
+        fakeLogger.Logs.Should().NotBeEmpty();
+        fakeLogger.Logs.Should().ContainSingle(log =>
+            log.Level == LogLevel.Information
+            && log.EventId.Id == 1004
+            && log.Message.Contains("user-123"));
+    }
+
+    [Fact]
     public async Task CreateAsync_WhenSucceeds_ShouldLogUserCreatedWithEventId1001()
     {
         // Arrange
