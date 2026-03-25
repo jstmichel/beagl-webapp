@@ -148,6 +148,25 @@ public sealed partial class UserManagementService(
         return result;
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserDetailsDto>> ConfirmAccountAsync(string userId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Result.Failure<UserDetailsDto>(new ResultError("users.invalid_id", "A user identifier is required."));
+        }
+
+        string trimmedUserId = userId.Trim();
+        Result<UserAccount> result = await _userRepository.ConfirmAccountAsync(trimmedUserId, cancellationToken).ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            return Result.Failure<UserDetailsDto>(result.Error!);
+        }
+
+        LogUserConfirmed(_logger, trimmedUserId);
+        return Result.Success(MapDetails(result.Value!));
+    }
+
     private static UserListItemDto MapListItem(UserAccount user)
     {
         return new UserListItemDto(
@@ -275,4 +294,7 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1003, Level = LogLevel.Information, Message = "Deleted managed user {UserId}")]
     private static partial void LogUserDeleted(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1004, Level = LogLevel.Information, Message = "Confirmed managed user account {UserId}")]
+    private static partial void LogUserConfirmed(ILogger logger, string userId);
 }

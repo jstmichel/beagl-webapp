@@ -37,6 +37,7 @@
   <data name="Users.Action.Delete" xml:space="preserve"><value>Supprimer</value></data>
   <data name="Users.Action.EditUser" xml:space="preserve"><value>Modifier l'utilisateur</value></data>
   <data name="Users.Action.DeleteUser" xml:space="preserve"><value>Supprimer l'utilisateur</value></data>
+  <data name="Users.Action.ConfirmAccount" xml:space="preserve"><value>Confirmer le compte</value></data>
   <data name="Users.Action.Close" xml:space="preserve"><value>Fermer</value></data>
   <data name="Users.Panel.Kicker" xml:space="preserve"><value>Espace de travail</value></data>
   <data name="Users.Form.UserName" xml:space="preserve"><value>Nom d'utilisateur</value></data>
@@ -72,6 +73,7 @@
   <data name="Users.Success.Created" xml:space="preserve"><value>Utilisateur créé avec succès.</value></data>
   <data name="Users.Success.Updated" xml:space="preserve"><value>Utilisateur mis à jour avec succès.</value></data>
   <data name="Users.Success.Deleted" xml:space="preserve"><value>Utilisateur supprimé avec succès.</value></data>
+  <data name="Users.Success.AccountConfirmed" xml:space="preserve"><value>Compte utilisateur confirmé avec succès.</value></data>
   <data name="Users.Optional.NotProvided" xml:space="preserve"><value>Non fourni</value></data>
   <data name="users.invalid_id" xml:space="preserve"><value>Un identifiant utilisateur est requis.</value></data>
   <data name="users.not_found" xml:space="preserve"><value>L'utilisateur demandé est introuvable.</value></data>

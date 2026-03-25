@@ -230,6 +230,40 @@ public class IdentityUserRepositoryQueryTests
         user.Role.Should().Be(UserRole.None);
     }
 
+    [Fact]
+    public async Task ConfirmAccountAsync_WhenUserIsUnconfirmed_ShouldPersistConfirmedState()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: false, lockedOut: false));
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await harness.Repository.ConfirmAccountAsync("u1", CancellationToken.None);
+        UserAccount? reloadedUser = await harness.Repository.GetByIdAsync("u1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.EmailConfirmed.Should().BeTrue();
+        reloadedUser.Should().NotBeNull();
+        reloadedUser!.EmailConfirmed.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ConfirmAccountAsync_WhenUserIsMissing_ShouldReturnFailureResult()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await harness.Repository.ConfirmAccountAsync("missing", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
     private static ApplicationUser MakeUser(string id, string username, bool confirmed, bool lockedOut) =>
         new()
         {

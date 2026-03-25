@@ -56,4 +56,12 @@ public interface IUserManagementService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The outcome of the deletion.</returns>
     public Task<Result> DeleteAsync(string userId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Confirms an existing user account.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The confirmed user or a failure result.</returns>
+    public Task<Result<UserDetailsDto>> ConfirmAccountAsync(string userId, CancellationToken cancellationToken);
 }

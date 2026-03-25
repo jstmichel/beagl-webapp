@@ -200,6 +200,31 @@ public sealed class IdentityUserRepository(
         return Result.Success();
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserAccount>> ConfirmAccountAsync(string userId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure<UserAccount>(new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        if (!identityUser.EmailConfirmed)
+        {
+            identityUser.EmailConfirmed = true;
+
+            IdentityResult updateResult = await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
+            if (!updateResult.Succeeded)
+            {
+                return Result.Failure<UserAccount>(MapIdentityError(updateResult));
+            }
+        }
+
+        return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
+    }
+
     private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);
