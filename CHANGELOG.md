@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.4.0"></a>
+## [0.4.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.4.0) (2026-03-25)
+
+### Features
+
+* **webapp:** require auth for employee workspace ([a9fc291](https://www.github.com/jstmichel/beagl-webapp/commit/a9fc291b924d1ab2281acbf9ded7df85981d0c5e))
+
 <a name="0.3.0"></a>
 ## [0.3.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.3.0) (2026-03-25)
 
