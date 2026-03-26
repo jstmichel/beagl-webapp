@@ -29,6 +29,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Beagl.AppHost", "aspire\Bea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Beagl.ServiceDefaults", "aspire\Beagl.ServiceDefaults\Beagl.ServiceDefaults.csproj", "{6BCFBFBB-E1AA-4335-827C-8810C7AF759F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{5CE8E52D-A8AF-340A-4033-B85429601BE7}"
+	ProjectSection(SolutionItems) = preProject
+		SECURITY.md = SECURITY.md
+		README.md = README.md
+		CHANGELOG.md = CHANGELOG.md
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "supporting files", "supporting files", "{614A696E-7B3B-918A-1173-1BBE14BFE845}"
+	ProjectSection(SolutionItems) = preProject
+		colima.sh = colima.sh
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
