@@ -271,6 +271,56 @@ public sealed class IdentityUserRepository(
         return Result.Success();
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserAccount>> RegisterCitizenAsync(RegisterCitizenAccount account, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(account);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser identityUser = new()
+        {
+            UserName = account.UserName,
+            Email = account.Email,
+            PhoneNumber = account.PhoneNumber,
+            EmailConfirmed = false,
+        };
+
+        await using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction =
+            await _applicationDbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        IdentityResult createResult = await _userManager.CreateAsync(identityUser, account.Password).ConfigureAwait(false);
+        if (!createResult.Succeeded)
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            return Result.Failure<UserAccount>(MapIdentityError(createResult));
+        }
+
+        IdentityResult addToRoleResult = await _userManager.AddToRoleAsync(identityUser, UserRole.Citizen.ToString()).ConfigureAwait(false);
+        if (!addToRoleResult.Succeeded)
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            return Result.Failure<UserAccount>(MapIdentityError(addToRoleResult));
+        }
+
+        CitizenProfileEntity profile = new()
+        {
+            Id = Guid.NewGuid(),
+            UserId = identityUser.Id,
+            FirstName = account.FirstName,
+            LastName = account.LastName,
+        };
+
+        _applicationDbContext.CitizenProfiles.Add(profile);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+        string? emailConfirmationToken = await GenerateEmailConfirmationTokenAsync(identityUser).ConfigureAwait(false);
+        UserAccount createdUser = await MapAsync(identityUser).ConfigureAwait(false);
+
+        return Result.Success(createdUser with { EmailConfirmationToken = emailConfirmationToken });
+    }
+
     private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);

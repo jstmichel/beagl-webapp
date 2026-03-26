@@ -20,3 +20,8 @@ partial class CreateIdentityTables
 partial class AddEmailProviderConfig
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddCitizenProfiles
+{
+}

@@ -15,6 +15,8 @@
   <data name="Auth.Login.Password.Label" xml:space="preserve"><value>Password</value></data>
   <data name="Auth.Login.RememberMe" xml:space="preserve"><value>Remember me</value></data>
   <data name="Auth.Login.Action.Submit" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.Login.NoAccount" xml:space="preserve"><value>Don't have an account?</value></data>
+  <data name="Auth.Login.Action.Register" xml:space="preserve"><value>Create one</value></data>
   <data name="Auth.Login.Error.InvalidCredentials" xml:space="preserve"><value>Invalid username/email or password.</value></data>
   <data name="Auth.Login.Error.LockedOut" xml:space="preserve"><value>This account is locked.</value></data>
   <data name="Auth.Login.Error.NotAllowed" xml:space="preserve"><value>This account is not confirmed yet.</value></data>
@@ -34,4 +36,27 @@
   <data name="Auth.ConfirmEmail.Error.Failed" xml:space="preserve"><value>The confirmation token is invalid or has expired.</value></data>
   <data name="Auth.ConfirmEmail.Action.Login" xml:space="preserve"><value>Go to sign in</value></data>
   <data name="Auth.ConfirmEmail.Action.Home" xml:space="preserve"><value>Return home</value></data>
+  <data name="Auth.Register.PageTitle" xml:space="preserve"><value>Create account</value></data>
+  <data name="Auth.Register.Kicker" xml:space="preserve"><value>Citizen self-service</value></data>
+  <data name="Auth.Register.Title" xml:space="preserve"><value>Create your account</value></data>
+  <data name="Auth.Register.Description" xml:space="preserve"><value>Register to access the citizen self-service portal.</value></data>
+  <data name="Auth.Register.FirstName.Label" xml:space="preserve"><value>First name</value></data>
+  <data name="Auth.Register.LastName.Label" xml:space="preserve"><value>Last name</value></data>
+  <data name="Auth.Register.UserName.Label" xml:space="preserve"><value>Username</value></data>
+  <data name="Auth.Register.PhoneNumber.Label" xml:space="preserve"><value>Phone number</value></data>
+  <data name="Auth.Register.Email.Label" xml:space="preserve"><value>Email</value></data>
+  <data name="Auth.Register.Optional" xml:space="preserve"><value>(optional)</value></data>
+  <data name="Auth.Register.Password.Label" xml:space="preserve"><value>Password</value></data>
+  <data name="Auth.Register.Password.Hint" xml:space="preserve"><value>Use at least 8 characters including uppercase, lowercase, a digit, and a special character.</value></data>
+  <data name="Auth.Register.Action.Submit" xml:space="preserve"><value>Create account</value></data>
+  <data name="Auth.Register.AlreadyHaveAccount" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="Auth.Register.Action.SignIn" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.Register.Validation.FirstNameRequired" xml:space="preserve"><value>Enter your first name.</value></data>
+  <data name="Auth.Register.Validation.LastNameRequired" xml:space="preserve"><value>Enter your last name.</value></data>
+  <data name="Auth.Register.Validation.UserNameRequired" xml:space="preserve"><value>Enter a username.</value></data>
+  <data name="Auth.Register.Validation.PhoneRequired" xml:space="preserve"><value>Enter your phone number.</value></data>
+  <data name="Auth.Register.Validation.EmailInvalid" xml:space="preserve"><value>Enter a valid email address.</value></data>
+  <data name="Auth.Register.Validation.PasswordRequired" xml:space="preserve"><value>Enter a password.</value></data>
+  <data name="Auth.Register.Validation.PasswordTooShort" xml:space="preserve"><value>The password must be at least 8 characters long.</value></data>
+  <data name="Auth.Register.Error.RegistrationFailed" xml:space="preserve"><value>Registration could not be completed. Please try again.</value></data>
 </root>
