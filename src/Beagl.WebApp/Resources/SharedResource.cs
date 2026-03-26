@@ -43,3 +43,10 @@ internal sealed class AuthResource
 internal sealed class SetupResource
 {
 }
+
+/// <summary>
+/// Marker type for email provider configuration localization resources.
+/// </summary>
+internal sealed class EmailConfigResource
+{
+}

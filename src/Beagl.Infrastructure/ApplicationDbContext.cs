@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using Beagl.Infrastructure.EmailProviders.Entities;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -16,7 +17,12 @@ public class ApplicationDbContext(
     : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 {
     /// <summary>
-    /// Configures the model for Animal, HealthRecord, and complex types.
+    /// Gets the email provider configuration table.
+    /// </summary>
+    public DbSet<EmailProviderConfigEntity> EmailProviderConfigurations => Set<EmailProviderConfigEntity>();
+
+    /// <summary>
+    /// Configures the model for all entities.
     /// </summary>
     /// <param name="builder">The model builder.</param>
     protected override void OnModelCreating(ModelBuilder builder)
@@ -26,6 +32,15 @@ public class ApplicationDbContext(
         base.OnModelCreating(builder);
 
         RenameIdentityTables(builder);
+
+        builder.Entity<EmailProviderConfigEntity>(entity =>
+        {
+            entity.ToTable("EmailProviderConfigurations");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ApiKey).IsRequired().HasMaxLength(512);
+            entity.Property(e => e.SenderEmail).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.SenderName).IsRequired().HasMaxLength(256);
+        });
     }
 
     private static void RenameIdentityTables(ModelBuilder builder)

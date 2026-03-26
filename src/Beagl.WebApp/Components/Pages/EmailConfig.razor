@@ -1,0 +1,233 @@
+@page "/admin/email-config"
+@rendermode InteractiveServer
+@attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
+@using Beagl.Application.EmailProviders.Dtos
+@using Beagl.Application.EmailProviders.Services
+@inject IEmailProviderConfigService EmailProviderConfigService
+@inject IStringLocalizer<EmailConfigResource> L
+
+<PageTitle>@L["EmailConfig.PageTitle"]</PageTitle>
+
+<section class="email-config-page-shell">
+    <div class="container-xxl py-4 py-lg-5">
+        <div class="email-config-hero mb-4 mb-lg-5">
+            <div>
+                <p class="email-config-kicker mb-2">@L["EmailConfig.Kicker"]</p>
+                <h1 class="display-5 fw-semibold mb-3">@L["EmailConfig.Title"]</h1>
+                <p class="email-config-hero__copy mb-0">@L["EmailConfig.Copy"]</p>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(_statusMessage))
+        {
+            <div class="alert alert-success mb-4" role="status" aria-live="polite">@_statusMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <div class="alert alert-danger mb-4" role="alert" aria-live="assertive">@_errorMessage</div>
+        }
+
+        @if (_isLoading)
+        {
+            <div class="email-config-loading py-5" role="status" aria-live="polite">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">@L["EmailConfig.Loading"]</span>
+                </div>
+            </div>
+        }
+        else if (_showForm)
+        {
+            <div class="email-config-surface">
+                <div class="email-config-surface__header">
+                    <h2 class="h4 mb-1">@(_config is null ? L["EmailConfig.Form.Title.Create"] : L["EmailConfig.Form.Title.Edit"])</h2>
+                    <p class="text-secondary mb-0">@L["EmailConfig.Form.Description"]</p>
+                </div>
+
+                <EditForm Model="_form" OnValidSubmit="SaveAsync" class="email-config-form">
+                    <DataAnnotationsValidator />
+
+                    @if (_formErrors.Count > 0)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0 ps-3">
+                                @foreach (string error in _formErrors)
+                                {
+                                    <li>@error</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <div class="email-config-form-grid">
+                        <div>
+                            <label class="form-label" for="emailConfigApiKey">@L["EmailConfig.Form.ApiKey"]</label>
+                            <InputText id="emailConfigApiKey" type="password" class="form-control" @bind-Value="_form.ApiKey" autocomplete="off" />
+                            <div class="form-text">@L["EmailConfig.Form.ApiKey.Hint"]</div>
+                        </div>
+                        <div>
+                            <label class="form-label" for="emailConfigSenderEmail">@L["EmailConfig.Form.SenderEmail"]</label>
+                            <InputText id="emailConfigSenderEmail" class="form-control" @bind-Value="_form.SenderEmail" />
+                        </div>
+                        <div>
+                            <label class="form-label" for="emailConfigSenderName">@L["EmailConfig.Form.SenderName"]</label>
+                            <InputText id="emailConfigSenderName" class="form-control" @bind-Value="_form.SenderName" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        @if (_config is not null)
+                        {
+                            <button type="button" class="btn btn-outline-secondary" @onclick="CancelEdit">@L["EmailConfig.Action.Cancel"]</button>
+                        }
+                        <button type="submit" class="btn btn-primary" disabled="@_isSubmitting">@L["EmailConfig.Action.Save"]</button>
+                    </div>
+                </EditForm>
+            </div>
+        }
+        else if (_config is not null)
+        {
+            <div class="email-config-surface" data-testid="email-config-details">
+                <div class="email-config-surface__header">
+                    <h2 class="h4 mb-1">@L["EmailConfig.Details.Title"]</h2>
+                    <p class="text-secondary mb-0">@L["EmailConfig.Details.Description"]</p>
+                </div>
+
+                <div class="email-config-detail-sections">
+                    <section class="email-config-detail-section">
+                        <h3 class="email-config-detail-section__heading">@L["EmailConfig.Details.Section.Provider"]</h3>
+                        <dl class="email-config-detail-grid">
+                            <div>
+                                <dt>@L["EmailConfig.Form.ApiKey"]</dt>
+                                <dd data-testid="masked-api-key">@_config.MaskedApiKey</dd>
+                            </div>
+                            <div>
+                                <dt>@L["EmailConfig.Form.SenderEmail"]</dt>
+                                <dd>@_config.SenderEmail</dd>
+                            </div>
+                            <div>
+                                <dt>@L["EmailConfig.Form.SenderName"]</dt>
+                                <dd>@_config.SenderName</dd>
+                            </div>
+                        </dl>
+                    </section>
+                </div>
+
+                <div class="mt-5">
+                    <button type="button" class="btn btn-primary" @onclick="OpenEditForm" data-testid="edit-email-config-button">
+                        <i class="bi bi-pencil me-2" aria-hidden="true"></i>
+                        @L["EmailConfig.Action.Edit"]
+                    </button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="email-config-empty-state py-5" data-testid="empty-state">
+                <div class="email-config-empty-state__icon"><i class="bi bi-envelope-slash"></i></div>
+                <h3 class="h5">@L["EmailConfig.Empty.Title"]</h3>
+                <p class="text-secondary mb-2">@L["EmailConfig.Empty.Description"]</p>
+                <button type="button" class="btn btn-primary" @onclick="OpenCreateForm" data-testid="create-email-config-button">
+                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                    @L["EmailConfig.Action.Create"]
+                </button>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private EmailProviderConfigDto? _config;
+    private bool _isLoading = true;
+    private bool _showForm;
+    private bool _isSubmitting;
+    private string? _statusMessage;
+    private string? _errorMessage;
+    private readonly List<string> _formErrors = [];
+    private readonly EmailConfigFormModel _form = new();
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadConfigAsync();
+    }
+
+    private async Task LoadConfigAsync()
+    {
+        _isLoading = true;
+        _config = await EmailProviderConfigService.GetActiveAsync(CancellationToken.None).ConfigureAwait(false);
+        _isLoading = false;
+    }
+
+    private void OpenCreateForm()
+    {
+        _form.Reset();
+        _showForm = true;
+        _statusMessage = null;
+        _errorMessage = null;
+    }
+
+    private void OpenEditForm()
+    {
+        if (_config is not null)
+        {
+            _form.SenderEmail = _config.SenderEmail;
+            _form.SenderName = _config.SenderName;
+            _form.ApiKey = string.Empty;
+        }
+
+        _showForm = true;
+        _statusMessage = null;
+        _errorMessage = null;
+        _formErrors.Clear();
+    }
+
+    private void CancelEdit()
+    {
+        _showForm = false;
+        _formErrors.Clear();
+    }
+
+    private async Task SaveAsync()
+    {
+        _isSubmitting = true;
+        _formErrors.Clear();
+
+        SaveEmailProviderConfigRequest request = new(
+            _form.ApiKey,
+            _form.SenderEmail,
+            _form.SenderName);
+
+        Beagl.Domain.Results.Result<EmailProviderConfigDto> result =
+            await EmailProviderConfigService.SaveAsync(request, CancellationToken.None).ConfigureAwait(false);
+
+        if (result.IsFailure)
+        {
+            LocalizedString localizedError = L[result.Error!.Code];
+            _formErrors.Add(localizedError.ResourceNotFound ? result.Error.Message : localizedError.Value);
+            _isSubmitting = false;
+            return;
+        }
+
+        _config = result.Value;
+        _showForm = false;
+        _statusMessage = L["EmailConfig.SaveSuccess"];
+        _isSubmitting = false;
+    }
+
+    private sealed class EmailConfigFormModel
+    {
+        public string ApiKey { get; set; } = string.Empty;
+
+        public string SenderEmail { get; set; } = string.Empty;
+
+        public string SenderName { get; set; } = string.Empty;
+
+        public void Reset()
+        {
+            ApiKey = string.Empty;
+            SenderEmail = string.Empty;
+            SenderName = string.Empty;
+        }
+    }
+}

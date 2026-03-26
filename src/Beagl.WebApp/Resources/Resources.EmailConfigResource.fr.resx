@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="EmailConfig.PageTitle" xml:space="preserve"><value>Configuration courriel</value></data>
+  <data name="EmailConfig.Kicker" xml:space="preserve"><value>Administration</value></data>
+  <data name="EmailConfig.Title" xml:space="preserve"><value>Configuration du fournisseur courriel</value></data>
+  <data name="EmailConfig.Copy" xml:space="preserve"><value>Gérez les identifiants du fournisseur courriel transactionnel Brevo utilisés pour les réinitialisations de mot de passe et la confirmation de comptes.</value></data>
+  <data name="EmailConfig.Loading" xml:space="preserve"><value>Chargement de la configuration courriel</value></data>
+  <data name="EmailConfig.SaveSuccess" xml:space="preserve"><value>La configuration du fournisseur courriel a été enregistrée avec succès.</value></data>
+  <data name="EmailConfig.Form.Title.Create" xml:space="preserve"><value>Configurer Brevo</value></data>
+  <data name="EmailConfig.Form.Title.Edit" xml:space="preserve"><value>Mettre à jour la configuration Brevo</value></data>
+  <data name="EmailConfig.Form.Description" xml:space="preserve"><value>Entrez votre clé API Brevo et les informations de l'expéditeur. La clé API n'est jamais affichée en entier après l'enregistrement.</value></data>
+  <data name="EmailConfig.Form.ApiKey" xml:space="preserve"><value>Clé API</value></data>
+  <data name="EmailConfig.Form.ApiKey.Hint" xml:space="preserve"><value>Entrez une nouvelle clé pour remplacer la clé actuelle. Laissez vide pour conserver la clé existante.</value></data>
+  <data name="EmailConfig.Form.SenderEmail" xml:space="preserve"><value>Adresse courriel de l'expéditeur</value></data>
+  <data name="EmailConfig.Form.SenderName" xml:space="preserve"><value>Nom d'affichage de l'expéditeur</value></data>
+  <data name="EmailConfig.Details.Title" xml:space="preserve"><value>Configuration actuelle</value></data>
+  <data name="EmailConfig.Details.Description" xml:space="preserve"><value>La clé API est masquée pour la sécurité. Seuls les quatre derniers caractères sont visibles.</value></data>
+  <data name="EmailConfig.Details.Section.Provider" xml:space="preserve"><value>Fournisseur</value></data>
+  <data name="EmailConfig.Empty.Title" xml:space="preserve"><value>Aucun fournisseur courriel configuré</value></data>
+  <data name="EmailConfig.Empty.Description" xml:space="preserve"><value>L'envoi de courriel est actuellement désactivé. Configurez Brevo pour activer les courriels transactionnels.</value></data>
+  <data name="EmailConfig.Action.Create" xml:space="preserve"><value>Configurer Brevo</value></data>
+  <data name="EmailConfig.Action.Edit" xml:space="preserve"><value>Modifier la configuration</value></data>
+  <data name="EmailConfig.Action.Save" xml:space="preserve"><value>Enregistrer la configuration</value></data>
+  <data name="EmailConfig.Action.Cancel" xml:space="preserve"><value>Annuler</value></data>
+  <data name="email_config.api_key_required" xml:space="preserve"><value>La clé API est requise.</value></data>
+  <data name="email_config.sender_email_required" xml:space="preserve"><value>L'adresse courriel de l'expéditeur est requise.</value></data>
+  <data name="email_config.sender_email_invalid" xml:space="preserve"><value>L'adresse courriel de l'expéditeur n'est pas valide.</value></data>
+  <data name="email_config.sender_name_required" xml:space="preserve"><value>Le nom de l'expéditeur est requis.</value></data>
+</root>
