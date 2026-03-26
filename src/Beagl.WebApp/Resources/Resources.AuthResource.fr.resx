@@ -25,4 +25,13 @@
   <data name="Auth.AccessDenied.Title" xml:space="preserve"><value>Vous n'avez pas l'autorisation de voir cette page</value></data>
   <data name="Auth.AccessDenied.Description" xml:space="preserve"><value>Demandez à un administrateur de vous accorder l'accès requis ou retournez à l'accueil.</value></data>
   <data name="Auth.AccessDenied.Action.Home" xml:space="preserve"><value>Retour à l'accueil</value></data>
+  <data name="Auth.ConfirmEmail.PageTitle" xml:space="preserve"><value>Confirmation du courriel</value></data>
+  <data name="Auth.ConfirmEmail.Kicker" xml:space="preserve"><value>Vérification du compte</value></data>
+  <data name="Auth.ConfirmEmail.Title" xml:space="preserve"><value>Confirmez votre adresse courriel</value></data>
+  <data name="Auth.ConfirmEmail.Description" xml:space="preserve"><value>Votre adresse courriel est en cours de vérification.</value></data>
+  <data name="Auth.ConfirmEmail.Success" xml:space="preserve"><value>Votre adresse courriel a été confirmée. Vous pouvez maintenant vous connecter.</value></data>
+  <data name="Auth.ConfirmEmail.Error.MissingToken" xml:space="preserve"><value>Le lien de confirmation est incomplet. Un jeton valide est requis.</value></data>
+  <data name="Auth.ConfirmEmail.Error.Failed" xml:space="preserve"><value>Le jeton de confirmation est invalide ou a expiré.</value></data>
+  <data name="Auth.ConfirmEmail.Action.Login" xml:space="preserve"><value>Aller à la connexion</value></data>
+  <data name="Auth.ConfirmEmail.Action.Home" xml:space="preserve"><value>Retour à l'accueil</value></data>
 </root>

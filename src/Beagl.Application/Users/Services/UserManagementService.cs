@@ -167,6 +167,52 @@ public sealed partial class UserManagementService(
         return Result.Success(MapDetails(result.Value!));
     }
 
+    /// <inheritdoc />
+    public async Task<Result<string>> GenerateEmailConfirmationTokenAsync(string userId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Result.Failure<string>(new ResultError("users.invalid_id", "A user identifier is required."));
+        }
+
+        string trimmedUserId = userId.Trim();
+        Result<string> result = await _userRepository
+            .GenerateEmailConfirmationTokenAsync(trimmedUserId, cancellationToken)
+            .ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        LogTokenGenerated(_logger, trimmedUserId);
+        return result;
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> ConfirmAccountByTokenAsync(string userId, string token, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Result.Failure(new ResultError("users.invalid_id", "A user identifier is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return Result.Failure(new ResultError("users.token_required", "An email confirmation token is required."));
+        }
+
+        string trimmedUserId = userId.Trim();
+        Result result = await _userRepository
+            .ConfirmAccountByTokenAsync(trimmedUserId, token, cancellationToken)
+            .ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            LogUserConfirmedByToken(_logger, trimmedUserId);
+        }
+
+        return result;
+    }
+
     private static UserListItemDto MapListItem(UserAccount user)
     {
         return new UserListItemDto(
@@ -297,4 +343,10 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1004, Level = LogLevel.Information, Message = "Confirmed managed user account {UserId}")]
     private static partial void LogUserConfirmed(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1005, Level = LogLevel.Information, Message = "Generated email confirmation token for managed user {UserId}")]
+    private static partial void LogTokenGenerated(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1006, Level = LogLevel.Information, Message = "Confirmed managed user account {UserId} by token")]
+    private static partial void LogUserConfirmedByToken(ILogger logger, string userId);
 }

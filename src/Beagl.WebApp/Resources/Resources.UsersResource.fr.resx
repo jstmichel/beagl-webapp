@@ -92,4 +92,10 @@
   <data name="users.role_not_found" xml:space="preserve"><value>Le rôle demandé n'existe pas.</value></data>
   <data name="users.duplicate_user_name" xml:space="preserve"><value>Le nom d'utilisateur est déjà utilisé.</value></data>
   <data name="users.duplicate_email" xml:space="preserve"><value>L'adresse courriel est déjà utilisée.</value></data>
+  <data name="users.already_confirmed" xml:space="preserve"><value>Le compte est déjà confirmé.</value></data>
+  <data name="users.token_required" xml:space="preserve"><value>Un jeton de confirmation de courriel est requis.</value></data>
+  <data name="users.invalid_token" xml:space="preserve"><value>Le jeton de confirmation est invalide ou a expiré.</value></data>
+  <data name="Users.Action.CopyConfirmationLink" xml:space="preserve"><value>Copier le lien de confirmation</value></data>
+  <data name="Users.Success.ConfirmationLinkCopied" xml:space="preserve"><value>Lien de confirmation copié dans le presse-papiers.</value></data>
+  <data name="Users.Info.CopyManually" xml:space="preserve"><value>Impossible de copier automatiquement. Sélectionnez le lien ci-dessous et copiez-le manuellement.</value></data>
 </root>

@@ -25,4 +25,13 @@
   <data name="Auth.AccessDenied.Title" xml:space="preserve"><value>You do not have permission to view this page</value></data>
   <data name="Auth.AccessDenied.Description" xml:space="preserve"><value>Ask an administrator to grant the required access, or return to the home page.</value></data>
   <data name="Auth.AccessDenied.Action.Home" xml:space="preserve"><value>Return home</value></data>
+  <data name="Auth.ConfirmEmail.PageTitle" xml:space="preserve"><value>Email confirmation</value></data>
+  <data name="Auth.ConfirmEmail.Kicker" xml:space="preserve"><value>Account verification</value></data>
+  <data name="Auth.ConfirmEmail.Title" xml:space="preserve"><value>Confirm your email address</value></data>
+  <data name="Auth.ConfirmEmail.Description" xml:space="preserve"><value>Your email address is being verified.</value></data>
+  <data name="Auth.ConfirmEmail.Success" xml:space="preserve"><value>Your email address has been confirmed. You can now sign in.</value></data>
+  <data name="Auth.ConfirmEmail.Error.MissingToken" xml:space="preserve"><value>The confirmation link is incomplete. A valid token is required.</value></data>
+  <data name="Auth.ConfirmEmail.Error.Failed" xml:space="preserve"><value>The confirmation token is invalid or has expired.</value></data>
+  <data name="Auth.ConfirmEmail.Action.Login" xml:space="preserve"><value>Go to sign in</value></data>
+  <data name="Auth.ConfirmEmail.Action.Home" xml:space="preserve"><value>Return home</value></data>
 </root>

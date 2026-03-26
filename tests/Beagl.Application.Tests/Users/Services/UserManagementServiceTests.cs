@@ -940,4 +940,127 @@ public class UserManagementServiceTests
             && log.EventId.Id == 1003
             && log.Message.Contains("user-789"));
     }
+
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WithEmptyUserId_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<string> result = await service.GenerateEmailConfirmationTokenAsync(" ", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_id");
+        userRepositoryMock.Verify(
+            repository => repository.GenerateEmailConfirmationTokenAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenRepositorySucceeds_ShouldReturnToken()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.GenerateEmailConfirmationTokenAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success("generated-token"));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<string> result = await service.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("generated-token");
+    }
+
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenRepositoryFails_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.GenerateEmailConfirmationTokenAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<string>(new ResultError("users.already_confirmed", "The account is already confirmed.")));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<string> result = await service.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.already_confirmed");
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WithEmptyUserId_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.ConfirmAccountByTokenAsync(" ", "some-token", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_id");
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WithEmptyToken_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.ConfirmAccountByTokenAsync("user-1", " ", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.token_required");
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WhenRepositorySucceeds_ShouldReturnSuccess()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ConfirmAccountByTokenAsync("user-1", "valid-token", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.ConfirmAccountByTokenAsync("user-1", "valid-token", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WhenRepositoryFails_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ConfirmAccountByTokenAsync("user-1", "bad-token", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(new ResultError("users.invalid_token", "The confirmation token is invalid or has expired.")));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.ConfirmAccountByTokenAsync("user-1", "bad-token", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_token");
+    }
 }

@@ -264,6 +264,41 @@ public class IdentityUserRepositoryQueryTests
         result.Error!.Code.Should().Be("users.not_found");
     }
 
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenUserIsUnconfirmedWithEmail_ShouldReturnToken()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: false, lockedOut: false));
+
+        // Act
+        Beagl.Domain.Results.Result<string> result = await harness.Repository.GenerateEmailConfirmationTokenAsync("u1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WhenTokenIsValid_ShouldConfirmUserAndReturnSuccess()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: false, lockedOut: false));
+
+        Beagl.Domain.Results.Result<string> tokenResult = await harness.Repository.GenerateEmailConfirmationTokenAsync("u1", CancellationToken.None);
+        tokenResult.IsSuccess.Should().BeTrue();
+
+        // Act
+        Beagl.Domain.Results.Result result = await harness.Repository.ConfirmAccountByTokenAsync("u1", tokenResult.Value!, CancellationToken.None);
+        UserAccount? reloadedUser = await harness.Repository.GetByIdAsync("u1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        reloadedUser.Should().NotBeNull();
+        reloadedUser!.EmailConfirmed.Should().BeTrue();
+    }
+
     private static ApplicationUser MakeUser(string id, string username, bool confirmed, bool lockedOut) =>
         new()
         {
@@ -314,6 +349,8 @@ public class IdentityUserRepositoryQueryTests
                 new Mock<IServiceProvider>().Object,
                 new Logger<UserManager<ApplicationUser>>(new LoggerFactory()));
 
+            userManager.RegisterTokenProvider(TokenOptions.DefaultProvider, new FakeEmailTokenProvider());
+
             return new EfTestHarness(context, userManager);
         }
 
@@ -339,6 +376,18 @@ public class IdentityUserRepositoryQueryTests
         {
             _userManager.Dispose();
             await _context.DisposeAsync();
+        }
+
+        private sealed class FakeEmailTokenProvider : IUserTwoFactorTokenProvider<ApplicationUser>
+        {
+            public Task<string> GenerateAsync(string purpose, UserManager<ApplicationUser> manager, ApplicationUser user)
+                => Task.FromResult($"{user.Id}:{purpose}");
+
+            public Task<bool> ValidateAsync(string purpose, string token, UserManager<ApplicationUser> manager, ApplicationUser user)
+                => Task.FromResult(token == $"{user.Id}:{purpose}");
+
+            public Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<ApplicationUser> manager, ApplicationUser user)
+                => Task.FromResult(false);
         }
     }
 }

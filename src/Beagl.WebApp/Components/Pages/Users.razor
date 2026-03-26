@@ -3,7 +3,10 @@
 @attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
 @inject IUserManagementService UserManagementService
 @inject ILogger<Users> Logger
+@using Microsoft.JSInterop
 @inject IStringLocalizer<UsersResource> L
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
 
 <PageTitle>@L["Users.PageTitle"]</PageTitle>
 
@@ -29,6 +32,14 @@
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <div class="alert alert-danger mb-4" role="alert" aria-live="assertive">@_errorMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(_confirmationUrl))
+        {
+            <div class="alert alert-info mb-4" role="status" aria-live="polite">
+                <span>@L["Users.Info.CopyManually"]</span>
+                <input type="text" readonly value="@_confirmationUrl" class="form-control mt-2" onfocus="this.select()" aria-label='@L["Users.Action.CopyConfirmationLink"]' />
+            </div>
         }
 
         <div class="users-metrics mb-4">
@@ -294,7 +305,31 @@
                                     <dl class="users-detail-grid">
                                         <div>
                                             <dt>@L["Users.Details.EmailConfirmation"]</dt>
-                                            <dd>@(_selectedUser.EmailConfirmed ? L["Users.Details.Confirmed"] : L["Users.Details.Pending"])</dd>
+                                            <dd>
+                                                <span class="d-inline-flex align-items-center gap-2">
+                                                    @if (_selectedUser.EmailConfirmed)
+                                                    {
+                                                        @L["Users.Details.Confirmed"]
+                                                    }
+                                                    else
+                                                    {
+                                                        @L["Users.Details.Pending"]
+                                                        @if (!string.IsNullOrWhiteSpace(_selectedUser.Email))
+                                                        {
+                                                        <button
+                                                            type="button"
+                                                            class="users-icon-action users-icon-action--inline"
+                                                            @onclick="CopyConfirmationLinkAsync"
+                                                            data-testid="copy-confirmation-link"
+                                                            aria-label='@L["Users.Action.CopyConfirmationLink"]'
+                                                            title='@L["Users.Action.CopyConfirmationLink"]'
+                                                            disabled="@_isSaving">
+                                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                                        </button>
+                                                        }
+                                                    }
+                                                </span>
+                                            </dd>
                                         </div>
                                         <div>
                                             <dt>@L["Users.Details.Lockout"]</dt>
@@ -397,6 +432,7 @@
     private int _lockedOutUsersCount;
     private string? _errorMessage;
     private string? _statusMessage;
+    private string? _confirmationUrl;
     private UserPanelMode _panelMode;
     private UserDetailsDto? _selectedUser;
     private EditContext _createEditContext = default!;
@@ -489,6 +525,7 @@
         _panelMode = UserPanelMode.Create;
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
     }
 
     private async Task OpenDetailsPanelAsync(string userId)
@@ -523,6 +560,7 @@
         _isSaving = true;
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
 
         CreateUserRequest request = new(
             _createForm.UserName,
@@ -540,6 +578,7 @@
         _isSaving = true;
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
 
         UpdateUserRequest request = new(
             _editForm.Id,
@@ -562,6 +601,7 @@
         _isSaving = true;
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
 
         Result result = await UserManagementService.DeleteAsync(_selectedUser.Id, CancellationToken.None).ConfigureAwait(false);
         if (result.IsFailure)
@@ -584,6 +624,7 @@
         _isSaving = true;
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
 
         Result<UserDetailsDto> result = await UserManagementService
             .ConfirmAccountAsync(userId, CancellationToken.None)
@@ -616,6 +657,7 @@
         _isSaving = true;
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
 
         Result<UserDetailsDto> result = await UserManagementService
             .ConfirmAccountAsync(_selectedUser.Id, CancellationToken.None)
@@ -623,10 +665,63 @@
         await HandleMutationResultAsync(result, L["Users.Success.AccountConfirmed"], UserPanelMode.Details).ConfigureAwait(false);
     }
 
+    private async Task CopyConfirmationLinkAsync()
+    {
+        if (_selectedUser is null || _selectedUser.EmailConfirmed)
+        {
+            return;
+        }
+
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+        _confirmationUrl = null;
+
+        Result<string> result = await UserManagementService
+            .GenerateEmailConfirmationTokenAsync(_selectedUser.Id, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        if (result.IsFailure)
+        {
+            _panelMode = UserPanelMode.None;
+            _errorMessage = LocalizeError(result.Error!);
+            _isSaving = false;
+            return;
+        }
+
+        string confirmationUrl = NavigationManager.ToAbsoluteUri(
+            $"/account/confirm-email?userId={Uri.EscapeDataString(_selectedUser.Id)}&token={Uri.EscapeDataString(result.Value!)}").ToString();
+
+        _confirmationUrl = null;
+
+        try
+        {
+            bool copied = await JS.InvokeAsync<bool>("beagl.copyToClipboard", confirmationUrl).ConfigureAwait(false);
+
+            if (copied)
+            {
+                _statusMessage = L["Users.Success.ConfirmationLinkCopied"];
+            }
+            else
+            {
+                _confirmationUrl = confirmationUrl;
+            }
+        }
+        catch (Exception exception)
+        {
+            Logger.LogWarning(exception, "Clipboard write failed");
+            _confirmationUrl = confirmationUrl;
+        }
+
+        _panelMode = UserPanelMode.None;
+        _isSaving = false;
+    }
+
     private async Task<bool> LoadSelectedUserAsync(string userId, UserPanelMode panelMode)
     {
         _errorMessage = null;
         _statusMessage = null;
+        _confirmationUrl = null;
 
         Result<UserDetailsDto> result = await UserManagementService.GetUserByIdAsync(userId, CancellationToken.None).ConfigureAwait(false);
         if (result.IsFailure)
