@@ -64,4 +64,21 @@ public interface IUserManagementService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The confirmed user or a failure result.</returns>
     public Task<Result<UserDetailsDto>> ConfirmAccountAsync(string userId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Generates an email confirmation token for the specified user.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The generated token or a failure result.</returns>
+    public Task<Result<string>> GenerateEmailConfirmationTokenAsync(string userId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Confirms a user account using an email confirmation token.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="token">The email confirmation token.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the confirmation.</returns>
+    public Task<Result> ConfirmAccountByTokenAsync(string userId, string token, CancellationToken cancellationToken);
 }

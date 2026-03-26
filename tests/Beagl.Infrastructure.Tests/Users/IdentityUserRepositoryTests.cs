@@ -569,6 +569,194 @@ public class IdentityUserRepositoryTests
         userManagerMock.Verify(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenUserNotFound_ShouldReturnNotFoundError()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("missing-id"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<string> result = await repository.GenerateEmailConfirmationTokenAsync("missing-id", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenUserAlreadyConfirmed_ShouldReturnAlreadyConfirmedError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", EmailConfirmed = true };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<string> result = await repository.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.already_confirmed");
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenUserHasNoEmail_ShouldReturnEmailRequiredError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = null, EmailConfirmed = false };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<string> result = await repository.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.email_required");
+        userManagerMock.Verify(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GenerateEmailConfirmationTokenAsync_WhenSucceeds_ShouldReturnToken()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", EmailConfirmed = false };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GenerateEmailConfirmationTokenAsync(identityUser))
+            .ReturnsAsync("confirmation-token-123");
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<string> result = await repository.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("confirmation-token-123");
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WhenUserNotFound_ShouldReturnNotFoundError()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("missing-id"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.ConfirmAccountByTokenAsync("missing-id", "some-token", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WhenTokenIsInvalid_ShouldReturnInvalidTokenError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", EmailConfirmed = false };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.ConfirmEmailAsync(identityUser, "bad-token"))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidToken", Description = "Invalid token." }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.ConfirmAccountByTokenAsync("user-1", "bad-token", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_token");
+    }
+
+    [Fact]
+    public async Task ConfirmAccountByTokenAsync_WhenTokenIsValid_ShouldReturnSuccess()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", EmailConfirmed = false };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.ConfirmEmailAsync(identityUser, "valid-token"))
+            .ReturnsAsync(IdentityResult.Success);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.ConfirmAccountByTokenAsync("user-1", "valid-token", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenUserHasNoExistingRoles_ShouldSkipRemoveFromRolesAndAddNewRole()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", PhoneNumber = "555-0100" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.UpdateAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .SetupSequence(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([])
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+        userManagerMock
+            .Setup(manager => manager.AddToRoleAsync(identityUser, UserRole.Employee.ToString()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+        UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Employee);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Role.Should().Be(UserRole.Employee);
+        userManagerMock.Verify(manager => manager.RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()), Times.Never);
+        userManagerMock.Verify(manager => manager.AddToRoleAsync(identityUser, UserRole.Employee.ToString()), Times.Once);
+    }
+
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
     {
         Mock<IUserStore<ApplicationUser>> userStoreMock = new();

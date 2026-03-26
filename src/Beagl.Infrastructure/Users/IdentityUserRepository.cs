@@ -225,6 +225,52 @@ public sealed class IdentityUserRepository(
         return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
     }
 
+    /// <inheritdoc />
+    public async Task<Result<string>> GenerateEmailConfirmationTokenAsync(string userId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure<string>(new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        if (identityUser.EmailConfirmed)
+        {
+            return Result.Failure<string>(new ResultError("users.already_confirmed", "The account is already confirmed."));
+        }
+
+        if (string.IsNullOrWhiteSpace(identityUser.Email))
+        {
+            return Result.Failure<string>(new ResultError("users.email_required", "An email address is required."));
+        }
+
+        string token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser).ConfigureAwait(false);
+
+        return Result.Success(token);
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> ConfirmAccountByTokenAsync(string userId, string token, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure(new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        IdentityResult confirmResult = await _userManager.ConfirmEmailAsync(identityUser, token).ConfigureAwait(false);
+        if (!confirmResult.Succeeded)
+        {
+            return Result.Failure(new ResultError("users.invalid_token", "The confirmation token is invalid or has expired."));
+        }
+
+        return Result.Success();
+    }
+
     private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);
