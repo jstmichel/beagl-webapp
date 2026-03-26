@@ -95,6 +95,8 @@
   <data name="users.already_confirmed" xml:space="preserve"><value>The account is already confirmed.</value></data>
   <data name="users.token_required" xml:space="preserve"><value>An email confirmation token is required.</value></data>
   <data name="users.invalid_token" xml:space="preserve"><value>The confirmation token is invalid or has expired.</value></data>
+  <data name="users.first_name_required" xml:space="preserve"><value>A first name is required.</value></data>
+  <data name="users.last_name_required" xml:space="preserve"><value>A last name is required.</value></data>
   <data name="Users.Action.CopyConfirmationLink" xml:space="preserve"><value>Copy confirmation link</value></data>
   <data name="Users.Success.ConfirmationLinkCopied" xml:space="preserve"><value>Confirmation link copied to clipboard.</value></data>
   <data name="Users.Info.CopyManually" xml:space="preserve"><value>Could not copy automatically. Select the link below and copy it manually.</value></data>

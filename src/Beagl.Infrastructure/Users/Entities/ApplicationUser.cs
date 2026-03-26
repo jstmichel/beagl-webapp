@@ -7,5 +7,4 @@ namespace Beagl.Infrastructure.Users.Entities;
 /// </summary>
 public class ApplicationUser : Microsoft.AspNetCore.Identity.IdentityUser
 {
-
 }

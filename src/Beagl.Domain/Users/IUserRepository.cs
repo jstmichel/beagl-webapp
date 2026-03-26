@@ -87,4 +87,12 @@ public interface IUserRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The outcome of the confirmation.</returns>
     public Task<Result> ConfirmAccountByTokenAsync(string userId, string token, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Self-registers a new Citizen account.
+    /// </summary>
+    /// <param name="account">The citizen registration data.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The created user or a failure result.</returns>
+    public Task<Result<UserAccount>> RegisterCitizenAsync(RegisterCitizenAccount account, CancellationToken cancellationToken);
 }

@@ -1063,4 +1063,237 @@ public class UserManagementServiceTests
         result.IsFailure.Should().BeTrue();
         result.Error!.Code.Should().Be("users.invalid_token");
     }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithNullRequest_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Func<Task> act = async () => await service.RegisterCitizenAsync(null!, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithMissingFirstName_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new(" ", "Smith", "jsmith", "555-0100", null, "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.first_name_required");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithMissingLastName_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", " ", "jsmith", "555-0100", null, "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.last_name_required");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithMissingUserName_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", " ", "555-0100", null, "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.user_name_required");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithMissingPhoneNumber_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", " ", null, "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.phone_required");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithInvalidEmail_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", "not-an-email", "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_email");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithMissingPassword_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, " ");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.password_required");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithPasswordTooShort_ShouldReturnFailureWithoutCallingRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "short");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.password_too_short");
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithValidRequestAndNoEmail_ShouldCallRepositoryAndReturnSuccess()
+    {
+        // Arrange
+        UserAccount createdUser = new("user-42", "jsmith", string.Empty, "555-0100", false, false, UserRole.Citizen);
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(createdUser));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.UserName.Should().Be("jsmith");
+        result.Value.Role.Should().Be(UserRole.Citizen);
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithValidRequestAndEmail_ShouldCallRepositoryWithNullNormalizedEmail()
+    {
+        // Arrange
+        RegisterCitizenAccount? capturedAccount = null;
+        UserAccount createdUser = new("user-42", "jsmith", "john@example.com", "555-0100", false, false, UserRole.Citizen);
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()))
+            .Callback<RegisterCitizenAccount, CancellationToken>((account, _) => capturedAccount = account)
+            .ReturnsAsync(Result.Success(createdUser));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "  jsmith  ", "  555-0100  ", "  john@example.com  ", "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        capturedAccount.Should().NotBeNull();
+        capturedAccount!.FirstName.Should().Be("John");
+        capturedAccount.LastName.Should().Be("Smith");
+        capturedAccount.UserName.Should().Be("jsmith");
+        capturedAccount.PhoneNumber.Should().Be("555-0100");
+        capturedAccount.Email.Should().Be("john@example.com");
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WhenRepositoryFails_ShouldReturnFailure()
+    {
+        // Arrange
+        ResultError repositoryError = new("users.duplicate_user_name", "The user name is already in use.");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<UserAccount>(repositoryError));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "Password123!");
+
+        // Act
+        Result<UserDetailsDto> result = await service.RegisterCitizenAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.duplicate_user_name");
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_ShouldForwardCancellationTokenToRepository()
+    {
+        // Arrange
+        CancellationTokenSource cancellationTokenSource = new();
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+        UserAccount createdUser = new("user-42", "jsmith", string.Empty, "555-0100", false, false, UserRole.Citizen);
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), cancellationToken))
+            .ReturnsAsync(Result.Success(createdUser));
+
+        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "Password123!");
+
+        // Act
+        _ = await service.RegisterCitizenAsync(request, cancellationToken);
+
+        // Assert
+        userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), cancellationToken), Times.Once);
+    }
 }

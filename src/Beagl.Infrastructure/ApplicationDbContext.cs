@@ -22,6 +22,11 @@ public class ApplicationDbContext(
     public DbSet<EmailProviderConfigEntity> EmailProviderConfigurations => Set<EmailProviderConfigEntity>();
 
     /// <summary>
+    /// Gets the citizen profiles table.
+    /// </summary>
+    public DbSet<CitizenProfileEntity> CitizenProfiles => Set<CitizenProfileEntity>();
+
+    /// <summary>
     /// Configures the model for all entities.
     /// </summary>
     /// <param name="builder">The model builder.</param>
@@ -40,6 +45,20 @@ public class ApplicationDbContext(
             entity.Property(e => e.ApiKey).IsRequired().HasMaxLength(512);
             entity.Property(e => e.SenderEmail).IsRequired().HasMaxLength(256);
             entity.Property(e => e.SenderName).IsRequired().HasMaxLength(256);
+        });
+
+        builder.Entity<CitizenProfileEntity>(entity =>
+        {
+            entity.ToTable("CitizenProfiles");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserId).IsRequired().HasMaxLength(450);
+            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.LastName).IsRequired().HasMaxLength(256);
+            entity.HasOne(e => e.User)
+                .WithOne()
+                .HasForeignKey<CitizenProfileEntity>(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(e => e.UserId).IsUnique();
         });
     }
 

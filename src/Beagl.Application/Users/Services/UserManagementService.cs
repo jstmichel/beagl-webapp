@@ -213,6 +213,35 @@ public sealed partial class UserManagementService(
         return result;
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserDetailsDto>> RegisterCitizenAsync(RegisterCitizenRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        Result validation = ValidateRegisterCitizenRequest(request);
+        if (validation.IsFailure)
+        {
+            return Result.Failure<UserDetailsDto>(validation.Error!);
+        }
+
+        RegisterCitizenAccount account = new(
+            request.FirstName.Trim(),
+            request.LastName.Trim(),
+            request.UserName.Trim(),
+            request.PhoneNumber.Trim(),
+            NormalizeOptionalValue(request.Email),
+            request.Password);
+
+        Result<UserAccount> result = await _userRepository.RegisterCitizenAsync(account, cancellationToken).ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            return Result.Failure<UserDetailsDto>(result.Error!);
+        }
+
+        LogCitizenRegistered(_logger, result.Value!.Id);
+        return Result.Success(MapDetails(result.Value));
+    }
+
     private static UserListItemDto MapListItem(UserAccount user)
     {
         return new UserListItemDto(
@@ -332,6 +361,52 @@ public sealed partial class UserManagementService(
         return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 
+    private static Result ValidateRegisterCitizenRequest(RegisterCitizenRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.FirstName))
+        {
+            return Result.Failure(new ResultError("users.first_name_required", "A first name is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.LastName))
+        {
+            return Result.Failure(new ResultError("users.last_name_required", "A last name is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.UserName))
+        {
+            return Result.Failure(new ResultError("users.user_name_required", "A user name is required."));
+        }
+
+        if (request.UserName.Trim().Length > 256)
+        {
+            return Result.Failure(new ResultError("users.user_name_too_long", "The user name must contain at most 256 characters."));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Email)
+            && !_emailValidator.IsValid(request.Email.Trim()))
+        {
+            return Result.Failure(new ResultError("users.invalid_email", "The email address is not valid."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+        {
+            return Result.Failure(new ResultError("users.phone_required", "A phone number is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return Result.Failure(new ResultError("users.password_required", "A password is required."));
+        }
+
+        if (request.Password.Trim().Length < 8)
+        {
+            return Result.Failure(new ResultError("users.password_too_short", "The password must contain at least 8 characters."));
+        }
+
+        return Result.Success();
+    }
+
     [LoggerMessage(EventId = 1001, Level = LogLevel.Information, Message = "Created managed user {UserId}")]
     private static partial void LogUserCreated(ILogger logger, string userId);
 
@@ -349,4 +424,7 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1006, Level = LogLevel.Information, Message = "Confirmed managed user account {UserId} by token")]
     private static partial void LogUserConfirmedByToken(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1007, Level = LogLevel.Information, Message = "Citizen self-registered user {UserId}")]
+    private static partial void LogCitizenRegistered(ILogger logger, string userId);
 }
