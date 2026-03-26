@@ -3,10 +3,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Beagl.Infrastructure;
+using Beagl.Infrastructure.EmailProviders;
 using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
+using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Setup.Services;
 using Beagl.Application.Users.Services;
+using Beagl.Domain.EmailProviders;
 using Beagl.Domain.Users;
 using Beagl.WebApp.Authentication;
 using Beagl.WebApp.Extensions;
@@ -74,6 +77,8 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddScoped<IUserRepository, IdentityUserRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IInitialSetupService, InitialSetupService>();
+builder.Services.AddScoped<IEmailProviderConfigRepository, EmailProviderConfigRepository>();
+builder.Services.AddScoped<IEmailProviderConfigService, EmailProviderConfigService>();
 builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
 
 builder.Services.AddHsts(options =>

@@ -12,6 +12,7 @@
   <data name="Setup.AlreadyCompleted" xml:space="preserve"><value>Setup is already completed. Redirecting to the home page.</value></data>
   <data name="Setup.Steps.Aria" xml:space="preserve"><value>Setup steps</value></data>
   <data name="Setup.Step.Account" xml:space="preserve"><value>Administrator account</value></data>
+  <data name="Setup.Step.EmailProvider" xml:space="preserve"><value>Email provider</value></data>
   <data name="Setup.Step.Confirmation" xml:space="preserve"><value>Confirmation</value></data>
   <data name="Setup.Form.UserName" xml:space="preserve"><value>User name</value></data>
   <data name="Setup.Form.Email" xml:space="preserve"><value>Email</value></data>
@@ -25,6 +26,18 @@
   <data name="Setup.Confirmation.Role.Administrator" xml:space="preserve"><value>Administrator</value></data>
   <data name="Setup.Confirmation.Verification" xml:space="preserve"><value>Account status</value></data>
   <data name="Setup.Confirmation.Verified" xml:space="preserve"><value>Verified</value></data>
+  <data name="Setup.Confirmation.EmailProvider" xml:space="preserve"><value>Email provider</value></data>
+  <data name="Setup.Confirmation.EmailProvider.Configured" xml:space="preserve"><value>Brevo configured</value></data>
+  <data name="Setup.Confirmation.EmailProvider.Skipped" xml:space="preserve"><value>Skipped — email sending disabled</value></data>
+  <data name="Setup.EmailProvider.Description" xml:space="preserve"><value>Configure Brevo as your email provider to enable transactional emails such as password resets. You can skip this step and configure it later from the administration panel.</value></data>
+  <data name="Setup.EmailProvider.Form.ApiKey" xml:space="preserve"><value>Brevo API key</value></data>
+  <data name="Setup.EmailProvider.Form.SenderEmail" xml:space="preserve"><value>Sender email address</value></data>
+  <data name="Setup.EmailProvider.Form.SenderName" xml:space="preserve"><value>Sender display name</value></data>
+  <data name="Setup.EmailProvider.Action.Skip" xml:space="preserve"><value>Skip</value></data>
+  <data name="setup.brevo.api_key_required" xml:space="preserve"><value>The Brevo API key is required.</value></data>
+  <data name="setup.brevo.sender_email_required" xml:space="preserve"><value>The sender email address is required.</value></data>
+  <data name="setup.brevo.sender_email_invalid" xml:space="preserve"><value>The sender email address is not valid.</value></data>
+  <data name="setup.brevo.sender_name_required" xml:space="preserve"><value>The sender name is required.</value></data>
   <data name="setup.already_completed" xml:space="preserve"><value>Initial setup has already been completed.</value></data>
   <data name="setup.user_name_required" xml:space="preserve"><value>A user name is required.</value></data>
   <data name="setup.user_name_too_long" xml:space="preserve"><value>The user name must contain at most 256 characters.</value></data>

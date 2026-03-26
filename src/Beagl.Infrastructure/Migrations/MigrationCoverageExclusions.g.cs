@@ -15,3 +15,8 @@ sealed partial class ApplicationDbContextModelSnapshot
 partial class CreateIdentityTables
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddEmailProviderConfig
+{
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="EmailConfig.PageTitle" xml:space="preserve"><value>Email configuration</value></data>
+  <data name="EmailConfig.Kicker" xml:space="preserve"><value>Administration</value></data>
+  <data name="EmailConfig.Title" xml:space="preserve"><value>Email provider configuration</value></data>
+  <data name="EmailConfig.Copy" xml:space="preserve"><value>Manage the Brevo transactional email provider credentials used for password resets and account confirmations.</value></data>
+  <data name="EmailConfig.Loading" xml:space="preserve"><value>Loading email configuration</value></data>
+  <data name="EmailConfig.SaveSuccess" xml:space="preserve"><value>Email provider configuration saved successfully.</value></data>
+  <data name="EmailConfig.Form.Title.Create" xml:space="preserve"><value>Configure Brevo</value></data>
+  <data name="EmailConfig.Form.Title.Edit" xml:space="preserve"><value>Update Brevo configuration</value></data>
+  <data name="EmailConfig.Form.Description" xml:space="preserve"><value>Enter your Brevo API key and sender details. The API key is never displayed in full after saving.</value></data>
+  <data name="EmailConfig.Form.ApiKey" xml:space="preserve"><value>API key</value></data>
+  <data name="EmailConfig.Form.ApiKey.Hint" xml:space="preserve"><value>Enter a new key to replace the current one. Leave blank to keep the existing key.</value></data>
+  <data name="EmailConfig.Form.SenderEmail" xml:space="preserve"><value>Sender email address</value></data>
+  <data name="EmailConfig.Form.SenderName" xml:space="preserve"><value>Sender display name</value></data>
+  <data name="EmailConfig.Details.Title" xml:space="preserve"><value>Current configuration</value></data>
+  <data name="EmailConfig.Details.Description" xml:space="preserve"><value>The API key is masked for security. Only the last four characters are visible.</value></data>
+  <data name="EmailConfig.Details.Section.Provider" xml:space="preserve"><value>Provider</value></data>
+  <data name="EmailConfig.Empty.Title" xml:space="preserve"><value>No email provider configured</value></data>
+  <data name="EmailConfig.Empty.Description" xml:space="preserve"><value>Email sending is currently disabled. Configure Brevo to enable transactional emails.</value></data>
+  <data name="EmailConfig.Action.Create" xml:space="preserve"><value>Configure Brevo</value></data>
+  <data name="EmailConfig.Action.Edit" xml:space="preserve"><value>Edit configuration</value></data>
+  <data name="EmailConfig.Action.Save" xml:space="preserve"><value>Save configuration</value></data>
+  <data name="EmailConfig.Action.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="email_config.api_key_required" xml:space="preserve"><value>The API key is required.</value></data>
+  <data name="email_config.sender_email_required" xml:space="preserve"><value>The sender email address is required.</value></data>
+  <data name="email_config.sender_email_invalid" xml:space="preserve"><value>The sender email address is not valid.</value></data>
+  <data name="email_config.sender_name_required" xml:space="preserve"><value>The sender name is required.</value></data>
+</root>

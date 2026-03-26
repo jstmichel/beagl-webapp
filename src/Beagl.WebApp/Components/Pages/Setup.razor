@@ -1,8 +1,11 @@
 @page "/setup"
 @rendermode InteractiveServer
+@using Beagl.Application.EmailProviders.Dtos
+@using Beagl.Application.EmailProviders.Services
 @using Beagl.Application.Setup.Dtos
 @using Beagl.Application.Setup.Services
 @inject IInitialSetupService InitialSetupService
+@inject IEmailProviderConfigService EmailProviderConfigService
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<SetupResource> L
 
@@ -33,6 +36,7 @@
             {
                 <ol class="setup-steps" aria-label="@L["Setup.Steps.Aria"]">
                     <li class="@(CurrentStep == SetupStep.Account ? "is-active" : "")">@L["Setup.Step.Account"]</li>
+                    <li class="@(CurrentStep == SetupStep.EmailProvider ? "is-active" : "")">@L["Setup.Step.EmailProvider"]</li>
                     <li class="@(CurrentStep == SetupStep.Confirmation ? "is-active" : "")">@L["Setup.Step.Confirmation"]</li>
                 </ol>
 
@@ -43,7 +47,7 @@
 
                 @if (CurrentStep == SetupStep.Account)
                 {
-                    <EditForm EditContext="_editContext" OnValidSubmit="GoToConfirmationStepAsync" class="setup-form">
+                    <EditForm EditContext="_editContext" OnValidSubmit="GoToEmailProviderStepAsync" class="setup-form">
                         <DataAnnotationsValidator />
 
                         @if (_editContext.GetValidationMessages().Any())
@@ -79,6 +83,47 @@
                         </div>
                     </EditForm>
                 }
+                else if (CurrentStep == SetupStep.EmailProvider)
+                {
+                    <EditForm EditContext="_brevoEditContext" OnValidSubmit="GoToConfirmationStepAsync" class="setup-form">
+                        <DataAnnotationsValidator />
+
+                        <p class="setup-step-description">@L["Setup.EmailProvider.Description"]</p>
+
+                        @if (_brevoEditContext.GetValidationMessages().Any())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                <ul class="mb-0 ps-3">
+                                    @foreach (string message in _brevoEditContext.GetValidationMessages().Distinct())
+                                    {
+                                        <li>@LocalizeValidationMessage(message)</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <div class="setup-form-grid">
+                            <div>
+                                <label class="form-label" for="setupBrevoApiKey">@L["Setup.EmailProvider.Form.ApiKey"]</label>
+                                <InputText id="setupBrevoApiKey" type="password" class="form-control" @bind-Value="_brevoForm.ApiKey" autocomplete="off" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="setupBrevoSenderEmail">@L["Setup.EmailProvider.Form.SenderEmail"]</label>
+                                <InputText id="setupBrevoSenderEmail" class="form-control" @bind-Value="_brevoForm.SenderEmail" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="setupBrevoSenderName">@L["Setup.EmailProvider.Form.SenderName"]</label>
+                                <InputText id="setupBrevoSenderName" class="form-control" @bind-Value="_brevoForm.SenderName" />
+                            </div>
+                        </div>
+
+                        <div class="setup-actions">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="GoToAccountStep">@L["Setup.Action.Back"]</button>
+                            <button type="button" class="btn btn-outline-secondary" @onclick="SkipEmailProviderStep">@L["Setup.EmailProvider.Action.Skip"]</button>
+                            <button type="submit" class="btn btn-primary">@L["Setup.Action.Next"]</button>
+                        </div>
+                    </EditForm>
+                }
                 else
                 {
                     <div class="setup-summary" data-testid="setup-confirmation">
@@ -100,11 +145,15 @@
                                 <dt>@L["Setup.Confirmation.Verification"]</dt>
                                 <dd>@L["Setup.Confirmation.Verified"]</dd>
                             </div>
+                            <div>
+                                <dt>@L["Setup.Confirmation.EmailProvider"]</dt>
+                                <dd>@(_brevoSkipped ? L["Setup.Confirmation.EmailProvider.Skipped"] : L["Setup.Confirmation.EmailProvider.Configured"])</dd>
+                            </div>
                         </dl>
                     </div>
 
                     <div class="setup-actions">
-                        <button type="button" class="btn btn-outline-secondary" @onclick="GoToAccountStep">@L["Setup.Action.Back"]</button>
+                        <button type="button" class="btn btn-outline-secondary" @onclick="GoToEmailProviderStep">@L["Setup.Action.Back"]</button>
                         <button type="button" class="btn btn-primary" @onclick="CompleteSetupAsync" disabled="@_isSubmitting">@L["Setup.Action.Submit"]</button>
                     </div>
                 }
@@ -115,10 +164,13 @@
 
 @code {
     private readonly SetupFormModel _form = new();
+    private readonly BrevoFormModel _brevoForm = new();
     private EditContext _editContext = default!;
+    private EditContext _brevoEditContext = default!;
     private bool _isCheckingSetup = true;
     private bool _isSetupRequired;
     private bool _isSubmitting;
+    private bool _brevoSkipped;
     private string? _errorMessage;
 
     private SetupStep CurrentStep { get; set; } = SetupStep.Account;
@@ -127,6 +179,7 @@
     protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(_form);
+        _brevoEditContext = new EditContext(_brevoForm);
         _isSetupRequired = await InitialSetupService.IsSetupRequiredAsync(CancellationToken.None).ConfigureAwait(false);
         _isCheckingSetup = false;
 
@@ -136,17 +189,38 @@
         }
     }
 
+    private Task GoToEmailProviderStepAsync()
+    {
+        _errorMessage = null;
+        CurrentStep = SetupStep.EmailProvider;
+        return Task.CompletedTask;
+    }
+
     private Task GoToConfirmationStepAsync()
     {
         _errorMessage = null;
+        _brevoSkipped = false;
         CurrentStep = SetupStep.Confirmation;
         return Task.CompletedTask;
+    }
+
+    private void SkipEmailProviderStep()
+    {
+        _errorMessage = null;
+        _brevoSkipped = true;
+        CurrentStep = SetupStep.Confirmation;
     }
 
     private void GoToAccountStep()
     {
         _errorMessage = null;
         CurrentStep = SetupStep.Account;
+    }
+
+    private void GoToEmailProviderStep()
+    {
+        _errorMessage = null;
+        CurrentStep = SetupStep.EmailProvider;
     }
 
     private async Task CompleteSetupAsync()
@@ -170,6 +244,24 @@
             return;
         }
 
+        if (!_brevoSkipped)
+        {
+            SaveEmailProviderConfigRequest brevoRequest = new(
+                _brevoForm.ApiKey,
+                _brevoForm.SenderEmail,
+                _brevoForm.SenderName);
+
+            Beagl.Domain.Results.Result<Beagl.Application.EmailProviders.Dtos.EmailProviderConfigDto> brevoResult =
+                await EmailProviderConfigService.SaveAsync(brevoRequest, CancellationToken.None).ConfigureAwait(false);
+
+            if (brevoResult.IsFailure)
+            {
+                _errorMessage = LocalizeError(brevoResult.Error!);
+                _isSubmitting = false;
+                return;
+            }
+        }
+
         NavigationManager.NavigateTo("/", replace: true);
     }
 
@@ -188,6 +280,7 @@
     private enum SetupStep
     {
         Account,
+        EmailProvider,
         Confirmation,
     }
 
@@ -226,6 +319,37 @@
             else if (Password.Trim().Length < 8)
             {
                 yield return new ValidationResult("setup.password_too_short", [nameof(Password)]);
+            }
+        }
+    }
+
+    private sealed class BrevoFormModel : IValidatableObject
+    {
+        public string ApiKey { get; set; } = string.Empty;
+
+        public string SenderEmail { get; set; } = string.Empty;
+
+        public string SenderName { get; set; } = string.Empty;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(ApiKey))
+            {
+                yield return new ValidationResult("setup.brevo.api_key_required", [nameof(ApiKey)]);
+            }
+
+            if (string.IsNullOrWhiteSpace(SenderEmail))
+            {
+                yield return new ValidationResult("setup.brevo.sender_email_required", [nameof(SenderEmail)]);
+            }
+            else if (!new EmailAddressAttribute().IsValid(SenderEmail.Trim()))
+            {
+                yield return new ValidationResult("setup.brevo.sender_email_invalid", [nameof(SenderEmail)]);
+            }
+
+            if (string.IsNullOrWhiteSpace(SenderName))
+            {
+                yield return new ValidationResult("setup.brevo.sender_name_required", [nameof(SenderName)]);
             }
         }
     }
