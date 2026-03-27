@@ -45,7 +45,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.FirstName));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.FirstName)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -65,7 +65,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.LastName));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.LastName)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -85,7 +85,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.UserName));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.UserName)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -105,7 +105,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.PhoneNumber));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.PhoneNumber)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -125,7 +125,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.Email));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.Email)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -145,7 +145,7 @@ public sealed class RegisterModelTests
         await model.OnPostAsync();
 
         // Assert
-        model.ModelState.Should().NotContainKey(nameof(RegisterModel.RegisterInputModel.Email));
+        model.ModelState.Should().NotContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.Email)));
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.Password));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.Password)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -182,7 +182,7 @@ public sealed class RegisterModelTests
 
         // Assert
         result.Should().BeOfType<PageResult>();
-        model.ModelState.Should().ContainKey(nameof(RegisterModel.RegisterInputModel.Password));
+        model.ModelState.Should().ContainKey(InputModelKey(nameof(RegisterModel.RegisterInputModel.Password)));
         serviceMock.Verify(
             s => s.RegisterCitizenAsync(It.IsAny<RegisterCitizenRequest>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -428,6 +428,11 @@ public sealed class RegisterModelTests
     private static UserDetailsDto StubUserDetails()
     {
         return new UserDetailsDto("id-1", "jsmith", "", null, false, false, UserRole.Citizen);
+    }
+
+    private static string InputModelKey(string propertyName)
+    {
+        return $"{nameof(RegisterModel.Input)}.{propertyName}";
     }
 
     private sealed class ConfigurableLocalizer<T> : IStringLocalizer<T>

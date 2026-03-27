@@ -70,6 +70,7 @@
   <data name="Users.Panel.Description.Edit" xml:space="preserve"><value>Mettez à jour le profil sans quitter le répertoire.</value></data>
   <data name="Users.Panel.Description.Delete" xml:space="preserve"><value>Confirmez la suppression définitive du répertoire du personnel.</value></data>
   <data name="Users.Error.LoadFailed" xml:space="preserve"><value>Le répertoire des utilisateurs n'a pas pu être chargé.</value></data>
+  <data name="Users.Error.UnexpectedError" xml:space="preserve"><value>Une erreur inattendue est survenue. Veuillez réessayer.</value></data>
   <data name="Users.Success.Created" xml:space="preserve"><value>Utilisateur créé avec succès.</value></data>
   <data name="Users.Success.Updated" xml:space="preserve"><value>Utilisateur mis à jour avec succès.</value></data>
   <data name="Users.Success.Deleted" xml:space="preserve"><value>Utilisateur supprimé avec succès.</value></data>

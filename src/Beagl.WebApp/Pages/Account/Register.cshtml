@@ -35,32 +35,28 @@
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="alert alert-danger auth-error" role="alert" aria-live="assertive">
-                        <div asp-validation-summary="ModelOnly"></div>
+                        <div asp-validation-summary="All" class="mb-0"></div>
                     </div>
                 }
 
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.FirstName">@L["Auth.Register.FirstName.Label"]</label>
                     <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name" />
-                    <span asp-validation-for="Input.FirstName" class="auth-field-error"></span>
                 </div>
 
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.LastName">@L["Auth.Register.LastName.Label"]</label>
                     <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" />
-                    <span asp-validation-for="Input.LastName" class="auth-field-error"></span>
                 </div>
 
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.UserName">@L["Auth.Register.UserName.Label"]</label>
                     <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
-                    <span asp-validation-for="Input.UserName" class="auth-field-error"></span>
                 </div>
 
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.PhoneNumber">@L["Auth.Register.PhoneNumber.Label"]</label>
                     <input asp-for="Input.PhoneNumber" type="tel" class="form-control" autocomplete="tel" />
-                    <span asp-validation-for="Input.PhoneNumber" class="auth-field-error"></span>
                 </div>
 
                 <div class="auth-field">
@@ -69,14 +65,12 @@
                         <span class="auth-optional">@L["Auth.Register.Optional"]</span>
                     </label>
                     <input asp-for="Input.Email" type="email" class="form-control" autocomplete="email" />
-                    <span asp-validation-for="Input.Email" class="auth-field-error"></span>
                 </div>
 
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.Password">@L["Auth.Register.Password.Label"]</label>
                     <input asp-for="Input.Password" type="password" class="form-control" autocomplete="new-password" />
                     <p class="auth-hint">@L["Auth.Register.Password.Hint"]</p>
-                    <span asp-validation-for="Input.Password" class="auth-field-error"></span>
                 </div>
 
                 <div class="auth-actions">

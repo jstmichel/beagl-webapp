@@ -438,6 +438,12 @@ body {
     margin-bottom: 0;
 }
 
+.auth-error ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .users-page-shell::before {
     position: absolute;
     inset: 1rem auto auto 50%;

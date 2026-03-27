@@ -25,3 +25,8 @@ partial class AddEmailProviderConfig
 partial class AddCitizenProfiles
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class EnforceUniqueEmail
+{
+}
