@@ -17,4 +17,15 @@
   <data name="Home.Highlight.Clarity.Copy" xml:space="preserve"><value>Status indicators and contextual panels keep shelter operations readable and actionable.</value></data>
   <data name="Home.Highlight.Teams.Title" xml:space="preserve"><value>Built for shelter teams</value></data>
   <data name="Home.Highlight.Teams.Copy" xml:space="preserve"><value>Responsive and accessible on desktop and mobile, for staff on the floor or at the desk.</value></data>
+  <data name="CitizenHome.Title" xml:space="preserve"><value>My portal</value></data>
+  <data name="CitizenHome.Kicker" xml:space="preserve"><value>Citizen self-service</value></data>
+  <data name="CitizenHome.Hero.Title" xml:space="preserve"><value>Welcome to your citizen portal.</value></data>
+  <data name="CitizenHome.Hero.Copy" xml:space="preserve"><value>Access your personal information, track your animals, and manage your annual fees — all in one place.</value></data>
+  <data name="CitizenHome.Services.Aria" xml:space="preserve"><value>Available services</value></data>
+  <data name="CitizenHome.Service.Profile.Title" xml:space="preserve"><value>My profile</value></data>
+  <data name="CitizenHome.Service.Profile.Copy" xml:space="preserve"><value>View and update your personal information, contact details, and account preferences.</value></data>
+  <data name="CitizenHome.Service.Animals.Title" xml:space="preserve"><value>My animals</value></data>
+  <data name="CitizenHome.Service.Animals.Copy" xml:space="preserve"><value>See the animals registered under your name and stay informed about their care and status.</value></data>
+  <data name="CitizenHome.Service.Payments.Title" xml:space="preserve"><value>Annual fees</value></data>
+  <data name="CitizenHome.Service.Payments.Copy" xml:space="preserve"><value>Review your payment history and pay your annual animal shelter fee online.</value></data>
 </root>

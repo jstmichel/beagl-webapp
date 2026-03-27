@@ -17,4 +17,15 @@
   <data name="Home.Highlight.Clarity.Copy" xml:space="preserve"><value>Des indicateurs de statut et des panneaux contextuels rendent les opérations du refuge lisibles et actionnables.</value></data>
   <data name="Home.Highlight.Teams.Title" xml:space="preserve"><value>Pensé pour les équipes de refuge</value></data>
   <data name="Home.Highlight.Teams.Copy" xml:space="preserve"><value>Responsive et accessible sur desktop et mobile, pour le personnel sur le terrain comme au bureau.</value></data>
+  <data name="CitizenHome.Title" xml:space="preserve"><value>Mon portail</value></data>
+  <data name="CitizenHome.Kicker" xml:space="preserve"><value>Libre-service citoyen</value></data>
+  <data name="CitizenHome.Hero.Title" xml:space="preserve"><value>Bienvenue sur votre portail citoyen.</value></data>
+  <data name="CitizenHome.Hero.Copy" xml:space="preserve"><value>Accédez à vos informations personnelles, suivez vos animaux et gérez vos frais annuels — tout en un seul endroit.</value></data>
+  <data name="CitizenHome.Services.Aria" xml:space="preserve"><value>Services disponibles</value></data>
+  <data name="CitizenHome.Service.Profile.Title" xml:space="preserve"><value>Mon profil</value></data>
+  <data name="CitizenHome.Service.Profile.Copy" xml:space="preserve"><value>Consultez et mettez à jour vos informations personnelles, vos coordonnées et les préférences de votre compte.</value></data>
+  <data name="CitizenHome.Service.Animals.Title" xml:space="preserve"><value>Mes animaux</value></data>
+  <data name="CitizenHome.Service.Animals.Copy" xml:space="preserve"><value>Consultez les animaux enregistrés à votre nom et restez informé de leur prise en charge et de leur statut.</value></data>
+  <data name="CitizenHome.Service.Payments.Title" xml:space="preserve"><value>Frais annuels</value></data>
+  <data name="CitizenHome.Service.Payments.Copy" xml:space="preserve"><value>Consultez votre historique de paiements et payez vos frais annuels de refuge en ligne.</value></data>
 </root>
