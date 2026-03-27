@@ -208,6 +208,40 @@ public class IdentityUserRepositoryTests
     }
 
     [Fact]
+    public async Task CreateAsync_WhenEmailAlreadyExists_ShouldReturnDuplicateEmailError()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateDbContext();
+        context.Users.Add(new ApplicationUser
+        {
+            Id = "existing-user",
+            UserName = "existing",
+            NormalizedUserName = "EXISTING",
+            Email = "alex@example.com",
+            NormalizedEmail = "ALEX@EXAMPLE.COM",
+            SecurityStamp = Guid.NewGuid().ToString(),
+        });
+        await context.SaveChangesAsync();
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .SetupGet(manager => manager.Users)
+            .Returns(context.Users);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        CreateUserAccount request = new("alex", "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.duplicate_email");
+        userManagerMock.Verify(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
     public async Task UpdateAsync_WhenRemoveFromRolesFails_ShouldReturnMappedError()
     {
         // Arrange
@@ -273,6 +307,103 @@ public class IdentityUserRepositoryTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().NotBeNull();
         result.Error!.Code.Should().Be("users.role_not_found");
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEmailAlreadyUsedByAnotherUser_ShouldReturnDuplicateEmailError()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateDbContext();
+        context.Users.Add(new ApplicationUser
+        {
+            Id = "user-2",
+            UserName = "bob",
+            NormalizedUserName = "BOB",
+            Email = "alex@example.com",
+            NormalizedEmail = "ALEX@EXAMPLE.COM",
+            SecurityStamp = Guid.NewGuid().ToString(),
+        });
+        await context.SaveChangesAsync();
+
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "other@example.com",
+            PhoneNumber = "555-0100",
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .SetupGet(manager => manager.Users)
+            .Returns(context.Users);
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Employee);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.duplicate_email");
+        userManagerMock.Verify(manager => manager.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEmailBelongsToCurrentUser_ShouldAllowUpdate()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateDbContext();
+        context.Users.Add(new ApplicationUser
+        {
+            Id = "user-1",
+            UserName = "alex",
+            NormalizedUserName = "ALEX",
+            Email = "alex@example.com",
+            NormalizedEmail = "ALEX@EXAMPLE.COM",
+            SecurityStamp = Guid.NewGuid().ToString(),
+        });
+        await context.SaveChangesAsync();
+
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", PhoneNumber = "555-0100" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .SetupGet(manager => manager.Users)
+            .Returns(context.Users);
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.UpdateAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .SetupSequence(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Citizen.ToString()])
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+        userManagerMock
+            .Setup(manager => manager.RemoveFromRolesAsync(identityUser, It.IsAny<IEnumerable<string>>()))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.AddToRoleAsync(identityUser, UserRole.Employee.ToString()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        UpdateUserAccount request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Employee);
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.Role.Should().Be(UserRole.Employee);
+        userManagerMock.Verify(manager => manager.UpdateAsync(identityUser), Times.Once);
     }
 
     [Fact]
