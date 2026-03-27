@@ -17,6 +17,14 @@
                 <a class="nav-link" href="/">@L["Nav.Home"]</a>
                 <NavLink class="nav-link" href="/employee/users" Match="NavLinkMatch.All">@L["Nav.Users"]</NavLink>
                 <NavLink class="nav-link" href="/admin/email-config" Match="NavLinkMatch.All">@L["Nav.EmailConfig"]</NavLink>
+                <AuthorizeView>
+                    <form method="post" action="/account/logout">
+                        <AntiforgeryToken />
+                        <button type="submit" class="nav-link app-shell__signout" title="@L["Nav.Logout"]">
+                            <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>@L["Nav.Logout"]
+                        </button>
+                    </form>
+                </AuthorizeView>
             </nav>
         </div>
     </header>
