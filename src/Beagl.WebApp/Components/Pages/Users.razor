@@ -237,7 +237,7 @@
                                         <ul class="mb-0 ps-3">
                                             @foreach (string message in _createEditContext.GetValidationMessages().Distinct())
                                             {
-                                                <li>@LocalizeValidationMessage(message)</li>
+                                                <li>@L.LocalizeValidationMessage(message)</li>
                                             }
                                         </ul>
                                     </div>
@@ -369,7 +369,7 @@
                                         <ul class="mb-0 ps-3">
                                             @foreach (string message in _editEditContext.GetValidationMessages().Distinct())
                                             {
-                                                <li>@LocalizeValidationMessage(message)</li>
+                                                <li>@L.LocalizeValidationMessage(message)</li>
                                             }
                                         </ul>
                                     </div>
@@ -631,7 +631,7 @@
         Result result = await UserManagementService.DeleteAsync(_selectedUser.Id, _cts.Token).ConfigureAwait(false);
         if (result.IsFailure)
         {
-            _errorMessage = LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(result.Error!);
             _isSaving = false;
             return;
         }
@@ -656,7 +656,7 @@
             .ConfigureAwait(false);
         if (result.IsFailure)
         {
-            _errorMessage = LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(result.Error!);
             _isSaving = false;
             return;
         }
@@ -709,7 +709,7 @@
         if (result.IsFailure)
         {
             _panelMode = UserPanelMode.None;
-            _errorMessage = LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(result.Error!);
             _isSaving = false;
             return;
         }
@@ -751,7 +751,7 @@
         Result<UserDetailsDto> result = await UserManagementService.GetUserByIdAsync(userId, _cts.Token).ConfigureAwait(false);
         if (result.IsFailure)
         {
-            _errorMessage = LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(result.Error!);
             return false;
         }
 
@@ -764,7 +764,7 @@
     {
         if (result.IsFailure)
         {
-            _errorMessage = LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(result.Error!);
             _isSaving = false;
             return;
         }
@@ -780,18 +780,6 @@
     private string FormatOptionalValue(string? value)
     {
         return string.IsNullOrWhiteSpace(value) ? L["Users.Optional.NotProvided"] : value;
-    }
-
-    private string LocalizeError(ResultError error)
-    {
-        LocalizedString localizedError = L[error.Code];
-        return localizedError.ResourceNotFound ? error.Message : localizedError.Value;
-    }
-
-    private string LocalizeValidationMessage(string message)
-    {
-        LocalizedString localizedMessage = L[message];
-        return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
     }
 
     private static IReadOnlyList<UserRole> SelectableRoles =>

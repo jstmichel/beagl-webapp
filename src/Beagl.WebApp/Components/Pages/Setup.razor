@@ -57,7 +57,7 @@
                                 <ul class="mb-0 ps-3">
                                     @foreach (string message in _editContext.GetValidationMessages().Distinct())
                                     {
-                                        <li>@LocalizeValidationMessage(message)</li>
+                                        <li>@L.LocalizeValidationMessage(message)</li>
                                     }
                                 </ul>
                             </div>
@@ -97,7 +97,7 @@
                                 <ul class="mb-0 ps-3">
                                     @foreach (string message in _brevoEditContext.GetValidationMessages().Distinct())
                                     {
-                                        <li>@LocalizeValidationMessage(message)</li>
+                                        <li>@L.LocalizeValidationMessage(message)</li>
                                     }
                                 </ul>
                             </div>
@@ -241,7 +241,7 @@
 
         if (result.IsFailure)
         {
-            _errorMessage = LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(result.Error!);
             _isSubmitting = false;
             return;
         }
@@ -258,25 +258,13 @@
 
             if (brevoResult.IsFailure)
             {
-                _errorMessage = LocalizeError(brevoResult.Error!);
+                _errorMessage = L.LocalizeError(brevoResult.Error!);
                 _isSubmitting = false;
                 return;
             }
         }
 
         NavigationManager.NavigateTo("/", replace: true);
-    }
-
-    private string LocalizeError(Beagl.Domain.Results.ResultError error)
-    {
-        LocalizedString localizedError = L[error.Code];
-        return localizedError.ResourceNotFound ? error.Message : localizedError.Value;
-    }
-
-    private string LocalizeValidationMessage(string message)
-    {
-        LocalizedString localizedMessage = L[message];
-        return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
     }
 
     public void Dispose()
