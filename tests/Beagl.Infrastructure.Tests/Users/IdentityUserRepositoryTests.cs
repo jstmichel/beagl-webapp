@@ -855,6 +855,178 @@ public class IdentityUserRepositoryTests
     }
 
     [Fact]
+    public async Task RegisterCitizenAsync_WhenSucceeds_ShouldReturnMappedUserWithCitizenRole()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateSqliteContext();
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .SetupGet(manager => manager.Users)
+            .Returns(context.Users);
+        userManagerMock
+            .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .Callback<ApplicationUser, string>((user, _) =>
+            {
+                user.Id = "citizen-1";
+                user.SecurityStamp = Guid.NewGuid().ToString();
+                context.Users.Add(user);
+                context.SaveChanges();
+            })
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), UserRole.Citizen.ToString()))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync("citizen-token");
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync([UserRole.Citizen.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        RegisterCitizenAccount account = new("John", "Doe", "johndoe", "555-0100", "john@example.com", "Password123!");
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.RegisterCitizenAsync(account, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.Id.Should().Be("citizen-1");
+        result.Value.UserName.Should().Be("johndoe");
+        result.Value.Email.Should().Be("john@example.com");
+        result.Value.Role.Should().Be(UserRole.Citizen);
+        result.Value.EmailConfirmationToken.Should().Be("citizen-token");
+        context.CitizenProfiles.Should().ContainSingle(profile =>
+            profile.UserId == "citizen-1"
+            && profile.FirstName == "John"
+            && profile.LastName == "Doe");
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WithNullEmail_ShouldSkipEmailCheckAndSucceed()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateSqliteContext();
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .Callback<ApplicationUser, string>((user, _) =>
+            {
+                user.Id = "citizen-2";
+                user.SecurityStamp = Guid.NewGuid().ToString();
+                context.Users.Add(user);
+                context.SaveChanges();
+            })
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), UserRole.Citizen.ToString()))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync([UserRole.Citizen.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        RegisterCitizenAccount account = new("Jane", "Smith", "janesmith", "555-0200", null, "Password123!");
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.RegisterCitizenAsync(account, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.EmailConfirmationToken.Should().BeNull();
+        userManagerMock.Verify(manager => manager.CreateAsync(
+            It.Is<ApplicationUser>(user => user.Email == null),
+            "Password123!"), Times.Once);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WhenEmailAlreadyExists_ShouldReturnDuplicateEmailError()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateSqliteContext();
+        context.Users.Add(new ApplicationUser
+        {
+            Id = "existing-user",
+            UserName = "existing",
+            NormalizedUserName = "EXISTING",
+            Email = "john@example.com",
+            NormalizedEmail = "JOHN@EXAMPLE.COM",
+            SecurityStamp = Guid.NewGuid().ToString(),
+        });
+        await context.SaveChangesAsync();
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .SetupGet(manager => manager.Users)
+            .Returns(context.Users);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        RegisterCitizenAccount account = new("John", "Doe", "johndoe", "555-0100", "john@example.com", "Password123!");
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.RegisterCitizenAsync(account, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.duplicate_email");
+        userManagerMock.Verify(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WhenCreateFails_ShouldRollbackAndReturnError()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateSqliteContext();
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "PasswordTooShort", Description = "Password too short." }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        RegisterCitizenAccount account = new("John", "Doe", "johndoe", "555-0100", null, "short");
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.RegisterCitizenAsync(account, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.password_too_short");
+        userManagerMock.Verify(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never);
+        context.CitizenProfiles.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task RegisterCitizenAsync_WhenAddToRoleFails_ShouldRollbackAndReturnError()
+    {
+        // Arrange
+        ApplicationDbContext context = CreateSqliteContext();
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .Callback<ApplicationUser, string>((user, _) => user.Id = "citizen-1")
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.AddToRoleAsync(It.IsAny<ApplicationUser>(), UserRole.Citizen.ToString()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "RoleNotFound", Description = "role missing" }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object, context);
+        RegisterCitizenAccount account = new("John", "Doe", "johndoe", "555-0100", null, "Password123!");
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.RegisterCitizenAsync(account, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error!.Code.Should().Be("users.role_not_found");
+        context.CitizenProfiles.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task UpdateAsync_WhenUserHasNoExistingRoles_ShouldSkipRemoveFromRolesAndAddNewRole()
     {
         // Arrange
@@ -911,5 +1083,20 @@ public class IdentityUserRepositoryTests
             .Options;
 
         return new ApplicationDbContext(options);
+    }
+
+    private static ApplicationDbContext CreateSqliteContext()
+    {
+        Microsoft.Data.Sqlite.SqliteConnection connection = new("Filename=:memory:");
+        connection.Open();
+
+        DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseSqlite(connection)
+            .Options;
+
+        ApplicationDbContext context = new(options);
+        context.Database.EnsureCreated();
+
+        return context;
     }
 }

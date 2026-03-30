@@ -169,6 +169,55 @@ public class IdentityUserRepositoryQueryTests
     }
 
     [Fact]
+    public async Task GetPageAsync_WhenNoUsersExist_ShouldReturnEmptyPage()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        GetUsersPageQuery query = new(null, 1, 10);
+
+        // Act
+        UsersPage page = await harness.Repository.GetPageAsync(query, CancellationToken.None);
+
+        // Assert
+        page.TotalCount.Should().Be(0);
+        page.PageNumber.Should().Be(1);
+        page.Users.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetPageAsync_WhenUserHasMultipleRoles_ShouldReturnFirstRoleOnly()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedRolesAsync(
+            new ApplicationRole
+            {
+                Id = "role-admin",
+                Name = UserRole.Administrator.ToString(),
+                NormalizedName = UserRole.Administrator.ToString().ToUpperInvariant(),
+            },
+            new ApplicationRole
+            {
+                Id = "role-employee",
+                Name = UserRole.Employee.ToString(),
+                NormalizedName = UserRole.Employee.ToString().ToUpperInvariant(),
+            });
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: true, lockedOut: false));
+        await harness.SeedUserRolesAsync(
+            new IdentityUserRole<string> { UserId = "u1", RoleId = "role-admin" },
+            new IdentityUserRole<string> { UserId = "u1", RoleId = "role-employee" });
+
+        GetUsersPageQuery query = new(null, 1, 10);
+
+        // Act
+        UsersPage page = await harness.Repository.GetPageAsync(query, CancellationToken.None);
+
+        // Assert
+        page.Users.Should().ContainSingle();
+        page.Users[0].Role.Should().Be(UserRole.Administrator);
+    }
+
+    [Fact]
     public async Task GetByIdAsync_WhenUserExists_ShouldReturnMappedUser()
     {
         // Arrange
