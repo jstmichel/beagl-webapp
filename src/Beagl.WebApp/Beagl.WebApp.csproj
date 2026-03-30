@@ -32,7 +32,7 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <UserSecretsId>7107e9ec-1447-41aa-9d32-34ee9ce23f65</UserSecretsId>
   </PropertyGroup>
 </Project>

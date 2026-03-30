@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.5.0"></a>
+## [0.5.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.5.0) (2026-03-30)
+
+### Features
+
+* Enhance authentication and user interface for citizens ([#65](https://www.github.com/jstmichel/beagl-webapp/issues/65)) ([1b92ba6](https://www.github.com/jstmichel/beagl-webapp/commit/1b92ba6a38c7147a2d37a51c1bbc48b4f4633ba6))
+* **account:** add citizen self-registration page ([#63](https://www.github.com/jstmichel/beagl-webapp/issues/63)) ([c6fd504](https://www.github.com/jstmichel/beagl-webapp/commit/c6fd5048712fd12b7cc2549fabfdf1aeecac7134))
+* **account:** add email confirmation functionality ([#60](https://www.github.com/jstmichel/beagl-webapp/issues/60)) ([1f3aff9](https://www.github.com/jstmichel/beagl-webapp/commit/1f3aff9acfd167e82a484d0970b6a46793b37c1e))
+* **setup:** add email provider configuration step ([#58](https://www.github.com/jstmichel/beagl-webapp/issues/58)) ([7802a0c](https://www.github.com/jstmichel/beagl-webapp/commit/7802a0c490e574ec856abcceeab96e84dc4af887))
+* **users:** add account confirmation functionality ([#56](https://www.github.com/jstmichel/beagl-webapp/issues/56)) ([b093367](https://www.github.com/jstmichel/beagl-webapp/commit/b093367a302f83478a35426c1a67cf1b1e41660a))
+* **users:** generate email confirmation token on user creation ([#54](https://www.github.com/jstmichel/beagl-webapp/issues/54)) ([b7c3285](https://www.github.com/jstmichel/beagl-webapp/commit/b7c3285dac8226538f298cec4d0e3e357ec68fb5))
+
 <a name="0.4.0"></a>
 ## [0.4.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.4.0) (2026-03-25)
 
