@@ -7,5 +7,4 @@ namespace Beagl.Infrastructure.Users.Entities;
 /// </summary>
 public class ApplicationRole : Microsoft.AspNetCore.Identity.IdentityRole
 {
-    // Add custom properties for roles here if needed
 }
