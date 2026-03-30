@@ -42,17 +42,12 @@ public class EfCoreDatabaseMigratorTests
     }
 
     [Fact]
-    public async Task MigrateAsync_NullDbContext_ThrowsArgumentNullException()
+    public void Constructor_NullDbContext_ThrowsArgumentNullException()
     {
-        // Arrange
-        EfCoreDatabaseMigrator? migrator = null;
         // Act
-        Func<Task> act = async () =>
-        {
-            migrator = new(null!);
-            await migrator.MigrateAsync();
-        };
+        Action act = () => _ = new EfCoreDatabaseMigrator(null!);
+
         // Assert
-        await act.Should().ThrowAsync<ArgumentNullException>();
+        act.Should().Throw<ArgumentNullException>();
     }
 }

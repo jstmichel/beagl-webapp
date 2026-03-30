@@ -73,31 +73,29 @@ public class DatabaseInitializerTests
     }
 
     [Fact]
-    public async Task InitializeAsync_NullDatabaseMigrator_ThrowsArgumentNullException()
+    public void Constructor_NullDatabaseMigrator_ThrowsArgumentNullException()
     {
         // Arrange
         Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
-        DatabaseInitializer initializer = new(null!, roleManagerMock.Object);
 
         // Act
-        Func<Task> act = async () => await initializer.InitializeAsync();
+        Action act = () => _ = new DatabaseInitializer(null!, roleManagerMock.Object);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentNullException>();
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
-    public async Task InitializeAsync_NullRoleManager_ThrowsArgumentNullException()
+    public void Constructor_NullRoleManager_ThrowsArgumentNullException()
     {
         // Arrange
         Mock<IDatabaseMigrator> migratorMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, null!);
 
         // Act
-        Func<Task> act = async () => await initializer.InitializeAsync();
+        Action act = () => _ = new DatabaseInitializer(migratorMock.Object, null!);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentNullException>();
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
