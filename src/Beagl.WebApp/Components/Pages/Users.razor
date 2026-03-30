@@ -863,7 +863,7 @@
 
             if (Role is UserRole.Employee or UserRole.Administrator && string.IsNullOrWhiteSpace(Email))
                 yield return new ValidationResult("users.email_required", [nameof(Email)]);
-            else if (!string.IsNullOrWhiteSpace(Email) && !new EmailAddressAttribute().IsValid(Email.Trim()))
+            else if (!string.IsNullOrWhiteSpace(Email) && !EmailValidator.IsValid(Email.Trim()))
                 yield return new ValidationResult("users.invalid_email", [nameof(Email)]);
 
             if (string.IsNullOrWhiteSpace(PhoneNumber))
@@ -902,7 +902,7 @@
 
             if (Role is UserRole.Employee or UserRole.Administrator && string.IsNullOrWhiteSpace(Email))
                 yield return new ValidationResult("users.email_required", [nameof(Email)]);
-            else if (!string.IsNullOrWhiteSpace(Email) && !new EmailAddressAttribute().IsValid(Email.Trim()))
+            else if (!string.IsNullOrWhiteSpace(Email) && !EmailValidator.IsValid(Email.Trim()))
                 yield return new ValidationResult("users.invalid_email", [nameof(Email)]);
 
             if (string.IsNullOrWhiteSpace(PhoneNumber))

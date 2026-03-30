@@ -303,7 +303,7 @@
             {
                 yield return new ValidationResult("setup.email_required", [nameof(Email)]);
             }
-            else if (!new EmailAddressAttribute().IsValid(Email.Trim()))
+            else if (!EmailValidator.IsValid(Email.Trim()))
             {
                 yield return new ValidationResult("setup.invalid_email", [nameof(Email)]);
             }
@@ -338,7 +338,7 @@
             {
                 yield return new ValidationResult("setup.brevo.sender_email_required", [nameof(SenderEmail)]);
             }
-            else if (!new EmailAddressAttribute().IsValid(SenderEmail.Trim()))
+            else if (!EmailValidator.IsValid(SenderEmail.Trim()))
             {
                 yield return new ValidationResult("setup.brevo.sender_email_invalid", [nameof(SenderEmail)]);
             }

@@ -16,6 +16,9 @@ trim_trailing_whitespace = true
 # Require file-scoped namespaces
 csharp_style_namespace_declarations = file_scoped:suggestion
 
+# Always use braces for control flow statements
+csharp_prefer_braces = true:warning
+
 # Prefer explicit type instead of var
 csharp_style_var_for_built_in_types = false:suggestion
 csharp_style_var_when_type_is_apparent = false:suggestion

@@ -11,6 +11,7 @@ Apply these conventions to all C# files.
 
 - Do not suppress nullable warnings without reason.
 - Always use file-scoped namespace declarations.
+- Always use braces (`{}`) for all control flow statements (`if`, `else`, `for`, `foreach`, `while`, `do`), even for single-line bodies.
 - Always use C# primary constructor syntax for classes unless custom logic is required in the constructor body.
 - Always use explicit types instead of `var` for all variable declarations.
 - When using explicit types, simplify variable creation using `new()` where valid.
