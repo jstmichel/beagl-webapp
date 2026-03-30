@@ -408,7 +408,6 @@ public sealed class IdentityUserRepository(
 
     private static UserAccount MapUser(ApplicationUser user, UserRole role)
     {
-
         return new UserAccount(
             user.Id,
             user.UserName ?? string.Empty,
