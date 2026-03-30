@@ -319,7 +319,7 @@ public sealed class IdentityUserRepository(
             bool emailExists = await EmailExistsAsync(
                     normalizedEmail,
                     excludedUserId: null,
-                    CancellationToken.None)
+                    cancellationToken)
                 .ConfigureAwait(false);
             if (emailExists)
             {

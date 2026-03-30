@@ -4,7 +4,6 @@ using Beagl.Infrastructure.Database;
 using Beagl.Infrastructure.Users.Entities;
 using Beagl.Domain.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 
 namespace Beagl.Infrastructure;
 
@@ -12,11 +11,9 @@ namespace Beagl.Infrastructure;
 /// Provides methods to initialize the application's database, apply migrations, and seed default roles and users.
 /// </summary>
 /// <param name="databaseMigrator">The database migrator abstraction.</param>
-/// <param name="configuration">The configuration containing seed data.</param>
 /// <param name="roleManager">The role manager used to ensure default roles exist.</param>
 public class DatabaseInitializer(
     IDatabaseMigrator databaseMigrator,
-    IConfiguration configuration,
     RoleManager<ApplicationRole> roleManager)
 {
     private static readonly IReadOnlyList<string> _defaultRoles =
@@ -37,7 +34,6 @@ public class DatabaseInitializer(
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(databaseMigrator, nameof(databaseMigrator));
-        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
         ArgumentNullException.ThrowIfNull(roleManager, nameof(roleManager));
 
         if (migrate)

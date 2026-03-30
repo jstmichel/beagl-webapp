@@ -14,22 +14,20 @@ namespace Beagl.WebApp.Extensions;
 internal static class WebApplicationExtensions
 {
     /// <summary>
-    /// Applies any pending database migrations and seeds initial data using the provided configuration.
+    /// Applies any pending database migrations and seeds initial data.
     /// </summary>
     /// <param name="app">The web application instance.</param>
-    /// <param name="configuration">The application configuration containing seed data and other settings.</param>
     [ExcludeFromCodeCoverage]
-    internal static async Task ExecuteMigrationsAsync(this WebApplication app, IConfiguration configuration)
+    internal static async Task ExecuteMigrationsAsync(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        ArgumentNullException.ThrowIfNull(configuration);
 
         using IServiceScope scope = app.Services.CreateScope();
         ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         RoleManager<ApplicationRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
         EfCoreDatabaseMigrator migrator = new(dbContext);
 
-        DatabaseInitializer initializer = new(migrator, configuration, roleManager);
+        DatabaseInitializer initializer = new(migrator, roleManager);
         await initializer.InitializeAsync().ConfigureAwait(false);
     }
 }

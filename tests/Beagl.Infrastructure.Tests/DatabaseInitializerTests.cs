@@ -6,7 +6,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -45,8 +44,7 @@ public class DatabaseInitializerTests
         Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
         roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(migratorMock.Object, roleManagerMock.Object);
 
         // Act
         await initializer.InitializeAsync(migrate: true);
@@ -65,8 +63,7 @@ public class DatabaseInitializerTests
         Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
         roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(migratorMock.Object, roleManagerMock.Object);
 
         // Act
         await initializer.InitializeAsync(migrate: false);
@@ -76,27 +73,11 @@ public class DatabaseInitializerTests
     }
 
     [Fact]
-    public async Task InitializeAsync_NullConfiguration_ThrowsArgumentNullException()
-    {
-        // Arrange
-        Mock<IDatabaseMigrator> migratorMock = new();
-        Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
-        DatabaseInitializer initializer = new(migratorMock.Object, null!, roleManagerMock.Object);
-
-        // Act
-        Func<Task> act = async () => await initializer.InitializeAsync();
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Fact]
     public async Task InitializeAsync_NullDatabaseMigrator_ThrowsArgumentNullException()
     {
         // Arrange
-        Mock<IConfiguration> configurationMock = new();
         Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
-        DatabaseInitializer initializer = new(null!, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(null!, roleManagerMock.Object);
 
         // Act
         Func<Task> act = async () => await initializer.InitializeAsync();
@@ -110,8 +91,7 @@ public class DatabaseInitializerTests
     {
         // Arrange
         Mock<IDatabaseMigrator> migratorMock = new();
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, null!);
+        DatabaseInitializer initializer = new(migratorMock.Object, null!);
 
         // Act
         Func<Task> act = async () => await initializer.InitializeAsync();
@@ -131,8 +111,7 @@ public class DatabaseInitializerTests
         roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
         roleManagerMock.Setup(m => m.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Success);
 
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(migratorMock.Object, roleManagerMock.Object);
 
         // Act
         await initializer.InitializeAsync(migrate: false);
@@ -153,8 +132,7 @@ public class DatabaseInitializerTests
         Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
         roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(migratorMock.Object, roleManagerMock.Object);
 
         // Act
         await initializer.InitializeAsync(migrate: false);
@@ -176,8 +154,7 @@ public class DatabaseInitializerTests
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "RoleCreationFailed", Description = "failed" }));
 
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(migratorMock.Object, roleManagerMock.Object);
 
         // Act
         Func<Task> act = async () => await initializer.InitializeAsync(migrate: false);
@@ -199,8 +176,7 @@ public class DatabaseInitializerTests
         Mock<RoleManager<ApplicationRole>> roleManagerMock = CreateRoleManagerMock();
         roleManagerMock.Setup(m => m.RoleExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-        Mock<IConfiguration> configurationMock = new();
-        DatabaseInitializer initializer = new(migratorMock.Object, configurationMock.Object, roleManagerMock.Object);
+        DatabaseInitializer initializer = new(migratorMock.Object, roleManagerMock.Object);
 
         // Act
         await initializer.InitializeAsync(migrate: true, cancellationToken);

@@ -96,7 +96,7 @@ builder.AddServiceDefaults();
 WebApplication app = builder.Build();
 
 // Ensure database is created and migrations are applied at startup
-await app.ExecuteMigrationsAsync(builder.Configuration);
+await app.ExecuteMigrationsAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
