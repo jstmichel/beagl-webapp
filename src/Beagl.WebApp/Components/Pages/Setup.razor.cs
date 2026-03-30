@@ -1,7 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Beagl.Application.EmailProviders.Dtos;
 using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Setup.Dtos;
@@ -19,7 +18,6 @@ namespace Beagl.WebApp.Components.Pages;
 /// <summary>
 /// Code-behind for the initial setup wizard page.
 /// </summary>
-[SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "Blazor component name matches the page route.")]
 public sealed partial class Setup : IDisposable
 {
     private readonly CancellationTokenSource _cts = new();

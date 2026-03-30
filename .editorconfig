@@ -107,6 +107,10 @@ csharp_style_prefer_null_propagation = true:suggestion
 # Prefer collection expressions (C# 12+)
 csharp_style_prefer_collection_expression = true:suggestion
 
+# Blazor page component names match routes and may collide with Application namespace names.
+[src/Beagl.WebApp/Components/Pages/*.cs]
+dotnet_diagnostic.CA1724.severity = none
+
 # EF migrations and snapshots are generated artifacts; do not analyze them.
 [src/Beagl.Infrastructure/Migrations/*.cs]
 generated_code = true

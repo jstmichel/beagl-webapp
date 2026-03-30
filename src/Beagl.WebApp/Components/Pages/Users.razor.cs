@@ -4,7 +4,6 @@
 #pragma warning disable CA1031 // Do not catch general exception types
 
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain;
@@ -22,7 +21,6 @@ namespace Beagl.WebApp.Components.Pages;
 /// <summary>
 /// Code-behind for the user management page.
 /// </summary>
-[SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "Blazor component name matches the page route.")]
 public sealed partial class Users : IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
