@@ -36,7 +36,7 @@
         IInitialSetupService setupService = scope.ServiceProvider.GetRequiredService<IInitialSetupService>();
 
         bool setupRequired = await setupService
-            .IsSetupRequiredAsync(CancellationToken.None)
+            .IsSetupRequiredAsync(navigationContext.CancellationToken)
             .ConfigureAwait(false);
 
         string path = "/" + navigationContext.Path.Trim('/');

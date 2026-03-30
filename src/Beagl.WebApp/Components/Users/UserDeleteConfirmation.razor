@@ -1,0 +1,8 @@
+<div class="users-delete-card" data-testid="delete-panel">
+    <p class="mb-3">@L["Users.Delete.Warning", User.UserName]</p>
+    <p class="text-secondary mb-4">@L["Users.Delete.Description"]</p>
+    <div class="users-panel__actions">
+        <button type="button" class="btn btn-danger" @onclick="OnConfirm" disabled="@IsSaving">@L["Users.Action.DeleteUser"]</button>
+        <button type="button" class="btn btn-outline-secondary" @onclick="OnCancel">@L["Users.Action.Cancel"]</button>
+    </div>
+</div>

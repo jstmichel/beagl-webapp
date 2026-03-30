@@ -2,7 +2,7 @@
 
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Users.Entities;
-using Beagl.WebApp.Authentication;
+using Beagl.Infrastructure.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -301,11 +301,11 @@ public sealed class SharedLoginServiceTests
         ApplicationUser user,
         UserRole role)
     {
-        userManagerMock.Setup(manager => manager.IsInRoleAsync(user, nameof(UserRole.Citizen)))
-            .ReturnsAsync(role == UserRole.Citizen);
-        userManagerMock.Setup(manager => manager.IsInRoleAsync(user, nameof(UserRole.Employee)))
-            .ReturnsAsync(role == UserRole.Employee);
-        userManagerMock.Setup(manager => manager.IsInRoleAsync(user, nameof(UserRole.Administrator)))
-            .ReturnsAsync(role == UserRole.Administrator);
+        IList<string> roles = role == UserRole.None
+            ? []
+            : new List<string> { role.ToString() };
+
+        userManagerMock.Setup(manager => manager.GetRolesAsync(user))
+            .ReturnsAsync(roles);
     }
 }

@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-using System.ComponentModel.DataAnnotations;
 using Beagl.Application.EmailProviders.Dtos;
+using Beagl.Domain;
 using Beagl.Domain.EmailProviders;
 using Beagl.Domain.Results;
 
@@ -13,7 +13,6 @@ namespace Beagl.Application.EmailProviders.Services;
 /// <param name="repository">The email provider configuration repository.</param>
 public sealed class EmailProviderConfigService(IEmailProviderConfigRepository repository) : IEmailProviderConfigService
 {
-    private static readonly EmailAddressAttribute _emailValidator = new();
     private readonly IEmailProviderConfigRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
     /// <inheritdoc />
@@ -58,7 +57,7 @@ public sealed class EmailProviderConfigService(IEmailProviderConfigRepository re
             return Result.Failure(new ResultError("email_config.sender_email_required", "The sender email address is required."));
         }
 
-        if (!_emailValidator.IsValid(request.SenderEmail.Trim()))
+        if (!EmailValidator.IsValid(request.SenderEmail.Trim()))
         {
             return Result.Failure(new ResultError("email_config.sender_email_invalid", "The sender email address is not valid."));
         }

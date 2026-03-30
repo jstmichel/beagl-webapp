@@ -20,7 +20,8 @@ public class InitialSetupServiceTests
             .Setup(repository => repository.HasAnyAdministratorAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        InitialSetupService service = new(userRepositoryMock.Object);
+        SetupStatusCache cache = new();
+        InitialSetupService service = new(userRepositoryMock.Object, cache);
 
         // Act
         bool result = await service.IsSetupRequiredAsync(CancellationToken.None);
@@ -30,11 +31,54 @@ public class InitialSetupServiceTests
     }
 
     [Fact]
+    public async Task IsSetupRequiredAsync_WhenAdministratorExists_ShouldCacheResult()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.HasAnyAdministratorAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        SetupStatusCache cache = new();
+        InitialSetupService service = new(userRepositoryMock.Object, cache);
+
+        // Act
+        bool firstCall = await service.IsSetupRequiredAsync(CancellationToken.None);
+        bool secondCall = await service.IsSetupRequiredAsync(CancellationToken.None);
+
+        // Assert
+        firstCall.Should().BeFalse();
+        secondCall.Should().BeFalse();
+        userRepositoryMock.Verify(
+            repository => repository.HasAnyAdministratorAsync(It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task IsSetupRequiredAsync_WhenCacheAlreadyComplete_ShouldSkipRepository()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        SetupStatusCache cache = new();
+        cache.MarkSetupComplete();
+        InitialSetupService service = new(userRepositoryMock.Object, cache);
+
+        // Act
+        bool result = await service.IsSetupRequiredAsync(CancellationToken.None);
+
+        // Assert
+        result.Should().BeFalse();
+        userRepositoryMock.Verify(
+            repository => repository.HasAnyAdministratorAsync(It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
     public async Task CompleteInitialSetupAsync_WithNullRequest_ShouldThrowArgumentNullException()
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        InitialSetupService service = new(userRepositoryMock.Object);
+        InitialSetupService service = new(userRepositoryMock.Object, new SetupStatusCache());
 
         // Act
         Func<Task> act = async () => await service.CompleteInitialSetupAsync(null!, CancellationToken.None);
@@ -52,7 +96,7 @@ public class InitialSetupServiceTests
             .Setup(repository => repository.HasAnyAdministratorAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        InitialSetupService service = new(userRepositoryMock.Object);
+        InitialSetupService service = new(userRepositoryMock.Object, new SetupStatusCache());
         CompleteInitialSetupRequest request = new("admin", "admin@example.com", "Password123!");
 
         // Act
@@ -81,7 +125,7 @@ public class InitialSetupServiceTests
             .Callback<CreateUserAccount, CancellationToken>((createUser, _) => capturedCreateUser = createUser)
             .ReturnsAsync(Result.Success(new UserAccount("user-1", "admin", "admin@example.com", null, true, false, UserRole.Administrator)));
 
-        InitialSetupService service = new(userRepositoryMock.Object);
+        InitialSetupService service = new(userRepositoryMock.Object, new SetupStatusCache());
         CompleteInitialSetupRequest request = new(" admin ", " admin@example.com ", "Password123!");
 
         // Act
@@ -111,7 +155,7 @@ public class InitialSetupServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        InitialSetupService service = new(userRepositoryMock.Object);
+        InitialSetupService service = new(userRepositoryMock.Object, new SetupStatusCache());
 
         CompleteInitialSetupRequest request = new(userName, email, password);
 

@@ -17,3 +17,4 @@ Apply these rules to all test code.
 - Keep tests behavior-focused rather than implementation-focused.
 - Prefer unit tests by default. Do not add integration tests, UI tests, or end-to-end tests automatically.
 - Add integration tests only when explicitly requested by the developer.
+- All test assemblies are excluded from code coverage via `[assembly: ExcludeFromCodeCoverage]` in `tests/Directory.Build.props`. Do not add per-class `[ExcludeFromCodeCoverage]` attributes in test code.

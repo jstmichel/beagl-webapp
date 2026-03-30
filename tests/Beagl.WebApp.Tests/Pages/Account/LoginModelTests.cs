@@ -1,6 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-using Beagl.WebApp.Authentication;
+using Beagl.Domain.Users;
 using Beagl.WebApp.Pages.Account;
 using Beagl.WebApp.Resources;
 using FluentAssertions;
@@ -166,6 +166,11 @@ public sealed class LoginModelTests
         {
             CallCount++;
             return Task.FromResult(NextStatus);
+        }
+
+        public Task SignOutAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 

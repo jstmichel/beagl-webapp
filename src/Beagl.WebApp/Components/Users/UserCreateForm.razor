@@ -1,0 +1,49 @@
+<EditForm EditContext="_editContext" OnValidSubmit="SubmitAsync">
+    <DataAnnotationsValidator />
+
+    @if (_editContext.GetValidationMessages().Any())
+    {
+        <div class="alert alert-danger" role="alert">
+            <ul class="mb-0 ps-3">
+                @foreach (string message in _editContext.GetValidationMessages().Distinct())
+                {
+                    <li>@L.LocalizeValidationMessage(message)</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="users-form-grid">
+        <div>
+            <label class="form-label" for="createUserName">@L["Users.Form.UserName"]</label>
+            <InputText id="createUserName" class="form-control" @bind-Value="_form.UserName" />
+        </div>
+        <div>
+            <label class="form-label" for="createRole">@L["Users.Form.Role"]</label>
+            <InputSelect id="createRole" class="form-select" @bind-Value="_form.Role">
+                @foreach (UserRole role in SelectableRoles)
+                {
+                    <option value="@role">@LocalizeRole(role)</option>
+                }
+            </InputSelect>
+        </div>
+        <div>
+            <label class="form-label" for="createEmail">@L["Users.Form.Email"]</label>
+            <InputText id="createEmail" class="form-control" @bind-Value="_form.Email" />
+        </div>
+        <div>
+            <label class="form-label" for="createPhone">@L["Users.Form.Phone"]</label>
+            <InputText id="createPhone" class="form-control" @bind-Value="_form.PhoneNumber" />
+        </div>
+        <div>
+            <label class="form-label" for="createPassword">@L["Users.Form.TempPassword"]</label>
+            <InputText id="createPassword" type="password" class="form-control" @bind-Value="_form.Password" />
+            <div class="form-text">@L["Users.Form.TempPasswordHint"]</div>
+        </div>
+    </div>
+
+    <div class="users-panel__actions">
+        <button type="submit" class="btn btn-primary" disabled="@IsSaving">@L["Users.Action.Create"]</button>
+        <button type="button" class="btn btn-outline-secondary" @onclick="OnCancel">@L["Users.Action.Cancel"]</button>
+    </div>
+</EditForm>

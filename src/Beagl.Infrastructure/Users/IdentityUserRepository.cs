@@ -4,7 +4,6 @@ using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Beagl.Infrastructure.Users;
@@ -319,7 +318,7 @@ public sealed class IdentityUserRepository(
             bool emailExists = await EmailExistsAsync(
                     normalizedEmail,
                     excludedUserId: null,
-                    CancellationToken.None)
+                    cancellationToken)
                 .ConfigureAwait(false);
             if (emailExists)
             {
@@ -408,7 +407,6 @@ public sealed class IdentityUserRepository(
 
     private static UserAccount MapUser(ApplicationUser user, UserRole role)
     {
-
         return new UserAccount(
             user.Id,
             user.UserName ?? string.Empty,

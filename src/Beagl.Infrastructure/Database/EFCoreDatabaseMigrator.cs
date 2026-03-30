@@ -11,6 +11,8 @@ namespace Beagl.Infrastructure.Database;
 
 public class EfCoreDatabaseMigrator(ApplicationDbContext dbContext) : IDatabaseMigrator
 {
+    private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+
     /// <summary>
     /// Applies any pending migrations to the database using Entity Framework Core's migration system.
     /// </summary>
@@ -18,7 +20,6 @@ public class EfCoreDatabaseMigrator(ApplicationDbContext dbContext) : IDatabaseM
     /// <returns>A task representing the asynchronous operation.</returns>
     public Task MigrateAsync(CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(dbContext, nameof(dbContext));
-        return dbContext.Database.MigrateAsync(cancellationToken);
+        return _dbContext.Database.MigrateAsync(cancellationToken);
     }
 }

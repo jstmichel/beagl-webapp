@@ -1,0 +1,79 @@
+<div class="users-detail-sections" data-testid="details-panel">
+    <section class="users-detail-section">
+        <h3 class="users-detail-section__heading">@L["Users.Details.Section.Identity"]</h3>
+        <dl class="users-detail-grid">
+            <div>
+                <dt>@L["Users.Form.UserName"]</dt>
+                <dd>@User.UserName</dd>
+            </div>
+            <div>
+                <dt>@L["Users.Form.Role"]</dt>
+                <dd>@LocalizeRole(User.Role)</dd>
+            </div>
+        </dl>
+    </section>
+    <section class="users-detail-section">
+        <h3 class="users-detail-section__heading">@L["Users.Details.Section.Contact"]</h3>
+        <dl class="users-detail-grid">
+            <div>
+                <dt>@L["Users.Form.Email"]</dt>
+                <dd>@FormatOptionalValue(User.Email)</dd>
+            </div>
+            <div>
+                <dt>@L["Users.Form.Phone"]</dt>
+                <dd>@FormatOptionalValue(User.PhoneNumber)</dd>
+            </div>
+        </dl>
+    </section>
+    <section class="users-detail-section">
+        <h3 class="users-detail-section__heading">@L["Users.Details.Section.Account"]</h3>
+        <dl class="users-detail-grid">
+            <div>
+                <dt>@L["Users.Details.EmailConfirmation"]</dt>
+                <dd>
+                    <span class="d-inline-flex align-items-center gap-2">
+                        @if (User.EmailConfirmed)
+                        {
+                            @L["Users.Details.Confirmed"]
+                        }
+                        else
+                        {
+                            @L["Users.Details.Pending"]
+                            @if (!string.IsNullOrWhiteSpace(User.Email))
+                            {
+                            <button
+                                type="button"
+                                class="users-icon-action users-icon-action--inline"
+                                @onclick="OnCopyConfirmationLink"
+                                data-testid="copy-confirmation-link"
+                                aria-label='@L["Users.Action.CopyConfirmationLink"]'
+                                title='@L["Users.Action.CopyConfirmationLink"]'
+                                disabled="@IsSaving">
+                                <i class="bi bi-clipboard" aria-hidden="true"></i>
+                            </button>
+                            }
+                        }
+                    </span>
+                </dd>
+            </div>
+            <div>
+                <dt>@L["Users.Details.Lockout"]</dt>
+                <dd>@(User.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
+            </div>
+        </dl>
+    </section>
+    <section class="users-detail-section">
+        <h3 class="users-detail-section__heading">@L["Users.Details.Section.System"]</h3>
+        <dl class="users-detail-grid">
+            <div>
+                <dt>@L["Users.Details.Identifier"]</dt>
+                <dd><code>@User.Id</code></dd>
+            </div>
+        </dl>
+    </section>
+</div>
+<div class="users-panel__actions">
+    <button type="button" class="btn btn-outline-secondary" @onclick="OnClose">@L["Users.Action.Close"]</button>
+    <button type="button" class="btn btn-outline-primary" @onclick="OnEdit">@L["Users.Action.EditUser"]</button>
+    <button type="button" class="btn btn-outline-danger" @onclick="OnDelete">@L["Users.Action.DeleteUser"]</button>
+</div>

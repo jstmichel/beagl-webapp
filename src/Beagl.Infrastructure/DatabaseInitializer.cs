@@ -4,7 +4,6 @@ using Beagl.Infrastructure.Database;
 using Beagl.Infrastructure.Users.Entities;
 using Beagl.Domain.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 
 namespace Beagl.Infrastructure;
 
@@ -12,13 +11,14 @@ namespace Beagl.Infrastructure;
 /// Provides methods to initialize the application's database, apply migrations, and seed default roles and users.
 /// </summary>
 /// <param name="databaseMigrator">The database migrator abstraction.</param>
-/// <param name="configuration">The configuration containing seed data.</param>
 /// <param name="roleManager">The role manager used to ensure default roles exist.</param>
 public class DatabaseInitializer(
     IDatabaseMigrator databaseMigrator,
-    IConfiguration configuration,
     RoleManager<ApplicationRole> roleManager)
 {
+    private readonly IDatabaseMigrator _databaseMigrator = databaseMigrator ?? throw new ArgumentNullException(nameof(databaseMigrator));
+    private readonly RoleManager<ApplicationRole> _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+
     private static readonly IReadOnlyList<string> _defaultRoles =
     [
         UserRole.Citizen.ToString(),
@@ -27,7 +27,7 @@ public class DatabaseInitializer(
     ];
 
     /// <summary>
-    /// Applies pending migrations (if <paramref name="migrate"/> is true) and seeds default roles and users using configuration values.
+    /// Applies pending migrations (if <paramref name="migrate"/> is true) and seeds default roles and users.
     /// </summary>
     /// <param name="migrate">If true, applies pending migrations before seeding data.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -36,13 +36,9 @@ public class DatabaseInitializer(
         bool migrate = true,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(databaseMigrator, nameof(databaseMigrator));
-        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
-        ArgumentNullException.ThrowIfNull(roleManager, nameof(roleManager));
-
         if (migrate)
         {
-            await databaseMigrator.MigrateAsync(cancellationToken);
+            await _databaseMigrator.MigrateAsync(cancellationToken);
         }
 
         await EnsureRolesExistAsync().ConfigureAwait(false);
@@ -52,13 +48,13 @@ public class DatabaseInitializer(
     {
         foreach (string roleName in _defaultRoles)
         {
-            bool roleExists = await roleManager.RoleExistsAsync(roleName).ConfigureAwait(false);
+            bool roleExists = await _roleManager.RoleExistsAsync(roleName).ConfigureAwait(false);
             if (roleExists)
             {
                 continue;
             }
 
-            IdentityResult roleCreationResult = await roleManager.CreateAsync(new ApplicationRole { Name = roleName })
+            IdentityResult roleCreationResult = await _roleManager.CreateAsync(new ApplicationRole { Name = roleName })
                 .ConfigureAwait(false);
             if (!roleCreationResult.Succeeded)
             {
