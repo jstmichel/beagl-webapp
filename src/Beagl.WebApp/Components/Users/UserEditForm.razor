@@ -1,0 +1,44 @@
+<EditForm EditContext="_editContext" OnValidSubmit="SubmitAsync">
+    <DataAnnotationsValidator />
+
+    @if (_editContext.GetValidationMessages().Any())
+    {
+        <div class="alert alert-danger" role="alert">
+            <ul class="mb-0 ps-3">
+                @foreach (string message in _editContext.GetValidationMessages().Distinct())
+                {
+                    <li>@L.LocalizeValidationMessage(message)</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="users-form-grid">
+        <div>
+            <label class="form-label" for="editUserName">@L["Users.Form.UserName"]</label>
+            <InputText id="editUserName" class="form-control" @bind-Value="_form.UserName" />
+        </div>
+        <div>
+            <label class="form-label" for="editRole">@L["Users.Form.Role"]</label>
+            <InputSelect id="editRole" class="form-select" @bind-Value="_form.Role">
+                @foreach (UserRole role in SelectableRoles)
+                {
+                    <option value="@role">@LocalizeRole(role)</option>
+                }
+            </InputSelect>
+        </div>
+        <div>
+            <label class="form-label" for="editEmail">@L["Users.Form.Email"]</label>
+            <InputText id="editEmail" class="form-control" @bind-Value="_form.Email" />
+        </div>
+        <div>
+            <label class="form-label" for="editPhone">@L["Users.Form.Phone"]</label>
+            <InputText id="editPhone" class="form-control" @bind-Value="_form.PhoneNumber" />
+        </div>
+    </div>
+
+    <div class="users-panel__actions">
+        <button type="submit" class="btn btn-primary" disabled="@IsSaving">@L["Users.Action.SaveChanges"]</button>
+        <button type="button" class="btn btn-outline-secondary" @onclick="OnCancel">@L["Users.Action.Cancel"]</button>
+    </div>
+</EditForm>

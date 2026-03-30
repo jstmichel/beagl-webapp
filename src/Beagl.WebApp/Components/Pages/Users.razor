@@ -1,7 +1,6 @@
 @page "/employee/users"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
-@using Microsoft.JSInterop
 
 <PageTitle>@L["Users.PageTitle"]</PageTitle>
 
@@ -222,192 +221,30 @@
                     @switch (_panelMode)
                     {
                         case UserPanelMode.Create:
-                            <EditForm EditContext="_createEditContext" OnValidSubmit="CreateUserAsync">
-                                <DataAnnotationsValidator />
-
-                                @if (_createEditContext.GetValidationMessages().Any())
-                                {
-                                    <div class="alert alert-danger" role="alert">
-                                        <ul class="mb-0 ps-3">
-                                            @foreach (string message in _createEditContext.GetValidationMessages().Distinct())
-                                            {
-                                                <li>@L.LocalizeValidationMessage(message)</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                }
-
-                                <div class="users-form-grid">
-                                    <div>
-                                        <label class="form-label" for="createUserName">@L["Users.Form.UserName"]</label>
-                                        <InputText id="createUserName" class="form-control" @bind-Value="_createForm.UserName" />
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="createRole">@L["Users.Form.Role"]</label>
-                                        <InputSelect id="createRole" class="form-select" @bind-Value="_createForm.Role">
-                                            @foreach (UserRole role in SelectableRoles)
-                                            {
-                                                <option value="@role">@LocalizeRole(role)</option>
-                                            }
-                                        </InputSelect>
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="createEmail">@L["Users.Form.Email"]</label>
-                                        <InputText id="createEmail" class="form-control" @bind-Value="_createForm.Email" />
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="createPhone">@L["Users.Form.Phone"]</label>
-                                        <InputText id="createPhone" class="form-control" @bind-Value="_createForm.PhoneNumber" />
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="createPassword">@L["Users.Form.TempPassword"]</label>
-                                        <InputText id="createPassword" type="password" class="form-control" @bind-Value="_createForm.Password" />
-                                        <div class="form-text">@L["Users.Form.TempPasswordHint"]</div>
-                                    </div>
-                                </div>
-
-                                <div class="users-panel__actions">
-                                    <button type="submit" class="btn btn-primary" disabled="@_isSaving">@L["Users.Action.Create"]</button>
-                                    <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Cancel"]</button>
-                                </div>
-                            </EditForm>
+                            <UserCreateForm IsSaving="_isSaving" OnSubmit="OnCreateUserSubmitted" OnCancel="ClosePanel" />
                             break;
                         case UserPanelMode.Details when _selectedUser is not null:
-                            <div class="users-detail-sections" data-testid="details-panel">
-                                <section class="users-detail-section">
-                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.Identity"]</h3>
-                                    <dl class="users-detail-grid">
-                                        <div>
-                                            <dt>@L["Users.Form.UserName"]</dt>
-                                            <dd>@_selectedUser.UserName</dd>
-                                        </div>
-                                        <div>
-                                            <dt>@L["Users.Form.Role"]</dt>
-                                            <dd>@LocalizeRole(_selectedUser.Role)</dd>
-                                        </div>
-                                    </dl>
-                                </section>
-                                <section class="users-detail-section">
-                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.Contact"]</h3>
-                                    <dl class="users-detail-grid">
-                                        <div>
-                                            <dt>@L["Users.Form.Email"]</dt>
-                                            <dd>@FormatOptionalValue(_selectedUser.Email)</dd>
-                                        </div>
-                                        <div>
-                                            <dt>@L["Users.Form.Phone"]</dt>
-                                            <dd>@FormatOptionalValue(_selectedUser.PhoneNumber)</dd>
-                                        </div>
-                                    </dl>
-                                </section>
-                                <section class="users-detail-section">
-                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.Account"]</h3>
-                                    <dl class="users-detail-grid">
-                                        <div>
-                                            <dt>@L["Users.Details.EmailConfirmation"]</dt>
-                                            <dd>
-                                                <span class="d-inline-flex align-items-center gap-2">
-                                                    @if (_selectedUser.EmailConfirmed)
-                                                    {
-                                                        @L["Users.Details.Confirmed"]
-                                                    }
-                                                    else
-                                                    {
-                                                        @L["Users.Details.Pending"]
-                                                        @if (!string.IsNullOrWhiteSpace(_selectedUser.Email))
-                                                        {
-                                                        <button
-                                                            type="button"
-                                                            class="users-icon-action users-icon-action--inline"
-                                                            @onclick="CopyConfirmationLinkAsync"
-                                                            data-testid="copy-confirmation-link"
-                                                            aria-label='@L["Users.Action.CopyConfirmationLink"]'
-                                                            title='@L["Users.Action.CopyConfirmationLink"]'
-                                                            disabled="@_isSaving">
-                                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
-                                                        </button>
-                                                        }
-                                                    }
-                                                </span>
-                                            </dd>
-                                        </div>
-                                        <div>
-                                            <dt>@L["Users.Details.Lockout"]</dt>
-                                            <dd>@(_selectedUser.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
-                                        </div>
-                                    </dl>
-                                </section>
-                                <section class="users-detail-section">
-                                    <h3 class="users-detail-section__heading">@L["Users.Details.Section.System"]</h3>
-                                    <dl class="users-detail-grid">
-                                        <div>
-                                            <dt>@L["Users.Details.Identifier"]</dt>
-                                            <dd><code>@_selectedUser.Id</code></dd>
-                                        </div>
-                                    </dl>
-                                </section>
-                            </div>
-                            <div class="users-panel__actions">
-                                <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Close"]</button>
-                                <button type="button" class="btn btn-outline-primary" @onclick="() => OpenEditPanelAsync(_selectedUser.Id)">@L["Users.Action.EditUser"]</button>
-                                <button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeletePanelAsync(_selectedUser.Id)">@L["Users.Action.DeleteUser"]</button>
-                            </div>
+                            <UserDetailsView
+                                User="_selectedUser"
+                                IsSaving="_isSaving"
+                                OnEdit="() => OpenEditPanelAsync(_selectedUser.Id)"
+                                OnDelete="() => OpenDeletePanelAsync(_selectedUser.Id)"
+                                OnCopyConfirmationLink="CopyConfirmationLinkAsync"
+                                OnClose="ClosePanel" />
                             break;
-                        case UserPanelMode.Edit:
-                            <EditForm EditContext="_editEditContext" OnValidSubmit="UpdateUserAsync">
-                                <DataAnnotationsValidator />
-
-                                @if (_editEditContext.GetValidationMessages().Any())
-                                {
-                                    <div class="alert alert-danger" role="alert">
-                                        <ul class="mb-0 ps-3">
-                                            @foreach (string message in _editEditContext.GetValidationMessages().Distinct())
-                                            {
-                                                <li>@L.LocalizeValidationMessage(message)</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                }
-
-                                <div class="users-form-grid">
-                                    <div>
-                                        <label class="form-label" for="editUserName">@L["Users.Form.UserName"]</label>
-                                        <InputText id="editUserName" class="form-control" @bind-Value="_editForm.UserName" />
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="editRole">@L["Users.Form.Role"]</label>
-                                        <InputSelect id="editRole" class="form-select" @bind-Value="_editForm.Role">
-                                            @foreach (UserRole role in SelectableRoles)
-                                            {
-                                                <option value="@role">@LocalizeRole(role)</option>
-                                            }
-                                        </InputSelect>
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="editEmail">@L["Users.Form.Email"]</label>
-                                        <InputText id="editEmail" class="form-control" @bind-Value="_editForm.Email" />
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="editPhone">@L["Users.Form.Phone"]</label>
-                                        <InputText id="editPhone" class="form-control" @bind-Value="_editForm.PhoneNumber" />
-                                    </div>
-                                </div>
-
-                                <div class="users-panel__actions">
-                                    <button type="submit" class="btn btn-primary" disabled="@_isSaving">@L["Users.Action.SaveChanges"]</button>
-                                    <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Cancel"]</button>
-                                </div>
-                            </EditForm>
+                        case UserPanelMode.Edit when _selectedUser is not null:
+                            <UserEditForm
+                                User="_selectedUser"
+                                IsSaving="_isSaving"
+                                OnSubmit="OnUpdateUserSubmitted"
+                                OnCancel="ClosePanel" />
                             break;
                         case UserPanelMode.Delete when _selectedUser is not null:
-                            <div class="users-delete-card" data-testid="delete-panel">
-                                <p class="mb-3">@L["Users.Delete.Warning", _selectedUser.UserName]</p>
-                                <p class="text-secondary mb-4">@L["Users.Delete.Description"]</p>
-                                <div class="users-panel__actions">
-                                    <button type="button" class="btn btn-danger" @onclick="DeleteUserAsync" disabled="@_isSaving">@L["Users.Action.DeleteUser"]</button>
-                                    <button type="button" class="btn btn-outline-secondary" @onclick="ClosePanel">@L["Users.Action.Cancel"]</button>
-                                </div>
-                            </div>
+                            <UserDeleteConfirmation
+                                User="_selectedUser"
+                                IsSaving="_isSaving"
+                                OnConfirm="DeleteUserAsync"
+                                OnCancel="ClosePanel" />
                             break;
                     }
                 </aside>

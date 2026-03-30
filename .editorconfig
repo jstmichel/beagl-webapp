@@ -78,7 +78,7 @@ dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA1822.severity = suggestion
 
 # Prefer internal classes over public (CA1515)
-dotnet_diagnostic.CA1515.severity = suggestion
+dotnet_diagnostic.CA1515.severity = none
 
 # (Optional) You can change 'warning' to 'error' to be stricter
 # dotnet_diagnostic.CS1591.severity = error
