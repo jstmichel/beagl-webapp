@@ -107,41 +107,53 @@ public sealed partial class Setup : IDisposable
         _isSubmitting = true;
         _errorMessage = null;
 
-        CompleteInitialSetupRequest request = new(
-            _form.UserName,
-            _form.Email,
-            _form.Password);
-
-        Result result = await InitialSetupService
-            .CompleteInitialSetupAsync(request, _cts.Token)
-            .ConfigureAwait(false);
-
-        if (result.IsFailure)
+        Result accountResult = await CreateAdminAccountAsync();
+        if (accountResult.IsFailure)
         {
-            _errorMessage = L.LocalizeError(result.Error!);
+            _errorMessage = L.LocalizeError(accountResult.Error!);
             _isSubmitting = false;
             return;
         }
 
         if (!_brevoSkipped)
         {
-            SaveEmailProviderConfigRequest brevoRequest = new(
-                _brevoForm.ApiKey,
-                _brevoForm.SenderEmail,
-                _brevoForm.SenderName);
-
-            Result<EmailProviderConfigDto> brevoResult =
-                await EmailProviderConfigService.SaveAsync(brevoRequest, _cts.Token).ConfigureAwait(false);
-
-            if (brevoResult.IsFailure)
+            Result emailResult = await SaveEmailProviderConfigAsync();
+            if (emailResult.IsFailure)
             {
-                _errorMessage = L.LocalizeError(brevoResult.Error!);
+                _errorMessage = L.LocalizeError(emailResult.Error!);
                 _isSubmitting = false;
                 return;
             }
         }
 
         NavigationManager.NavigateTo("/", replace: true);
+    }
+
+    private async Task<Result> CreateAdminAccountAsync()
+    {
+        CompleteInitialSetupRequest request = new(
+            _form.UserName,
+            _form.Email,
+            _form.Password);
+
+        return await InitialSetupService
+            .CompleteInitialSetupAsync(request, _cts.Token)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<Result> SaveEmailProviderConfigAsync()
+    {
+        SaveEmailProviderConfigRequest request = new(
+            _brevoForm.ApiKey,
+            _brevoForm.SenderEmail,
+            _brevoForm.SenderName);
+
+        Result<EmailProviderConfigDto> result =
+            await EmailProviderConfigService.SaveAsync(request, _cts.Token).ConfigureAwait(false);
+
+        return result.IsFailure
+            ? Result.Failure(result.Error!)
+            : Result.Success();
     }
 
     private enum SetupStep
