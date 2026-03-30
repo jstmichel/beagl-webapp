@@ -13,7 +13,6 @@ using Beagl.Domain.EmailProviders;
 using Beagl.Domain.Users;
 using Beagl.WebApp.Authentication;
 using Beagl.WebApp.Extensions;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,11 +41,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 // Add EF Core DbContext with PostgreSQL
 string? connectionString = builder.Configuration.GetConnectionString("beagl-db");
+
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     throw new InvalidOperationException(
-        "Database connection string 'DefaultConnection' is missing from configuration.");
+        "Database connection string 'beagl-db' is missing from configuration.");
 }
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
@@ -103,6 +104,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/error", createScopeForErrors: true);
     app.UseHsts();
 }
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 app.UseRequestLocalization();
