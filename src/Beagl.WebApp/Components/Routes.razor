@@ -1,7 +1,7 @@
 @using Beagl.WebApp.Components.Layout
 @using Beagl.Application.Setup.Services
 @inject IStringLocalizer<ErrorResource> L
-@inject IInitialSetupService InitialSetupService
+@inject IServiceProvider ServiceProvider
 @inject NavigationManager NavigationManager
 
 <Router AppAssembly="typeof(Program).Assembly" OnNavigateAsync="HandleNavigateAsync">
@@ -32,8 +32,11 @@
 @code {
     private async Task HandleNavigateAsync(NavigationContext navigationContext)
     {
-        bool setupRequired = await InitialSetupService
-            .IsSetupRequiredAsync(navigationContext.CancellationToken)
+        await using AsyncServiceScope scope = ServiceProvider.CreateAsyncScope();
+        IInitialSetupService setupService = scope.ServiceProvider.GetRequiredService<IInitialSetupService>();
+
+        bool setupRequired = await setupService
+            .IsSetupRequiredAsync(CancellationToken.None)
             .ConfigureAwait(false);
 
         string path = "/" + navigationContext.Path.Trim('/');
@@ -47,7 +50,7 @@
 
         if (!setupRequired && isSetupRoute)
         {
-            NavigationManager.NavigateTo("/", replace: true);
+            NavigationManager.NavigateTo("/employee", replace: true);
         }
     }
 }

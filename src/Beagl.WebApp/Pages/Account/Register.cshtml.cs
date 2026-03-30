@@ -42,22 +42,22 @@ internal sealed class RegisterModel(
     {
         if (string.IsNullOrWhiteSpace(Input.FirstName))
         {
-            ModelState.AddModelError(nameof(Input.FirstName), localizer["Auth.Register.Validation.FirstNameRequired"]);
+            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.FirstName)}", localizer["Auth.Register.Validation.FirstNameRequired"]);
         }
 
         if (string.IsNullOrWhiteSpace(Input.LastName))
         {
-            ModelState.AddModelError(nameof(Input.LastName), localizer["Auth.Register.Validation.LastNameRequired"]);
+            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.LastName)}", localizer["Auth.Register.Validation.LastNameRequired"]);
         }
 
         if (string.IsNullOrWhiteSpace(Input.UserName))
         {
-            ModelState.AddModelError(nameof(Input.UserName), localizer["Auth.Register.Validation.UserNameRequired"]);
+            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.UserName)}", localizer["Auth.Register.Validation.UserNameRequired"]);
         }
 
         if (string.IsNullOrWhiteSpace(Input.PhoneNumber))
         {
-            ModelState.AddModelError(nameof(Input.PhoneNumber), localizer["Auth.Register.Validation.PhoneRequired"]);
+            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.PhoneNumber)}", localizer["Auth.Register.Validation.PhoneRequired"]);
         }
 
         if (!string.IsNullOrWhiteSpace(Input.Email))
@@ -65,17 +65,17 @@ internal sealed class RegisterModel(
             EmailAddressAttribute emailValidator = new();
             if (!emailValidator.IsValid(Input.Email.Trim()))
             {
-                ModelState.AddModelError(nameof(Input.Email), localizer["Auth.Register.Validation.EmailInvalid"]);
+                ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Email)}", localizer["Auth.Register.Validation.EmailInvalid"]);
             }
         }
 
         if (string.IsNullOrWhiteSpace(Input.Password))
         {
-            ModelState.AddModelError(nameof(Input.Password), localizer["Auth.Register.Validation.PasswordRequired"]);
+            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Password)}", localizer["Auth.Register.Validation.PasswordRequired"]);
         }
         else if (Input.Password.Trim().Length < 8)
         {
-            ModelState.AddModelError(nameof(Input.Password), localizer["Auth.Register.Validation.PasswordTooShort"]);
+            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Password)}", localizer["Auth.Register.Validation.PasswordTooShort"]);
         }
 
         if (!ModelState.IsValid)
@@ -92,13 +92,12 @@ internal sealed class RegisterModel(
             Input.Password!);
 
         Result<UserDetailsDto> result = await userManagementService
-            .RegisterCitizenAsync(request, HttpContext.RequestAborted)
+            .RegisterCitizenAsync(request, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (result.IsFailure)
         {
-            string message = ResolveErrorMessage(result.Error!.Code);
-            ModelState.AddModelError(string.Empty, message);
+            ModelState.AddModelError(string.Empty, ResolveErrorMessage(result.Error!.Code));
             return Page();
         }
 

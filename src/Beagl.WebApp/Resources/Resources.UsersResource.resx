@@ -70,6 +70,7 @@
   <data name="Users.Panel.Description.Edit" xml:space="preserve"><value>Update profile information without leaving the directory.</value></data>
   <data name="Users.Panel.Description.Delete" xml:space="preserve"><value>Confirm permanent removal from the staff directory.</value></data>
   <data name="Users.Error.LoadFailed" xml:space="preserve"><value>The user directory could not be loaded.</value></data>
+  <data name="Users.Error.UnexpectedError" xml:space="preserve"><value>An unexpected error occurred. Please try again.</value></data>
   <data name="Users.Success.Created" xml:space="preserve"><value>User created successfully.</value></data>
   <data name="Users.Success.Updated" xml:space="preserve"><value>User updated successfully.</value></data>
   <data name="Users.Success.Deleted" xml:space="preserve"><value>User deleted successfully.</value></data>

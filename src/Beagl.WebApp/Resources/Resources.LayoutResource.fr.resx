@@ -11,4 +11,5 @@
   <data name="Nav.Home" xml:space="preserve"><value>Accueil</value></data>
   <data name="Nav.Users" xml:space="preserve"><value>Utilisateurs</value></data>
   <data name="Nav.EmailConfig" xml:space="preserve"><value>Courriel</value></data>
+  <data name="Nav.Logout" xml:space="preserve"><value>Déconnexion</value></data>
 </root>

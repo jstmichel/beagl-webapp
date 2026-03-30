@@ -49,7 +49,7 @@ internal sealed class ConfirmEmailModel(
         }
 
         Result result = await userManagementService
-            .ConfirmAccountByTokenAsync(userId, token, HttpContext.RequestAborted)
+            .ConfirmAccountByTokenAsync(userId, token, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (result.IsFailure)

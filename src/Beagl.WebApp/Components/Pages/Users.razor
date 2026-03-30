@@ -1,5 +1,5 @@
 @page "/employee/users"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
 @inject IUserManagementService UserManagementService
 @inject ILogger<Users> Logger
@@ -218,6 +218,11 @@
                             </AuthorizeView>
                         }
                     </div>
+
+                    @if (!string.IsNullOrWhiteSpace(_errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">@_errorMessage</div>
+                    }
 
                     @switch (_panelMode)
                     {
@@ -562,15 +567,24 @@
         _statusMessage = null;
         _confirmationUrl = null;
 
-        CreateUserRequest request = new(
-            _createForm.UserName,
-            _createForm.Email,
-            _createForm.PhoneNumber,
-            _createForm.Password,
-            _createForm.Role);
+        try
+        {
+            CreateUserRequest request = new(
+                _createForm.UserName,
+                _createForm.Email,
+                _createForm.PhoneNumber,
+                _createForm.Password,
+                _createForm.Role);
 
-        Result<UserDetailsDto> result = await UserManagementService.CreateAsync(request, CancellationToken.None).ConfigureAwait(false);
-        await HandleMutationResultAsync(result, L["Users.Success.Created"], UserPanelMode.Details).ConfigureAwait(false);
+            Result<UserDetailsDto> result = await UserManagementService.CreateAsync(request, CancellationToken.None).ConfigureAwait(false);
+            await HandleMutationResultAsync(result, L["Users.Success.Created"], UserPanelMode.Details).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(exception, "Failed to create user");
+            _errorMessage = L["Users.Error.UnexpectedError"];
+            _isSaving = false;
+        }
     }
 
     private async Task UpdateUserAsync()
@@ -580,15 +594,24 @@
         _statusMessage = null;
         _confirmationUrl = null;
 
-        UpdateUserRequest request = new(
-            _editForm.Id,
-            _editForm.UserName,
-            _editForm.Email,
-            _editForm.PhoneNumber,
-            _editForm.Role);
+        try
+        {
+            UpdateUserRequest request = new(
+                _editForm.Id,
+                _editForm.UserName,
+                _editForm.Email,
+                _editForm.PhoneNumber,
+                _editForm.Role);
 
-        Result<UserDetailsDto> result = await UserManagementService.UpdateAsync(request, CancellationToken.None).ConfigureAwait(false);
-        await HandleMutationResultAsync(result, L["Users.Success.Updated"], UserPanelMode.Details).ConfigureAwait(false);
+            Result<UserDetailsDto> result = await UserManagementService.UpdateAsync(request, CancellationToken.None).ConfigureAwait(false);
+            await HandleMutationResultAsync(result, L["Users.Success.Updated"], UserPanelMode.Details).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(exception, "Failed to update user");
+            _errorMessage = L["Users.Error.UnexpectedError"];
+            _isSaving = false;
+        }
     }
 
     private async Task DeleteUserAsync()

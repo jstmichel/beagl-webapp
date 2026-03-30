@@ -38,6 +38,12 @@ public class ApplicationDbContext(
 
         RenameIdentityTables(builder);
 
+        builder.Entity<ApplicationUser>()
+            .HasIndex(u => u.NormalizedEmail)
+            .HasDatabaseName("EmailIndex")
+            .IsUnique()
+            .HasFilter("\"NormalizedEmail\" IS NOT NULL");
+
         builder.Entity<EmailProviderConfigEntity>(entity =>
         {
             entity.ToTable("EmailProviderConfigurations");

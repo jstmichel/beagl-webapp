@@ -92,6 +92,13 @@ body {
     font-size: 0.94rem;
 }
 
+.app-shell__signout {
+    appearance: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
 .app-shell__nav .nav-link {
     color: #31445f;
     border-radius: var(--radius-pill);
@@ -429,6 +436,12 @@ body {
 
 .auth-error {
     margin-bottom: 0;
+}
+
+.auth-error ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .users-page-shell::before {

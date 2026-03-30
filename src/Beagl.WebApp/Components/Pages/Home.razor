@@ -1,4 +1,4 @@
-@page "/"
+@page "/employee"
 @attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess)]
 @inject IStringLocalizer<HomeResource> L
 
@@ -12,7 +12,7 @@
             <p class="home-copy mb-0">@L["Home.Hero.Copy"]</p>
             <div class="home-actions">
                 <a class="btn btn-primary btn-lg px-4" href="/employee/users">@L["Home.Action.Users"]</a>
-                <a class="btn btn-outline-secondary btn-lg px-4" href="/">@L["Home.Action.Overview"]</a>
+                <a class="btn btn-outline-secondary btn-lg px-4" href="/employee">@L["Home.Action.Overview"]</a>
             </div>
         </article>
 

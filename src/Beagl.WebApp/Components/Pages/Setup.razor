@@ -1,5 +1,5 @@
 @page "/setup"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @using Beagl.Application.EmailProviders.Dtos
 @using Beagl.Application.EmailProviders.Services
 @using Beagl.Application.Setup.Dtos

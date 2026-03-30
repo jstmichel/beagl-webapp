@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Beagl.WebApp.Authentication;
 
 /// <summary>
-/// Provides a shared sign-in workflow for employees and administrators.
+/// Provides a shared sign-in workflow for all users.
 /// </summary>
 internal sealed class SharedLoginService(
     UserManager<ApplicationUser> userManager,
@@ -26,8 +26,8 @@ internal sealed class SharedLoginService(
             return SharedLoginStatus.InvalidCredentials;
         }
 
-        bool hasEmployeeAccess = await HasEmployeeAccessAsync(user).ConfigureAwait(false);
-        if (!hasEmployeeAccess)
+        bool hasAccess = await HasAccessAsync(user).ConfigureAwait(false);
+        if (!hasAccess)
         {
             return SharedLoginStatus.InvalidCredentials;
         }
@@ -46,11 +46,6 @@ internal sealed class SharedLoginService(
             return SharedLoginStatus.LockedOut;
         }
 
-        if (signInResult.IsNotAllowed)
-        {
-            return SharedLoginStatus.NotAllowed;
-        }
-
         return SharedLoginStatus.InvalidCredentials;
     }
 
@@ -66,8 +61,17 @@ internal sealed class SharedLoginService(
         return emailUser;
     }
 
-    private async Task<bool> HasEmployeeAccessAsync(ApplicationUser user)
+    private async Task<bool> HasAccessAsync(ApplicationUser user)
     {
+        bool isCitizen = await userManager
+            .IsInRoleAsync(user, nameof(UserRole.Citizen))
+            .ConfigureAwait(false);
+
+        if (isCitizen)
+        {
+            return true;
+        }
+
         bool isEmployee = await userManager
             .IsInRoleAsync(user, nameof(UserRole.Employee))
             .ConfigureAwait(false);

@@ -122,6 +122,20 @@ public sealed class IdentityUserRepository(
         ArgumentNullException.ThrowIfNull(user);
         cancellationToken.ThrowIfCancellationRequested();
 
+        if (user.Email is not null)
+        {
+            string normalizedEmail = user.Email.ToUpperInvariant();
+            bool emailExists = await EmailExistsAsync(
+                    normalizedEmail,
+                    excludedUserId: null,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (emailExists)
+            {
+                return Result.Failure<UserAccount>(new ResultError("users.duplicate_email", "The email address is already in use."));
+            }
+        }
+
         ApplicationUser identityUser = new()
         {
             UserName = user.UserName,
@@ -164,6 +178,20 @@ public sealed class IdentityUserRepository(
         identityUser.UserName = user.UserName;
         identityUser.Email = user.Email;
         identityUser.PhoneNumber = user.PhoneNumber;
+
+        if (user.Email is not null)
+        {
+            string normalizedEmail = user.Email.ToUpperInvariant();
+            bool emailExists = await EmailExistsAsync(
+                    normalizedEmail,
+                    identityUser.Id,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (emailExists)
+            {
+                return Result.Failure<UserAccount>(new ResultError("users.duplicate_email", "The email address is already in use."));
+            }
+        }
 
         IdentityResult updateResult = await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
         if (!updateResult.Succeeded)
@@ -285,6 +313,20 @@ public sealed class IdentityUserRepository(
             EmailConfirmed = false,
         };
 
+        if (account.Email is not null)
+        {
+            string normalizedEmail = account.Email.ToUpperInvariant();
+            bool emailExists = await EmailExistsAsync(
+                    normalizedEmail,
+                    excludedUserId: null,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
+            if (emailExists)
+            {
+                return Result.Failure<UserAccount>(new ResultError("users.duplicate_email", "The email address is already in use."));
+            }
+        }
+
         await using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction =
             await _applicationDbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
@@ -398,6 +440,29 @@ public sealed class IdentityUserRepository(
         }
 
         return await _userManager.AddToRoleAsync(user, newRole.ToString()).ConfigureAwait(false);
+    }
+
+    private async Task<bool> EmailExistsAsync(
+        string normalizedEmail,
+        string? excludedUserId,
+        CancellationToken cancellationToken)
+    {
+        IQueryable<ApplicationUser> users = _userManager.Users;
+
+        // Some unit tests use an in-memory IQueryable without IAsyncQueryProvider.
+        if (users.Provider is not Microsoft.EntityFrameworkCore.Query.IAsyncQueryProvider)
+        {
+            return users.Any(user =>
+                user.NormalizedEmail == normalizedEmail
+                && (excludedUserId == null || user.Id != excludedUserId));
+        }
+
+        return await users
+            .AnyAsync(
+                user => user.NormalizedEmail == normalizedEmail
+                    && (excludedUserId == null || user.Id != excludedUserId),
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private async Task<string?> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
