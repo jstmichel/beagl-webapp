@@ -4,7 +4,6 @@ using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Beagl.Infrastructure.Users;

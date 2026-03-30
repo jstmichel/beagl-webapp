@@ -4,6 +4,7 @@
 @using Beagl.Application.EmailProviders.Services
 @using Beagl.Application.Setup.Dtos
 @using Beagl.Application.Setup.Services
+@implements IDisposable
 @inject IInitialSetupService InitialSetupService
 @inject IEmailProviderConfigService EmailProviderConfigService
 @inject NavigationManager NavigationManager
@@ -163,6 +164,7 @@
 </section>
 
 @code {
+    private readonly CancellationTokenSource _cts = new();
     private readonly SetupFormModel _form = new();
     private readonly BrevoFormModel _brevoForm = new();
     private EditContext _editContext = default!;
@@ -180,7 +182,7 @@
     {
         _editContext = new EditContext(_form);
         _brevoEditContext = new EditContext(_brevoForm);
-        _isSetupRequired = await InitialSetupService.IsSetupRequiredAsync(CancellationToken.None).ConfigureAwait(false);
+        _isSetupRequired = await InitialSetupService.IsSetupRequiredAsync(_cts.Token).ConfigureAwait(false);
         _isCheckingSetup = false;
 
         if (!_isSetupRequired)
@@ -234,7 +236,7 @@
             _form.Password);
 
         Beagl.Domain.Results.Result result = await InitialSetupService
-            .CompleteInitialSetupAsync(request, CancellationToken.None)
+            .CompleteInitialSetupAsync(request, _cts.Token)
             .ConfigureAwait(false);
 
         if (result.IsFailure)
@@ -252,7 +254,7 @@
                 _brevoForm.SenderName);
 
             Beagl.Domain.Results.Result<Beagl.Application.EmailProviders.Dtos.EmailProviderConfigDto> brevoResult =
-                await EmailProviderConfigService.SaveAsync(brevoRequest, CancellationToken.None).ConfigureAwait(false);
+                await EmailProviderConfigService.SaveAsync(brevoRequest, _cts.Token).ConfigureAwait(false);
 
             if (brevoResult.IsFailure)
             {
@@ -275,6 +277,12 @@
     {
         LocalizedString localizedMessage = L[message];
         return localizedMessage.ResourceNotFound ? message : localizedMessage.Value;
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
     }
 
     private enum SetupStep

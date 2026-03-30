@@ -1,6 +1,7 @@
 @page "/employee/users"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
+@implements IDisposable
 @inject IUserManagementService UserManagementService
 @inject ILogger<Users> Logger
 @using Microsoft.JSInterop
@@ -422,6 +423,7 @@
 </section>
 
 @code {
+    private readonly CancellationTokenSource _cts = new();
     private readonly List<UserListItemDto> _users = [];
     private readonly CreateUserFormModel _createForm = new();
     private readonly EditUserFormModel _editForm = new();
@@ -484,7 +486,7 @@
     {
         try
         {
-            UsersMetricsDto metrics = await UserManagementService.GetUsersMetricsAsync(CancellationToken.None).ConfigureAwait(false);
+            UsersMetricsDto metrics = await UserManagementService.GetUsersMetricsAsync(_cts.Token).ConfigureAwait(false);
             _totalUsersCount = metrics.TotalUsers;
             _pendingConfirmationUsersCount = metrics.PendingConfirmationUsers;
             _lockedOutUsersCount = metrics.LockedOutUsers;
@@ -504,7 +506,7 @@
         try
         {
             GetUsersPageRequest request = new(_searchText, _currentPage, _pageSize);
-            UsersPageDto page = await UserManagementService.GetUsersPageAsync(request, CancellationToken.None).ConfigureAwait(false);
+            UsersPageDto page = await UserManagementService.GetUsersPageAsync(request, _cts.Token).ConfigureAwait(false);
 
             _users.Clear();
             _users.AddRange(page.Users);
@@ -576,7 +578,7 @@
                 _createForm.Password,
                 _createForm.Role);
 
-            Result<UserDetailsDto> result = await UserManagementService.CreateAsync(request, CancellationToken.None).ConfigureAwait(false);
+            Result<UserDetailsDto> result = await UserManagementService.CreateAsync(request, _cts.Token).ConfigureAwait(false);
             await HandleMutationResultAsync(result, L["Users.Success.Created"], UserPanelMode.Details).ConfigureAwait(false);
         }
         catch (Exception exception)
@@ -603,7 +605,7 @@
                 _editForm.PhoneNumber,
                 _editForm.Role);
 
-            Result<UserDetailsDto> result = await UserManagementService.UpdateAsync(request, CancellationToken.None).ConfigureAwait(false);
+            Result<UserDetailsDto> result = await UserManagementService.UpdateAsync(request, _cts.Token).ConfigureAwait(false);
             await HandleMutationResultAsync(result, L["Users.Success.Updated"], UserPanelMode.Details).ConfigureAwait(false);
         }
         catch (Exception exception)
@@ -626,7 +628,7 @@
         _statusMessage = null;
         _confirmationUrl = null;
 
-        Result result = await UserManagementService.DeleteAsync(_selectedUser.Id, CancellationToken.None).ConfigureAwait(false);
+        Result result = await UserManagementService.DeleteAsync(_selectedUser.Id, _cts.Token).ConfigureAwait(false);
         if (result.IsFailure)
         {
             _errorMessage = LocalizeError(result.Error!);
@@ -650,7 +652,7 @@
         _confirmationUrl = null;
 
         Result<UserDetailsDto> result = await UserManagementService
-            .ConfirmAccountAsync(userId, CancellationToken.None)
+            .ConfirmAccountAsync(userId, _cts.Token)
             .ConfigureAwait(false);
         if (result.IsFailure)
         {
@@ -683,7 +685,7 @@
         _confirmationUrl = null;
 
         Result<UserDetailsDto> result = await UserManagementService
-            .ConfirmAccountAsync(_selectedUser.Id, CancellationToken.None)
+            .ConfirmAccountAsync(_selectedUser.Id, _cts.Token)
             .ConfigureAwait(false);
         await HandleMutationResultAsync(result, L["Users.Success.AccountConfirmed"], UserPanelMode.Details).ConfigureAwait(false);
     }
@@ -701,7 +703,7 @@
         _confirmationUrl = null;
 
         Result<string> result = await UserManagementService
-            .GenerateEmailConfirmationTokenAsync(_selectedUser.Id, CancellationToken.None)
+            .GenerateEmailConfirmationTokenAsync(_selectedUser.Id, _cts.Token)
             .ConfigureAwait(false);
 
         if (result.IsFailure)
@@ -746,7 +748,7 @@
         _statusMessage = null;
         _confirmationUrl = null;
 
-        Result<UserDetailsDto> result = await UserManagementService.GetUserByIdAsync(userId, CancellationToken.None).ConfigureAwait(false);
+        Result<UserDetailsDto> result = await UserManagementService.GetUserByIdAsync(userId, _cts.Token).ConfigureAwait(false);
         if (result.IsFailure)
         {
             _errorMessage = LocalizeError(result.Error!);
@@ -839,6 +841,12 @@
         return string.IsNullOrWhiteSpace(user.UserName)
             ? "?"
             : user.UserName[..1].ToUpperInvariant();
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
     }
 
     private enum UserPanelMode

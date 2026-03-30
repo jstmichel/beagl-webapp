@@ -3,6 +3,7 @@
 @attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
 @using Beagl.Application.EmailProviders.Dtos
 @using Beagl.Application.EmailProviders.Services
+@implements IDisposable
 @inject IEmailProviderConfigService EmailProviderConfigService
 @inject IStringLocalizer<EmailConfigResource> L
 
@@ -137,6 +138,7 @@
 </section>
 
 @code {
+    private readonly CancellationTokenSource _cts = new();
     private EmailProviderConfigDto? _config;
     private bool _isLoading = true;
     private bool _showForm;
@@ -155,7 +157,7 @@
     private async Task LoadConfigAsync()
     {
         _isLoading = true;
-        _config = await EmailProviderConfigService.GetActiveAsync(CancellationToken.None).ConfigureAwait(false);
+        _config = await EmailProviderConfigService.GetActiveAsync(_cts.Token).ConfigureAwait(false);
         _isLoading = false;
     }
 
@@ -199,7 +201,7 @@
             _form.SenderName);
 
         Beagl.Domain.Results.Result<EmailProviderConfigDto> result =
-            await EmailProviderConfigService.SaveAsync(request, CancellationToken.None).ConfigureAwait(false);
+            await EmailProviderConfigService.SaveAsync(request, _cts.Token).ConfigureAwait(false);
 
         if (result.IsFailure)
         {
@@ -213,6 +215,12 @@
         _showForm = false;
         _statusMessage = L["EmailConfig.SaveSuccess"];
         _isSubmitting = false;
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
     }
 
     private sealed class EmailConfigFormModel
