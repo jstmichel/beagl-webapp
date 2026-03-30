@@ -61,28 +61,17 @@ internal sealed class SharedLoginService(
         return emailUser;
     }
 
+    private static readonly HashSet<string> _allowedRoles =
+    [
+        nameof(UserRole.Citizen),
+        nameof(UserRole.Employee),
+        nameof(UserRole.Administrator),
+    ];
+
     private async Task<bool> HasAccessAsync(ApplicationUser user)
     {
-        bool isCitizen = await userManager
-            .IsInRoleAsync(user, nameof(UserRole.Citizen))
-            .ConfigureAwait(false);
+        IList<string> roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
 
-        if (isCitizen)
-        {
-            return true;
-        }
-
-        bool isEmployee = await userManager
-            .IsInRoleAsync(user, nameof(UserRole.Employee))
-            .ConfigureAwait(false);
-
-        if (isEmployee)
-        {
-            return true;
-        }
-
-        return await userManager
-            .IsInRoleAsync(user, nameof(UserRole.Administrator))
-            .ConfigureAwait(false);
+        return roles.Any(role => _allowedRoles.Contains(role));
     }
 }
