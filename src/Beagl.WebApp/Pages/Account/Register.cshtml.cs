@@ -3,6 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
+using Beagl.Domain;
 using Beagl.Domain.Results;
 using Beagl.WebApp.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -62,8 +63,7 @@ internal sealed class RegisterModel(
 
         if (!string.IsNullOrWhiteSpace(Input.Email))
         {
-            EmailAddressAttribute emailValidator = new();
-            if (!emailValidator.IsValid(Input.Email.Trim()))
+            if (!EmailValidator.IsValid(Input.Email.Trim()))
             {
                 ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Email)}", localizer["Auth.Register.Validation.EmailInvalid"]);
             }
@@ -73,7 +73,7 @@ internal sealed class RegisterModel(
         {
             ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Password)}", localizer["Auth.Register.Validation.PasswordRequired"]);
         }
-        else if (Input.Password.Trim().Length < 8)
+        else if (Input.Password.Trim().Length < ValidationConstants.PasswordMinLength)
         {
             ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Password)}", localizer["Auth.Register.Validation.PasswordTooShort"]);
         }

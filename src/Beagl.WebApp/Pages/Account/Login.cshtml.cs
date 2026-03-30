@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using System.ComponentModel.DataAnnotations;
-using Beagl.WebApp.Authentication;
+using Beagl.Domain.Users;
 using Beagl.WebApp.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

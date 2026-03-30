@@ -1,9 +1,8 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-using Beagl.WebApp.Extensions;
 using FluentAssertions;
 
-namespace Beagl.WebApp.Tests.Extensions;
+namespace Beagl.Domain.Tests;
 
 public sealed class EmailValidatorTests
 {

@@ -2,12 +2,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Beagl.WebApp.Extensions;
+namespace Beagl.Domain;
 
 /// <summary>
 /// Provides reusable email address validation using a shared <see cref="EmailAddressAttribute"/> instance.
 /// </summary>
-internal static class EmailValidator
+public static class EmailValidator
 {
     private static readonly EmailAddressAttribute _emailAttribute = new();
 

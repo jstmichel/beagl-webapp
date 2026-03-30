@@ -1,18 +1,27 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-using Beagl.Infrastructure.Users.Entities;
 using Beagl.Domain.Users;
+using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Beagl.WebApp.Authentication;
+namespace Beagl.Infrastructure.Users;
 
 /// <summary>
 /// Provides a shared sign-in workflow for all users.
 /// </summary>
-internal sealed class SharedLoginService(
+/// <param name="userManager">The identity user manager.</param>
+/// <param name="signInManager">The identity sign-in manager.</param>
+public sealed class SharedLoginService(
     UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager) : ISharedLoginService
 {
+    private static readonly HashSet<string> _allowedRoles =
+    [
+        nameof(UserRole.Citizen),
+        nameof(UserRole.Employee),
+        nameof(UserRole.Administrator),
+    ];
+
     /// <inheritdoc />
     public async Task<SharedLoginStatus> AuthenticateAsync(string identifier, string password, bool rememberMe)
     {
@@ -49,6 +58,12 @@ internal sealed class SharedLoginService(
         return SharedLoginStatus.InvalidCredentials;
     }
 
+    /// <inheritdoc />
+    public async Task SignOutAsync()
+    {
+        await signInManager.SignOutAsync().ConfigureAwait(false);
+    }
+
     private async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier)
     {
         ApplicationUser? userNameUser = await userManager.FindByNameAsync(identifier).ConfigureAwait(false);
@@ -60,13 +75,6 @@ internal sealed class SharedLoginService(
         ApplicationUser? emailUser = await userManager.FindByEmailAsync(identifier).ConfigureAwait(false);
         return emailUser;
     }
-
-    private static readonly HashSet<string> _allowedRoles =
-    [
-        nameof(UserRole.Citizen),
-        nameof(UserRole.Employee),
-        nameof(UserRole.Administrator),
-    ];
 
     private async Task<bool> HasAccessAsync(ApplicationUser user)
     {

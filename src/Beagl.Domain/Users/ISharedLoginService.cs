@@ -1,11 +1,11 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-namespace Beagl.WebApp.Authentication;
+namespace Beagl.Domain.Users;
 
 /// <summary>
 /// Defines the shared authentication flow for username and email sign-in.
 /// </summary>
-internal interface ISharedLoginService
+public interface ISharedLoginService
 {
     /// <summary>
     /// Attempts to authenticate a user with the shared login flow.
@@ -15,4 +15,10 @@ internal interface ISharedLoginService
     /// <param name="rememberMe">A value indicating whether the authentication cookie should persist.</param>
     /// <returns>The authentication result status.</returns>
     public Task<SharedLoginStatus> AuthenticateAsync(string identifier, string password, bool rememberMe);
+
+    /// <summary>
+    /// Signs out the current user and clears the authentication cookie.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous sign-out operation.</returns>
+    public Task SignOutAsync();
 }

@@ -2,7 +2,7 @@
 
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Users.Entities;
-using Beagl.WebApp.Authentication;
+using Beagl.Infrastructure.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;

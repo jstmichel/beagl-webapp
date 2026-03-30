@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-using System.ComponentModel.DataAnnotations;
 using Beagl.Application.Setup.Dtos;
+using Beagl.Domain;
 using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 
@@ -13,7 +13,6 @@ namespace Beagl.Application.Setup.Services;
 /// <param name="userRepository">The user repository.</param>
 public sealed class InitialSetupService(IUserRepository userRepository) : IInitialSetupService
 {
-    private static readonly EmailAddressAttribute _emailValidator = new();
     private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 
     /// <inheritdoc />
@@ -67,7 +66,7 @@ public sealed class InitialSetupService(IUserRepository userRepository) : IIniti
             return Result.Failure(new ResultError("setup.user_name_required", "A user name is required."));
         }
 
-        if (request.UserName.Trim().Length > 256)
+        if (request.UserName.Trim().Length > ValidationConstants.UserNameMaxLength)
         {
             return Result.Failure(new ResultError("setup.user_name_too_long", "The user name must contain at most 256 characters."));
         }
@@ -77,7 +76,7 @@ public sealed class InitialSetupService(IUserRepository userRepository) : IIniti
             return Result.Failure(new ResultError("setup.email_required", "An email address is required."));
         }
 
-        if (!_emailValidator.IsValid(request.Email.Trim()))
+        if (!EmailValidator.IsValid(request.Email.Trim()))
         {
             return Result.Failure(new ResultError("setup.invalid_email", "The email address is not valid."));
         }
@@ -87,7 +86,7 @@ public sealed class InitialSetupService(IUserRepository userRepository) : IIniti
             return Result.Failure(new ResultError("setup.password_required", "A password is required."));
         }
 
-        if (request.Password.Trim().Length < 8)
+        if (request.Password.Trim().Length < ValidationConstants.PasswordMinLength)
         {
             return Result.Failure(new ResultError("setup.password_too_short", "The password must contain at least 8 characters."));
         }

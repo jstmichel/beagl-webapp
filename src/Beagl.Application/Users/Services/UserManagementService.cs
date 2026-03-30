@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
-using System.ComponentModel.DataAnnotations;
 using Beagl.Application.Users.Dtos;
+using Beagl.Domain;
 using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 using Microsoft.Extensions.Logging;
@@ -17,8 +17,6 @@ public sealed partial class UserManagementService(
     IUserRepository userRepository,
     ILogger<UserManagementService> logger) : IUserManagementService
 {
-    private static readonly EmailAddressAttribute _emailValidator = new();
-
     private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     private readonly ILogger<UserManagementService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -279,7 +277,7 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.user_name_required", "A user name is required."));
         }
 
-        if (request.UserName.Trim().Length > 256)
+        if (request.UserName.Trim().Length > ValidationConstants.UserNameMaxLength)
         {
             return Result.Failure(new ResultError("users.user_name_too_long", "The user name must contain at most 256 characters."));
         }
@@ -291,7 +289,7 @@ public sealed partial class UserManagementService(
         }
 
         if (!string.IsNullOrWhiteSpace(request.Email)
-            && !_emailValidator.IsValid(request.Email.Trim()))
+            && !EmailValidator.IsValid(request.Email.Trim()))
         {
             return Result.Failure(new ResultError("users.invalid_email", "The email address is not valid."));
         }
@@ -306,7 +304,7 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.password_required", "A password is required."));
         }
 
-        if (request.Password.Trim().Length < 8)
+        if (request.Password.Trim().Length < ValidationConstants.PasswordMinLength)
         {
             return Result.Failure(new ResultError("users.password_too_short", "The password must contain at least 8 characters."));
         }
@@ -331,7 +329,7 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.user_name_required", "A user name is required."));
         }
 
-        if (request.UserName.Trim().Length > 256)
+        if (request.UserName.Trim().Length > ValidationConstants.UserNameMaxLength)
         {
             return Result.Failure(new ResultError("users.user_name_too_long", "The user name must contain at most 256 characters."));
         }
@@ -343,7 +341,7 @@ public sealed partial class UserManagementService(
         }
 
         if (!string.IsNullOrWhiteSpace(request.Email)
-            && !_emailValidator.IsValid(request.Email.Trim()))
+            && !EmailValidator.IsValid(request.Email.Trim()))
         {
             return Result.Failure(new ResultError("users.invalid_email", "The email address is not valid."));
         }
@@ -378,13 +376,13 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.user_name_required", "A user name is required."));
         }
 
-        if (request.UserName.Trim().Length > 256)
+        if (request.UserName.Trim().Length > ValidationConstants.UserNameMaxLength)
         {
             return Result.Failure(new ResultError("users.user_name_too_long", "The user name must contain at most 256 characters."));
         }
 
         if (!string.IsNullOrWhiteSpace(request.Email)
-            && !_emailValidator.IsValid(request.Email.Trim()))
+            && !EmailValidator.IsValid(request.Email.Trim()))
         {
             return Result.Failure(new ResultError("users.invalid_email", "The email address is not valid."));
         }
@@ -399,7 +397,7 @@ public sealed partial class UserManagementService(
             return Result.Failure(new ResultError("users.password_required", "A password is required."));
         }
 
-        if (request.Password.Trim().Length < 8)
+        if (request.Password.Trim().Length < ValidationConstants.PasswordMinLength)
         {
             return Result.Failure(new ResultError("users.password_too_short", "The password must contain at least 8 characters."));
         }
