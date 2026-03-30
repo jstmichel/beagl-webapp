@@ -79,6 +79,7 @@ builder.Services.AddAuthorizationBuilder()
 
 builder.Services.AddScoped<IUserRepository, IdentityUserRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddSingleton<SetupStatusCache>();
 builder.Services.AddScoped<IInitialSetupService, InitialSetupService>();
 builder.Services.AddScoped<IEmailProviderConfigRepository, EmailProviderConfigRepository>();
 builder.Services.AddScoped<IEmailProviderConfigService, EmailProviderConfigService>();

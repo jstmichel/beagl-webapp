@@ -11,15 +11,30 @@ namespace Beagl.Application.Setup.Services;
 /// Implements first-run setup workflows.
 /// </summary>
 /// <param name="userRepository">The user repository.</param>
-public sealed class InitialSetupService(IUserRepository userRepository) : IInitialSetupService
+/// <param name="setupStatusCache">The setup status cache.</param>
+public sealed class InitialSetupService(
+    IUserRepository userRepository,
+    SetupStatusCache setupStatusCache) : IInitialSetupService
 {
     private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly SetupStatusCache _setupStatusCache = setupStatusCache ?? throw new ArgumentNullException(nameof(setupStatusCache));
 
     /// <inheritdoc />
     public async Task<bool> IsSetupRequiredAsync(CancellationToken cancellationToken)
     {
+        if (_setupStatusCache.IsSetupComplete)
+        {
+            return false;
+        }
+
         bool hasAdministrator = await _userRepository.HasAnyAdministratorAsync(cancellationToken).ConfigureAwait(false);
-        return !hasAdministrator;
+        if (hasAdministrator)
+        {
+            _setupStatusCache.MarkSetupComplete();
+            return false;
+        }
+
+        return true;
     }
 
     /// <inheritdoc />
@@ -55,6 +70,8 @@ public sealed class InitialSetupService(IUserRepository userRepository) : IIniti
         {
             return Result.Failure(createResult.Error!);
         }
+
+        _setupStatusCache.MarkSetupComplete();
 
         return Result.Success();
     }
