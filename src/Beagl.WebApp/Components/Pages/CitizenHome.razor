@@ -3,6 +3,7 @@
 @attribute [Authorize]
 @inject IStringLocalizer<HomeResource> L
 @inject NavigationManager NavigationManager
+@inject ICitizenProfileService CitizenProfileService
 
 <PageTitle>@L["CitizenHome.Title"]</PageTitle>
 
@@ -47,6 +48,20 @@
         if (isEmployee || isAdmin)
         {
             NavigationManager.NavigateTo("/employee", replace: true);
+            return;
+        }
+
+        string? userId = state.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            bool isComplete = await CitizenProfileService
+                .IsProfileCompleteAsync(userId, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            if (!isComplete)
+            {
+                NavigationManager.NavigateTo("/profile", replace: true);
+            }
         }
     }
 }

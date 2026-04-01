@@ -1,0 +1,180 @@
+@page "/profile"
+@layout CitizenLayout
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<PageTitle>@L["CitizenProfile.PageTitle"]</PageTitle>
+
+<section class="profile-page-shell">
+    <div class="container-xxl py-4 py-lg-5">
+        @if (_isLoading)
+        {
+            <div class="profile-loading">
+                <div class="spinner-border text-secondary" role="status">
+                    <span class="visually-hidden">@L["CitizenProfile.Loading"]</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="profile-surface mx-auto">
+                <header class="profile-header">
+                    <p class="profile-kicker">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i> @L["CitizenProfile.Kicker"]
+                    </p>
+                    <h1 class="profile-title">
+                        @(_isFirstLogin ? L["CitizenProfile.Title"] : L["CitizenProfile.Title.Edit"])
+                    </h1>
+                    <p class="profile-copy">
+                        @(_isFirstLogin ? L["CitizenProfile.Copy"] : L["CitizenProfile.Copy.Edit"])
+                    </p>
+                </header>
+
+                @if (_isFirstLogin)
+                {
+                    <div class="alert alert-info mb-3" role="alert">
+                        <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+                        @L["CitizenProfile.FirstLogin.Banner"]
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(_successMessage))
+                {
+                    <div class="alert alert-success mb-3" role="alert">
+                        <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+                        @_successMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="alert alert-danger mb-3" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>
+                        @_errorMessage
+                    </div>
+                }
+
+                <EditForm EditContext="_editContext" OnValidSubmit="HandleSubmitAsync" FormName="citizen-profile">
+                    <DataAnnotationsValidator />
+
+                    @if (_editContext.GetValidationMessages().Any())
+                    {
+                        <div class="alert alert-danger mb-3" role="alert">
+                            <ul class="mb-0 ps-3">
+                                @foreach (string message in _editContext.GetValidationMessages().Distinct())
+                                {
+                                    <li>@L.LocalizeValidationMessage(message)</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <div class="profile-form-grid">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="firstName">@L["CitizenProfile.Form.FirstName"]</label>
+                                    <InputText id="firstName" class="form-control" @bind-Value="_model.FirstName"
+                                               maxlength="@ValidationConstants.FirstNameMaxLength" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="lastName">@L["CitizenProfile.Form.LastName"]</label>
+                                    <InputText id="lastName" class="form-control" @bind-Value="_model.LastName"
+                                               maxlength="@ValidationConstants.LastNameMaxLength" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="auth-field">
+                                    <label class="form-label" for="street">@L["CitizenProfile.Form.Street"]</label>
+                                    <InputText id="street" class="form-control" @bind-Value="_model.Street"
+                                               maxlength="@ValidationConstants.StreetMaxLength" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="city">@L["CitizenProfile.Form.City"]</label>
+                                    <InputText id="city" class="form-control" @bind-Value="_model.City"
+                                               maxlength="@ValidationConstants.CityMaxLength" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="province">@L["CitizenProfile.Form.Province"]</label>
+                                    <InputText id="province" class="form-control" @bind-Value="_model.Province"
+                                               maxlength="@ValidationConstants.ProvinceMaxLength" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <div class="auth-field">
+                                    <label class="form-label" for="postalCode">@L["CitizenProfile.Form.PostalCode"]</label>
+                                    <InputText id="postalCode" class="form-control" @bind-Value="_model.PostalCode"
+                                               maxlength="@ValidationConstants.PostalCodeMaxLength" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="dateOfBirth">@L["CitizenProfile.Form.DateOfBirth"]</label>
+                                    <InputDate id="dateOfBirth" class="form-control" @bind-Value="_model.DateOfBirth" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="communicationPreference">
+                                        @L["CitizenProfile.Form.CommunicationPreference"]
+                                    </label>
+                                    <InputSelect id="communicationPreference" class="form-select"
+                                                 @bind-Value="_model.CommunicationPreference">
+                                        <option value="@CommunicationPreference.None">@L["CitizenProfile.Form.SelectOption"]</option>
+                                        <option value="@CommunicationPreference.Email">@L["CitizenProfile.CommunicationPreference.Email"]</option>
+                                        <option value="@CommunicationPreference.Phone">@L["CitizenProfile.CommunicationPreference.Phone"]</option>
+                                        <option value="@CommunicationPreference.Mail">@L["CitizenProfile.CommunicationPreference.Mail"]</option>
+                                    </InputSelect>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="languagePreference">
+                                        @L["CitizenProfile.Form.LanguagePreference"]
+                                    </label>
+                                    <InputSelect id="languagePreference" class="form-select"
+                                                 @bind-Value="_model.LanguagePreference">
+                                        <option value="@LanguagePreference.None">@L["CitizenProfile.Form.SelectOption"]</option>
+                                        <option value="@LanguagePreference.English">@L["CitizenProfile.LanguagePreference.English"]</option>
+                                        <option value="@LanguagePreference.French">@L["CitizenProfile.LanguagePreference.French"]</option>
+                                    </InputSelect>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button type="submit" class="btn btn-primary btn-lg px-4" disabled="@_isSaving">
+                                @if (_isSaving)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                                }
+                                @L["CitizenProfile.Form.Submit"]
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        }
+    </div>
+</section>

@@ -6,6 +6,7 @@ using Beagl.Infrastructure;
 using Beagl.Infrastructure.EmailProviders;
 using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
+using Beagl.Application.CitizenProfiles.Services;
 using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Setup.Services;
 using Beagl.Application.Users.Services;
@@ -84,6 +85,8 @@ builder.Services.AddScoped<IInitialSetupService, InitialSetupService>();
 builder.Services.AddScoped<IEmailProviderConfigRepository, EmailProviderConfigRepository>();
 builder.Services.AddScoped<IEmailProviderConfigService, EmailProviderConfigService>();
 builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
+builder.Services.AddScoped<ICitizenProfileRepository, CitizenProfileRepository>();
+builder.Services.AddScoped<ICitizenProfileService, CitizenProfileService>();
 
 builder.Services.AddHsts(options =>
 {

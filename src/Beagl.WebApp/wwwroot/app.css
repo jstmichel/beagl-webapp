@@ -857,3 +857,79 @@ body {
         transform: translateY(0);
     }
 }
+
+.profile-page-shell {
+    position: relative;
+    min-height: calc(100vh - 5rem);
+    display: grid;
+    align-items: start;
+}
+
+.profile-page-shell::before {
+    position: absolute;
+    inset: auto 8% 10% auto;
+    width: min(40vw, 20rem);
+    height: min(40vw, 20rem);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(78, 170, 171, 0.22), transparent 72%);
+    filter: blur(62px);
+    content: "";
+    pointer-events: none;
+}
+
+.profile-surface {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 48rem);
+    border: 1px solid var(--surface-border);
+    border-radius: calc(var(--radius-xl) + 0.4rem);
+    padding: clamp(1.4rem, 2vw + 1rem, 2.6rem);
+    background: linear-gradient(152deg, rgba(255, 255, 255, 0.97), rgba(241, 250, 250, 0.92));
+    box-shadow: var(--shadow-floating);
+    animation: reveal-up var(--speed-med) var(--ease-standard) both;
+}
+
+.profile-header {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--brand-2);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.profile-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 1.5vw + 1rem, 2.2rem);
+    font-family: "IBM Plex Sans", "Space Grotesk", sans-serif;
+}
+
+.profile-copy {
+    color: var(--ink-soft);
+}
+
+.profile-loading {
+    min-height: 10rem;
+    display: grid;
+    place-items: center;
+}
+
+.profile-form-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.profile-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}

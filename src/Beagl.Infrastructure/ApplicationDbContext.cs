@@ -60,6 +60,19 @@ public class ApplicationDbContext(
             entity.Property(e => e.UserId).IsRequired().HasMaxLength(450);
             entity.Property(e => e.FirstName).IsRequired().HasMaxLength(256);
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(256);
+            entity.OwnsOne(e => e.Address, address =>
+            {
+                address.Property(a => a.Street).HasMaxLength(256).HasColumnName("Address_Street");
+                address.Property(a => a.City).HasMaxLength(100).HasColumnName("Address_City");
+                address.Property(a => a.Province).HasMaxLength(100).HasColumnName("Address_Province");
+                address.Property(a => a.PostalCode).HasMaxLength(20).HasColumnName("Address_PostalCode");
+            });
+            entity.Property(e => e.CommunicationPreference)
+                .HasConversion<int>()
+                .HasDefaultValue(Domain.Users.CommunicationPreference.None);
+            entity.Property(e => e.LanguagePreference)
+                .HasConversion<int>()
+                .HasDefaultValue(Domain.Users.LanguagePreference.None);
             entity.HasOne(e => e.User)
                 .WithOne()
                 .HasForeignKey<CitizenProfileEntity>(e => e.UserId)

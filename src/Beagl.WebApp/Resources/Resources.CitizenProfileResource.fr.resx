@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+  <data name="CitizenProfile.PageTitle" xml:space="preserve"><value>Mon profil</value></data>
+  <data name="CitizenProfile.Kicker" xml:space="preserve"><value>Profil citoyen</value></data>
+  <data name="CitizenProfile.Title" xml:space="preserve"><value>Complétez votre profil</value></data>
+  <data name="CitizenProfile.Title.Edit" xml:space="preserve"><value>Modifier votre profil</value></data>
+  <data name="CitizenProfile.Copy" xml:space="preserve"><value>Remplissez vos informations personnelles, vos coordonnées et vos préférences de communication.</value></data>
+  <data name="CitizenProfile.Copy.Edit" xml:space="preserve"><value>Mettez à jour vos informations personnelles et vos préférences ci-dessous.</value></data>
+  <data name="CitizenProfile.Form.FirstName" xml:space="preserve"><value>Prénom</value></data>
+  <data name="CitizenProfile.Form.LastName" xml:space="preserve"><value>Nom de famille</value></data>
+  <data name="CitizenProfile.Form.Street" xml:space="preserve"><value>Rue</value></data>
+  <data name="CitizenProfile.Form.City" xml:space="preserve"><value>Ville</value></data>
+  <data name="CitizenProfile.Form.Province" xml:space="preserve"><value>Province</value></data>
+  <data name="CitizenProfile.Form.PostalCode" xml:space="preserve"><value>Code postal</value></data>
+  <data name="CitizenProfile.Form.DateOfBirth" xml:space="preserve"><value>Date de naissance</value></data>
+  <data name="CitizenProfile.Form.CommunicationPreference" xml:space="preserve"><value>Préférence de communication</value></data>
+  <data name="CitizenProfile.Form.LanguagePreference" xml:space="preserve"><value>Langue de communication</value></data>
+  <data name="CitizenProfile.Form.SelectOption" xml:space="preserve"><value>Sélectionnez une option...</value></data>
+  <data name="CitizenProfile.Form.Submit" xml:space="preserve"><value>Enregistrer le profil</value></data>
+  <data name="CitizenProfile.Form.Success" xml:space="preserve"><value>Votre profil a été enregistré avec succès.</value></data>
+  <data name="CitizenProfile.CommunicationPreference.Email" xml:space="preserve"><value>Courriel</value></data>
+  <data name="CitizenProfile.CommunicationPreference.Phone" xml:space="preserve"><value>Téléphone</value></data>
+  <data name="CitizenProfile.CommunicationPreference.Mail" xml:space="preserve"><value>Courrier</value></data>
+  <data name="CitizenProfile.LanguagePreference.English" xml:space="preserve"><value>Anglais</value></data>
+  <data name="CitizenProfile.LanguagePreference.French" xml:space="preserve"><value>Français</value></data>
+  <data name="CitizenProfile.Loading" xml:space="preserve"><value>Chargement de votre profil...</value></data>
+  <data name="CitizenProfile.FirstLogin.Banner" xml:space="preserve"><value>Veuillez compléter votre profil pour continuer à utiliser le portail.</value></data>
+  <data name="citizen_profile.first_name_required" xml:space="preserve"><value>Un prénom est requis.</value></data>
+  <data name="citizen_profile.last_name_required" xml:space="preserve"><value>Un nom de famille est requis.</value></data>
+  <data name="citizen_profile.address_required" xml:space="preserve"><value>Une adresse est requise.</value></data>
+  <data name="citizen_profile.street_required" xml:space="preserve"><value>Une rue est requise.</value></data>
+  <data name="citizen_profile.street_too_long" xml:space="preserve"><value>La rue doit contenir au plus 256 caractères.</value></data>
+  <data name="citizen_profile.city_required" xml:space="preserve"><value>Une ville est requise.</value></data>
+  <data name="citizen_profile.city_too_long" xml:space="preserve"><value>La ville doit contenir au plus 100 caractères.</value></data>
+  <data name="citizen_profile.province_required" xml:space="preserve"><value>Une province est requise.</value></data>
+  <data name="citizen_profile.province_too_long" xml:space="preserve"><value>La province doit contenir au plus 100 caractères.</value></data>
+  <data name="citizen_profile.postal_code_required" xml:space="preserve"><value>Un code postal est requis.</value></data>
+  <data name="citizen_profile.postal_code_too_long" xml:space="preserve"><value>Le code postal doit contenir au plus 20 caractères.</value></data>
+  <data name="citizen_profile.date_of_birth_required" xml:space="preserve"><value>Une date de naissance est requise.</value></data>
+  <data name="citizen_profile.communication_preference_required" xml:space="preserve"><value>Une préférence de communication est requise.</value></data>
+  <data name="citizen_profile.language_preference_required" xml:space="preserve"><value>Une préférence de langue est requise.</value></data>
+  <data name="citizen_profile.first_name_too_long" xml:space="preserve"><value>Le prénom doit contenir au plus 256 caractères.</value></data>
+  <data name="citizen_profile.last_name_too_long" xml:space="preserve"><value>Le nom de famille doit contenir au plus 256 caractères.</value></data>
+  <data name="citizen_profile.not_found" xml:space="preserve"><value>Le profil citoyen est introuvable.</value></data>
+  <data name="citizen_profile.invalid_user_id" xml:space="preserve"><value>Un identifiant d'utilisateur est requis.</value></data>
+</root>

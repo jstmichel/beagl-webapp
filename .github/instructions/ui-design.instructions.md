@@ -43,6 +43,13 @@ Use these rules for WebApp UI changes.
 - In CRUD dialogs, keep a single secondary dismissal action in the footer.
 - Do not show both a top close button and a footer cancel or close button at the same time.
 
+## Form Validation Rendering
+
+- Do not use per-field `<ValidationMessage For="..." />` components. They render raw unlocalized strings.
+- Use a single consolidated validation summary block that iterates `_editContext.GetValidationMessages()` and renders each message through `L.LocalizeValidationMessage(message)`.
+- Place the validation summary inside `<EditForm>` after `<DataAnnotationsValidator />` and before the form fields.
+- See `localization.instructions.md` for the full validation pattern, key naming, and code example.
+
 ## Detail Panel Standard
 
 Detail panels must use grouped sections with module-scoped BEM classes.

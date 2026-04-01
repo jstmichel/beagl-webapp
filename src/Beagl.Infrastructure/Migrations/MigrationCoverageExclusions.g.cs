@@ -30,3 +30,13 @@ partial class AddCitizenProfiles
 partial class EnforceUniqueEmail
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddCitizenProfileFields
+{
+}
+
+[ExcludeFromCodeCoverage]
+partial class ReplaceAddressWithStructuredFields
+{
+}
