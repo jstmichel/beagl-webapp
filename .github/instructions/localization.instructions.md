@@ -29,6 +29,36 @@ This scope intentionally includes `.razor.cs` and WebApp `.cs` files so localiza
 - Keep backend error code keys in the concern resources used by the UI.
 - French translations must use proper French orthography with accents.
 
+## Form Validation
+
+- Never use bare `[Required]`, `[MaxLength]`, or other data-annotation attributes on Blazor form models for user-facing validation. Default .NET data annotations produce English-only messages that bypass the localization pipeline.
+- Implement `IValidatableObject` on form models. Yield `ValidationResult` objects whose `ErrorMessage` is a resx key (e.g., `citizen_profile.first_name_required`).
+- In the Razor template, render errors with a consolidated validation summary block using `_editContext.GetValidationMessages()` and `L.LocalizeValidationMessage(message)`. Do not use per-field `<ValidationMessage For="..." />` components, as they render the raw (unlocalized) message.
+- The `LocalizeValidationMessage` extension method looks up the key in `IStringLocalizer` and falls back to the raw string only when the resource is not found. Always add keys to both `.resx` and `.fr.resx` concern files.
+
+### Validation Summary Pattern
+
+```razor
+@if (_editContext.GetValidationMessages().Any())
+{
+    <div class="alert alert-danger mb-3" role="alert">
+        <ul class="mb-0 ps-3">
+            @foreach (string message in _editContext.GetValidationMessages().Distinct())
+            {
+                <li>@L.LocalizeValidationMessage(message)</li>
+            }
+        </ul>
+    </div>
+}
+```
+
+Place this block inside the `<EditForm>` after `<DataAnnotationsValidator />` and before the form fields.
+
+### Validation Key Naming
+
+- Use the pattern `{concern}.{field}_{rule}` for validation keys.
+- Examples: `citizen_profile.first_name_required`, `citizen_profile.street_too_long`, `setup.organization_name_required`.
+
 ## Detail Section Keys
 
 For CRUD detail panels, section headings should use keys under `{Module}.Details.Section.{GroupName}` in both English and French resources.

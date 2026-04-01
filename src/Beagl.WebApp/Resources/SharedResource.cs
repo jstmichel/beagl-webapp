@@ -50,3 +50,10 @@ internal sealed class SetupResource
 internal sealed class EmailConfigResource
 {
 }
+
+/// <summary>
+/// Marker type for citizen profile page localization resources.
+/// </summary>
+internal sealed class CitizenProfileResource
+{
+}

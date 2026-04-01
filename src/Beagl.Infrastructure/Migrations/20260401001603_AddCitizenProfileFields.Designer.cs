@@ -3,6 +3,7 @@ using System;
 using Beagl.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Beagl.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260401001603_AddCitizenProfileFields")]
+    partial class AddCitizenProfileFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,6 +148,10 @@ namespace Beagl.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("CommunicationPreference")
                         .ValueGeneratedOnAdd()
@@ -295,45 +302,6 @@ namespace Beagl.Infrastructure.Migrations
                         .HasForeignKey("Beagl.Infrastructure.Users.Entities.CitizenProfileEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("Beagl.Infrastructure.Database.AddressEntity", "Address", b1 =>
-                        {
-                            b1.Property<Guid>("CitizenProfileEntityId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("Address_City");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("character varying(20)")
-                                .HasColumnName("Address_PostalCode");
-
-                            b1.Property<string>("Province")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("Address_Province");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(256)
-                                .HasColumnType("character varying(256)")
-                                .HasColumnName("Address_Street");
-
-                            b1.HasKey("CitizenProfileEntityId");
-
-                            b1.ToTable("CitizenProfiles");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CitizenProfileEntityId");
-                        });
-
-                    b.Navigation("Address");
 
                     b.Navigation("User");
                 });

@@ -16,4 +16,34 @@ public static class ValidationConstants
     /// Minimum allowed length for a password.
     /// </summary>
     public const int PasswordMinLength = 8;
+
+    /// <summary>
+    /// Maximum allowed length for a first name.
+    /// </summary>
+    public const int FirstNameMaxLength = 256;
+
+    /// <summary>
+    /// Maximum allowed length for a last name.
+    /// </summary>
+    public const int LastNameMaxLength = 256;
+
+    /// <summary>
+    /// Maximum allowed length for a street line.
+    /// </summary>
+    public const int StreetMaxLength = 256;
+
+    /// <summary>
+    /// Maximum allowed length for a city name.
+    /// </summary>
+    public const int CityMaxLength = 100;
+
+    /// <summary>
+    /// Maximum allowed length for a province or territory name.
+    /// </summary>
+    public const int ProvinceMaxLength = 100;
+
+    /// <summary>
+    /// Maximum allowed length for a postal code.
+    /// </summary>
+    public const int PostalCodeMaxLength = 20;
 }
