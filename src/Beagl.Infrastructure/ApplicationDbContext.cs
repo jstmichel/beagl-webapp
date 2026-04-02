@@ -84,6 +84,11 @@ public class ApplicationDbContext(
     private static void RenameIdentityTables(ModelBuilder builder)
     {
         builder.Entity<ApplicationUser>().ToTable("Users");
+
+        builder.Entity<ApplicationUser>()
+            .Property(u => u.RecoveryCode)
+            .HasMaxLength(6);
+
         builder.Entity<ApplicationRole>().ToTable("Roles");
         builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
         builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");

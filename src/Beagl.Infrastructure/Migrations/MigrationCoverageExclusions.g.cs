@@ -40,3 +40,8 @@ partial class AddCitizenProfileFields
 partial class ReplaceAddressWithStructuredFields
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddRecoveryCodeToUsers
+{
+}

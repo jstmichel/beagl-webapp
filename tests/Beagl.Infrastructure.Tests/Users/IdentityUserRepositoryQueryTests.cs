@@ -348,6 +348,77 @@ public class IdentityUserRepositoryQueryTests
         reloadedUser!.EmailConfirmed.Should().BeTrue();
     }
 
+    [Fact]
+    public async Task ResetPasswordByRecoveryCodeAsync_WhenCodeDoesNotMatch_ShouldReturnFailure()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: true, lockedOut: false));
+
+        // Act
+        Beagl.Domain.Results.Result result = await harness.Repository.ResetPasswordByRecoveryCodeAsync("XYZABC", "NewP@ssw0rd", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_recovery_code");
+    }
+
+    [Fact]
+    public async Task ResetPasswordByRecoveryCodeAsync_WhenCodeMatches_ShouldResetPasswordAndClearCode()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        ApplicationUser user = MakeUser("u1", "alice", confirmed: true, lockedOut: false);
+        user.RecoveryCode = "ABCDEF";
+        await harness.SeedUsersAsync(user);
+
+        // Act
+        Beagl.Domain.Results.Result result = await harness.Repository.ResetPasswordByRecoveryCodeAsync("ABCDEF", "NewP@ssw0rd!1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ApplicationUser? reloadedUser = await harness.FindUserByIdAsync("u1");
+        reloadedUser.Should().NotBeNull();
+        reloadedUser!.RecoveryCode.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GenerateRecoveryCodeAsync_WhenUserExists_ShouldPersistCode()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        await harness.SeedUsersAsync(MakeUser("u1", "alice", confirmed: true, lockedOut: false));
+
+        // Act
+        Beagl.Domain.Results.Result result = await harness.Repository.GenerateRecoveryCodeAsync("u1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        ApplicationUser? reloadedUser = await harness.FindUserByIdAsync("u1");
+        reloadedUser.Should().NotBeNull();
+        reloadedUser!.RecoveryCode.Should().NotBeNull();
+        reloadedUser.RecoveryCode.Should().HaveLength(6);
+        reloadedUser.RecoveryCode.Should().MatchRegex("^[A-Z]+$");
+    }
+
+    [Fact]
+    public async Task ClearRecoveryCodeAsync_WhenUserHasCode_ShouldPersistNull()
+    {
+        // Arrange
+        await using EfTestHarness harness = EfTestHarness.Create();
+        ApplicationUser user = MakeUser("u1", "alice", confirmed: true, lockedOut: false);
+        user.RecoveryCode = "ABCDEF";
+        await harness.SeedUsersAsync(user);
+
+        // Act
+        await harness.Repository.ClearRecoveryCodeAsync("u1", CancellationToken.None);
+
+        // Assert
+        ApplicationUser? reloadedUser = await harness.FindUserByIdAsync("u1");
+        reloadedUser.Should().NotBeNull();
+        reloadedUser!.RecoveryCode.Should().BeNull();
+    }
+
     private static ApplicationUser MakeUser(string id, string username, bool confirmed, bool lockedOut) =>
         new()
         {
@@ -419,6 +490,11 @@ public class IdentityUserRepositoryQueryTests
         {
             _context.Set<IdentityUserRole<string>>().AddRange(userRoles);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<ApplicationUser?> FindUserByIdAsync(string userId)
+        {
+            return await _context.Users.FindAsync(userId);
         }
 
         public async ValueTask DisposeAsync()

@@ -60,6 +60,19 @@
                 <dt>@L["Users.Details.Lockout"]</dt>
                 <dd>@(User.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
             </div>
+            <div>
+                <dt>@L["Users.Details.RecoveryCode"]</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(User.RecoveryCode))
+                    {
+                        <code>@User.RecoveryCode</code>
+                    }
+                    else
+                    {
+                        @L["Users.Details.RecoveryCode.None"]
+                    }
+                </dd>
+            </div>
         </dl>
     </section>
     <section class="users-detail-section">

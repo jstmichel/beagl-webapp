@@ -95,4 +95,37 @@ public interface IUserRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created user or a failure result.</returns>
     public Task<Result<UserAccount>> RegisterCitizenAsync(RegisterCitizenAccount account, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Finds a user by username or email identifier.
+    /// </summary>
+    /// <param name="identifier">The username or email address.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The matching user if found; otherwise, <see langword="null"/>.</returns>
+    public Task<UserAccount?> FindByIdentifierAsync(string identifier, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Generates a recovery code for the specified user.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the code generation.</returns>
+    public Task<Result> GenerateRecoveryCodeAsync(string userId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Resets a user password using a recovery code.
+    /// </summary>
+    /// <param name="code">The recovery code.</param>
+    /// <param name="newPassword">The new password.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the password reset.</returns>
+    public Task<Result> ResetPasswordByRecoveryCodeAsync(string code, string newPassword, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Clears any active recovery code for the specified user.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public Task ClearRecoveryCodeAsync(string userId, CancellationToken cancellationToken);
 }

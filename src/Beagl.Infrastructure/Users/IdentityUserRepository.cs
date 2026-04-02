@@ -1,10 +1,12 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using Beagl.Domain;
 using Beagl.Domain.Results;
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace Beagl.Infrastructure.Users;
 
@@ -112,7 +114,8 @@ public sealed class IdentityUserRepository(
             identityUser.PhoneNumber,
             identityUser.EmailConfirmed,
             identityUser.LockoutEnd.HasValue && identityUser.LockoutEnd.Value > DateTimeOffset.UtcNow,
-            role);
+            role,
+            RecoveryCode: identityUser.RecoveryCode);
     }
 
     /// <inheritdoc />
@@ -362,6 +365,94 @@ public sealed class IdentityUserRepository(
         return Result.Success(createdUser with { EmailConfirmationToken = emailConfirmationToken });
     }
 
+    /// <inheritdoc />
+    public async Task<UserAccount?> FindByIdentifierAsync(string identifier, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(identifier);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        string normalizedIdentifier = identifier.Trim();
+        ApplicationUser? identityUser = await _userManager.FindByNameAsync(normalizedIdentifier).ConfigureAwait(false);
+        identityUser ??= await _userManager.FindByEmailAsync(normalizedIdentifier).ConfigureAwait(false);
+
+        if (identityUser is null)
+        {
+            return null;
+        }
+
+        UserRole role = await GetPrimaryRoleAsync(identityUser).ConfigureAwait(false);
+
+        return MapUser(identityUser, role);
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> GenerateRecoveryCodeAsync(string userId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure(new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        identityUser.RecoveryCode = GenerateRandomCode();
+
+        IdentityResult updateResult = await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
+        if (!updateResult.Succeeded)
+        {
+            return Result.Failure(MapIdentityError(updateResult));
+        }
+
+        return Result.Success();
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> ResetPasswordByRecoveryCodeAsync(string code, string newPassword, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.Users
+            .SingleOrDefaultAsync(user => user.RecoveryCode == code, cancellationToken)
+            .ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure(new ResultError("users.invalid_recovery_code", "The recovery code is invalid."));
+        }
+
+        string resetToken = await _userManager.GeneratePasswordResetTokenAsync(identityUser).ConfigureAwait(false);
+        IdentityResult resetResult = await _userManager.ResetPasswordAsync(identityUser, resetToken, newPassword).ConfigureAwait(false);
+        if (!resetResult.Succeeded)
+        {
+            return Result.Failure(MapIdentityError(resetResult));
+        }
+
+        identityUser.RecoveryCode = null;
+
+        IdentityResult updateResult = await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
+        if (!updateResult.Succeeded)
+        {
+            return Result.Failure(MapIdentityError(updateResult));
+        }
+
+        return Result.Success();
+    }
+
+    /// <inheritdoc />
+    public async Task ClearRecoveryCodeAsync(string userId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (identityUser is null || identityUser.RecoveryCode is null)
+        {
+            return;
+        }
+
+        identityUser.RecoveryCode = null;
+        await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
+    }
+
     private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);
@@ -414,7 +505,22 @@ public sealed class IdentityUserRepository(
             user.PhoneNumber,
             user.EmailConfirmed,
             user.LockoutEnd is not null && user.LockoutEnd > DateTimeOffset.UtcNow,
-            role);
+            role,
+            RecoveryCode: user.RecoveryCode);
+    }
+
+    private static string GenerateRandomCode()
+    {
+        Span<byte> bytes = stackalloc byte[ValidationConstants.RecoveryCodeLength];
+        RandomNumberGenerator.Fill(bytes);
+
+        return string.Create(ValidationConstants.RecoveryCodeLength, bytes.ToArray(), static (span, data) =>
+        {
+            for (int i = 0; i < span.Length; i++)
+            {
+                span[i] = (char)('A' + (data[i] % 26));
+            }
+        });
     }
 
     private async Task<UserRole> GetPrimaryRoleAsync(ApplicationUser user)

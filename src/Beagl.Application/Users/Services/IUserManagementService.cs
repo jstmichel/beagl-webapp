@@ -89,4 +89,20 @@ public interface IUserManagementService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created user or a failure result.</returns>
     public Task<Result<UserDetailsDto>> RegisterCitizenAsync(RegisterCitizenRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Requests a recovery code for the specified identifier.
+    /// </summary>
+    /// <param name="identifier">The username or email address.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the request. Always succeeds from the caller perspective.</returns>
+    public Task<Result> RequestRecoveryCodeAsync(string identifier, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Recovers an account using a recovery code and new password.
+    /// </summary>
+    /// <param name="request">The account recovery request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the recovery.</returns>
+    public Task<Result> RecoverAccountAsync(RecoverAccountRequest request, CancellationToken cancellationToken);
 }

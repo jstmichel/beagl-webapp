@@ -59,4 +59,31 @@
   <data name="Auth.Register.Validation.PasswordRequired" xml:space="preserve"><value>Saisissez un mot de passe.</value></data>
   <data name="Auth.Register.Validation.PasswordTooShort" xml:space="preserve"><value>Le mot de passe doit comporter au moins 8 caractères.</value></data>
   <data name="Auth.Register.Error.RegistrationFailed" xml:space="preserve"><value>L'inscription n'a pas pu être complétée. Veuillez réessayer.</value></data>
+  <data name="Auth.ForgotPassword.PageTitle" xml:space="preserve"><value>Mot de passe oublié</value></data>
+  <data name="Auth.ForgotPassword.Kicker" xml:space="preserve"><value>Récupération de compte</value></data>
+  <data name="Auth.ForgotPassword.Title" xml:space="preserve"><value>Demander un code de récupération</value></data>
+  <data name="Auth.ForgotPassword.Description" xml:space="preserve"><value>Saisissez votre nom d'utilisateur ou courriel pour demander un code de récupération. Un gestionnaire de compte vous contactera dans un délai de 2 à 3 jours ouvrables.</value></data>
+  <data name="Auth.ForgotPassword.Identifier.Label" xml:space="preserve"><value>Nom d'utilisateur ou courriel</value></data>
+  <data name="Auth.ForgotPassword.Identifier.Placeholder" xml:space="preserve"><value>Saisissez votre nom d'utilisateur ou votre courriel</value></data>
+  <data name="Auth.ForgotPassword.Action.Submit" xml:space="preserve"><value>Demander le code</value></data>
+  <data name="Auth.ForgotPassword.Action.BackToLogin" xml:space="preserve"><value>Retour à la connexion</value></data>
+  <data name="Auth.ForgotPassword.Success" xml:space="preserve"><value>Si un compte correspond, un code de récupération a été généré. Un gestionnaire de compte vous contactera dans un délai de 2 à 3 jours ouvrables.</value></data>
+  <data name="Auth.ForgotPassword.Validation.IdentifierRequired" xml:space="preserve"><value>Saisissez votre nom d'utilisateur ou votre courriel.</value></data>
+  <data name="Auth.RecoverAccount.PageTitle" xml:space="preserve"><value>Récupération de compte</value></data>
+  <data name="Auth.RecoverAccount.Kicker" xml:space="preserve"><value>Récupération de compte</value></data>
+  <data name="Auth.RecoverAccount.Title" xml:space="preserve"><value>Réinitialiser votre mot de passe</value></data>
+  <data name="Auth.RecoverAccount.Description" xml:space="preserve"><value>Saisissez le code de récupération fourni par votre gestionnaire de compte et choisissez un nouveau mot de passe.</value></data>
+  <data name="Auth.RecoverAccount.Code.Label" xml:space="preserve"><value>Code de récupération</value></data>
+  <data name="Auth.RecoverAccount.Code.Placeholder" xml:space="preserve"><value>Code à 6 lettres</value></data>
+  <data name="Auth.RecoverAccount.NewPassword.Label" xml:space="preserve"><value>Nouveau mot de passe</value></data>
+  <data name="Auth.RecoverAccount.NewPassword.Hint" xml:space="preserve"><value>Utilisez au moins 8 caractères incluant une majuscule, une minuscule, un chiffre et un caractère spécial.</value></data>
+  <data name="Auth.RecoverAccount.Action.Submit" xml:space="preserve"><value>Réinitialiser le mot de passe</value></data>
+  <data name="Auth.RecoverAccount.Action.BackToLogin" xml:space="preserve"><value>Retour à la connexion</value></data>
+  <data name="Auth.RecoverAccount.Success" xml:space="preserve"><value>Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.</value></data>
+  <data name="Auth.RecoverAccount.Validation.CodeRequired" xml:space="preserve"><value>Saisissez le code de récupération.</value></data>
+  <data name="Auth.RecoverAccount.Validation.PasswordRequired" xml:space="preserve"><value>Saisissez un nouveau mot de passe.</value></data>
+  <data name="Auth.RecoverAccount.Validation.PasswordTooShort" xml:space="preserve"><value>Le mot de passe doit comporter au moins 8 caractères.</value></data>
+  <data name="Auth.RecoverAccount.Error.RecoveryFailed" xml:space="preserve"><value>La récupération du compte a échoué. Veuillez vérifier le code et réessayer.</value></data>
+  <data name="Auth.Login.Action.ForgotPassword" xml:space="preserve"><value>Mot de passe oublié&#160;?</value></data>
+  <data name="Auth.Login.Action.RecoverAccount" xml:space="preserve"><value>J'ai un code de récupération</value></data>
 </root>

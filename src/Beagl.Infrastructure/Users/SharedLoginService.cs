@@ -47,6 +47,12 @@ public sealed class SharedLoginService(
 
         if (signInResult.Succeeded)
         {
+            if (user.RecoveryCode is not null)
+            {
+                user.RecoveryCode = null;
+                await userManager.UpdateAsync(user).ConfigureAwait(false);
+            }
+
             return SharedLoginStatus.Succeeded;
         }
 

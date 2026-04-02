@@ -46,4 +46,9 @@ public static class ValidationConstants
     /// Maximum allowed length for a postal code.
     /// </summary>
     public const int PostalCodeMaxLength = 20;
+
+    /// <summary>
+    /// Length of the account recovery code.
+    /// </summary>
+    public const int RecoveryCodeLength = 6;
 }
