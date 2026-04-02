@@ -14,6 +14,7 @@ using Beagl.Domain.Users;
 /// <param name="EmailConfirmed">A value indicating whether the email address is confirmed.</param>
 /// <param name="IsLockedOut">A value indicating whether the user is currently locked out.</param>
 /// <param name="Role">The user role.</param>
+/// <param name="HasRecoveryCode">A value indicating whether the user has an active recovery code.</param>
 public sealed record UserListItemDto(
     string Id,
     string UserName,
@@ -21,4 +22,5 @@ public sealed record UserListItemDto(
     string? PhoneNumber,
     bool EmailConfirmed,
     bool IsLockedOut,
-    UserRole Role);
+    UserRole Role,
+    bool HasRecoveryCode = false);

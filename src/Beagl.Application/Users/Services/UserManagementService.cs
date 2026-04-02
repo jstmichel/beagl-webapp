@@ -240,6 +240,74 @@ public sealed partial class UserManagementService(
         return Result.Success(MapDetails(result.Value));
     }
 
+    /// <inheritdoc />
+    public async Task<Result> RequestRecoveryCodeAsync(string identifier, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(identifier))
+        {
+            return Result.Success();
+        }
+
+        string trimmedIdentifier = identifier.Trim();
+
+        UserAccount? user = await _userRepository
+            .FindByIdentifierAsync(trimmedIdentifier, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is null)
+        {
+            return Result.Success();
+        }
+
+        Result result = await _userRepository
+            .GenerateRecoveryCodeAsync(user.Id, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.IsSuccess)
+        {
+            LogRecoveryCodeRequested(_logger, trimmedIdentifier);
+        }
+
+        return Result.Success();
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> RecoverAccountAsync(RecoverAccountRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Code))
+        {
+            return Result.Failure(new ResultError("users.recovery_code_required", "A recovery code is required."));
+        }
+
+        if (request.Code.Trim().Length != ValidationConstants.RecoveryCodeLength)
+        {
+            return Result.Failure(new ResultError("users.invalid_recovery_code", "The recovery code is invalid."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.NewPassword))
+        {
+            return Result.Failure(new ResultError("users.password_required", "A password is required."));
+        }
+
+        if (request.NewPassword.Trim().Length < ValidationConstants.PasswordMinLength)
+        {
+            return Result.Failure(new ResultError("users.password_too_short", "The password must contain at least 8 characters."));
+        }
+
+        Result result = await _userRepository
+            .ResetPasswordByRecoveryCodeAsync(request.Code.Trim().ToUpperInvariant(), request.NewPassword, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.IsSuccess)
+        {
+            LogAccountRecovered(_logger);
+        }
+
+        return result;
+    }
+
     private static UserListItemDto MapListItem(UserAccount user)
     {
         return new UserListItemDto(
@@ -249,7 +317,8 @@ public sealed partial class UserManagementService(
             user.PhoneNumber,
             user.EmailConfirmed,
             user.IsLockedOut,
-            user.Role);
+            user.Role,
+            user.RecoveryCode is not null);
     }
 
     private static UserDetailsDto MapDetails(UserAccount user)
@@ -262,7 +331,8 @@ public sealed partial class UserManagementService(
             user.EmailConfirmed,
             user.IsLockedOut,
             user.Role,
-            user.EmailConfirmationToken);
+            user.EmailConfirmationToken,
+            user.RecoveryCode);
     }
 
     private static Result ValidateCreateRequest(CreateUserRequest request)
@@ -425,4 +495,10 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1007, Level = LogLevel.Information, Message = "Citizen self-registered user {UserId}")]
     private static partial void LogCitizenRegistered(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1008, Level = LogLevel.Information, Message = "Recovery code requested for identifier {Identifier}")]
+    private static partial void LogRecoveryCodeRequested(ILogger logger, string identifier);
+
+    [LoggerMessage(EventId = 1009, Level = LogLevel.Information, Message = "Account recovered by recovery code")]
+    private static partial void LogAccountRecovered(ILogger logger);
 }

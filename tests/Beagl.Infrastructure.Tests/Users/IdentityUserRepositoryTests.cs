@@ -1060,6 +1060,277 @@ public class IdentityUserRepositoryTests
         userManagerMock.Verify(manager => manager.AddToRoleAsync(identityUser, UserRole.Employee.ToString()), Times.Once);
     }
 
+    [Fact]
+    public async Task FindByIdentifierAsync_WithNullIdentifier_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Func<Task> act = async () => await repository.FindByIdentifierAsync(null!, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task FindByIdentifierAsync_WhenUserFoundByUserName_ShouldReturnUser()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", PhoneNumber = "555-0100", EmailConfirmed = true };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("alex"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be("user-1");
+        result.UserName.Should().Be("alex");
+        userManagerMock.Verify(manager => manager.FindByNameAsync("alex"), Times.Once);
+        userManagerMock.Verify(manager => manager.FindByEmailAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task FindByIdentifierAsync_WhenUserNotFoundByUserName_ShouldFallBackToEmail()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", PhoneNumber = "555-0100", EmailConfirmed = true };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("alex@example.com"))
+            .ReturnsAsync((ApplicationUser?)null);
+        userManagerMock
+            .Setup(manager => manager.FindByEmailAsync("alex@example.com"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("alex@example.com", CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be("user-1");
+        userManagerMock.Verify(manager => manager.FindByNameAsync("alex@example.com"), Times.Once);
+        userManagerMock.Verify(manager => manager.FindByEmailAsync("alex@example.com"), Times.Once);
+    }
+
+    [Fact]
+    public async Task FindByIdentifierAsync_WhenNoUserFound_ShouldReturnNull()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("unknown"))
+            .ReturnsAsync((ApplicationUser?)null);
+        userManagerMock
+            .Setup(manager => manager.FindByEmailAsync("unknown"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("unknown", CancellationToken.None);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task FindByIdentifierAsync_ShouldTrimIdentifier()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", EmailConfirmed = true };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("alex"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("  alex  ", CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        userManagerMock.Verify(manager => manager.FindByNameAsync("alex"), Times.Once);
+    }
+
+    [Fact]
+    public async Task FindByIdentifierAsync_ShouldMapRecoveryCode()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", Email = "alex@example.com", EmailConfirmed = true, RecoveryCode = "ABCDEF" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("alex"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.RecoveryCode.Should().Be("ABCDEF");
+    }
+
+    [Fact]
+    public async Task GenerateRecoveryCodeAsync_WhenUserNotFound_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.GenerateRecoveryCodeAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
+    [Fact]
+    public async Task GenerateRecoveryCodeAsync_WhenUserFound_ShouldSetRecoveryCodeAndSucceed()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.UpdateAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Success);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.GenerateRecoveryCodeAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        identityUser.RecoveryCode.Should().NotBeNull();
+        identityUser.RecoveryCode.Should().HaveLength(6);
+        identityUser.RecoveryCode.Should().MatchRegex("^[A-Z]+$");
+        userManagerMock.Verify(manager => manager.UpdateAsync(identityUser), Times.Once);
+    }
+
+    [Fact]
+    public async Task GenerateRecoveryCodeAsync_WhenUpdateFails_ShouldReturnFailure()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.UpdateAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "ConcurrencyFailure", Description = "Concurrency failure." }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result result = await repository.GenerateRecoveryCodeAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ClearRecoveryCodeAsync_WhenUserNotFound_ShouldReturnWithoutError()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Func<Task> act = async () => await repository.ClearRecoveryCodeAsync("user-1", CancellationToken.None);
+
+        // Assert
+        await act.Should().NotThrowAsync();
+        userManagerMock.Verify(manager => manager.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ClearRecoveryCodeAsync_WhenUserHasNoRecoveryCode_ShouldReturnWithoutUpdate()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", RecoveryCode = null };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        await repository.ClearRecoveryCodeAsync("user-1", CancellationToken.None);
+
+        // Assert
+        userManagerMock.Verify(manager => manager.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ClearRecoveryCodeAsync_WhenUserHasRecoveryCode_ShouldClearAndUpdate()
+    {
+        // Arrange
+        ApplicationUser identityUser = new() { Id = "user-1", UserName = "alex", RecoveryCode = "ABCDEF" };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.UpdateAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Success);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        await repository.ClearRecoveryCodeAsync("user-1", CancellationToken.None);
+
+        // Assert
+        identityUser.RecoveryCode.Should().BeNull();
+        userManagerMock.Verify(manager => manager.UpdateAsync(identityUser), Times.Once);
+    }
+
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
     {
         Mock<IUserStore<ApplicationUser>> userStoreMock = new();

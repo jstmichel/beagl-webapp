@@ -101,4 +101,9 @@
   <data name="Users.Action.CopyConfirmationLink" xml:space="preserve"><value>Copy confirmation link</value></data>
   <data name="Users.Success.ConfirmationLinkCopied" xml:space="preserve"><value>Confirmation link copied to clipboard.</value></data>
   <data name="Users.Info.CopyManually" xml:space="preserve"><value>Could not copy automatically. Select the link below and copy it manually.</value></data>
+  <data name="Users.Status.RecoveryCode" xml:space="preserve"><value>Recovery pending</value></data>
+  <data name="Users.Details.RecoveryCode" xml:space="preserve"><value>Recovery code</value></data>
+  <data name="Users.Details.RecoveryCode.None" xml:space="preserve"><value>None</value></data>
+  <data name="users.recovery_code_required" xml:space="preserve"><value>A recovery code is required.</value></data>
+  <data name="users.invalid_recovery_code" xml:space="preserve"><value>The recovery code is invalid.</value></data>
 </root>

@@ -125,6 +125,10 @@
                                                 {
                                                     <span class="badge text-bg-warning">@L["Users.Status.LockedOut"]</span>
                                                 }
+                                                @if (user.HasRecoveryCode)
+                                                {
+                                                    <span class="badge text-bg-info">@L["Users.Status.RecoveryCode"]</span>
+                                                }
                                             </div>
                                         </td>
                                         <td>

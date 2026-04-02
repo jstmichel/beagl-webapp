@@ -13,6 +13,7 @@ namespace Beagl.Domain.Users;
 /// <param name="IsLockedOut">A value indicating whether the user is currently locked out.</param>
 /// <param name="Role">The user role.</param>
 /// <param name="EmailConfirmationToken">The email confirmation token produced at account creation time.</param>
+/// <param name="RecoveryCode">The active account recovery code, if any.</param>
 public sealed record UserAccount(
     string Id,
     string UserName,
@@ -21,4 +22,5 @@ public sealed record UserAccount(
     bool EmailConfirmed,
     bool IsLockedOut,
     UserRole Role,
-    string? EmailConfirmationToken = null);
+    string? EmailConfirmationToken = null,
+    string? RecoveryCode = null);

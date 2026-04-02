@@ -59,4 +59,31 @@
   <data name="Auth.Register.Validation.PasswordRequired" xml:space="preserve"><value>Enter a password.</value></data>
   <data name="Auth.Register.Validation.PasswordTooShort" xml:space="preserve"><value>The password must be at least 8 characters long.</value></data>
   <data name="Auth.Register.Error.RegistrationFailed" xml:space="preserve"><value>Registration could not be completed. Please try again.</value></data>
+  <data name="Auth.ForgotPassword.PageTitle" xml:space="preserve"><value>Forgot password</value></data>
+  <data name="Auth.ForgotPassword.Kicker" xml:space="preserve"><value>Account recovery</value></data>
+  <data name="Auth.ForgotPassword.Title" xml:space="preserve"><value>Request a recovery code</value></data>
+  <data name="Auth.ForgotPassword.Description" xml:space="preserve"><value>Enter your username or email to request a recovery code. An account manager will contact you within 2-3 business days.</value></data>
+  <data name="Auth.ForgotPassword.Identifier.Label" xml:space="preserve"><value>Username or email</value></data>
+  <data name="Auth.ForgotPassword.Identifier.Placeholder" xml:space="preserve"><value>Enter your username or email</value></data>
+  <data name="Auth.ForgotPassword.Action.Submit" xml:space="preserve"><value>Request code</value></data>
+  <data name="Auth.ForgotPassword.Action.BackToLogin" xml:space="preserve"><value>Back to sign in</value></data>
+  <data name="Auth.ForgotPassword.Success" xml:space="preserve"><value>If an account matches, a recovery code has been generated. An account manager will contact you within 2-3 business days.</value></data>
+  <data name="Auth.ForgotPassword.Validation.IdentifierRequired" xml:space="preserve"><value>Enter your username or email.</value></data>
+  <data name="Auth.RecoverAccount.PageTitle" xml:space="preserve"><value>Recover account</value></data>
+  <data name="Auth.RecoverAccount.Kicker" xml:space="preserve"><value>Account recovery</value></data>
+  <data name="Auth.RecoverAccount.Title" xml:space="preserve"><value>Reset your password</value></data>
+  <data name="Auth.RecoverAccount.Description" xml:space="preserve"><value>Enter the recovery code provided by your account manager and choose a new password.</value></data>
+  <data name="Auth.RecoverAccount.Code.Label" xml:space="preserve"><value>Recovery code</value></data>
+  <data name="Auth.RecoverAccount.Code.Placeholder" xml:space="preserve"><value>6-letter code</value></data>
+  <data name="Auth.RecoverAccount.NewPassword.Label" xml:space="preserve"><value>New password</value></data>
+  <data name="Auth.RecoverAccount.NewPassword.Hint" xml:space="preserve"><value>Use at least 8 characters including uppercase, lowercase, a digit, and a special character.</value></data>
+  <data name="Auth.RecoverAccount.Action.Submit" xml:space="preserve"><value>Reset password</value></data>
+  <data name="Auth.RecoverAccount.Action.BackToLogin" xml:space="preserve"><value>Back to sign in</value></data>
+  <data name="Auth.RecoverAccount.Success" xml:space="preserve"><value>Your password has been reset. You can now sign in.</value></data>
+  <data name="Auth.RecoverAccount.Validation.CodeRequired" xml:space="preserve"><value>Enter the recovery code.</value></data>
+  <data name="Auth.RecoverAccount.Validation.PasswordRequired" xml:space="preserve"><value>Enter a new password.</value></data>
+  <data name="Auth.RecoverAccount.Validation.PasswordTooShort" xml:space="preserve"><value>The password must be at least 8 characters long.</value></data>
+  <data name="Auth.RecoverAccount.Error.RecoveryFailed" xml:space="preserve"><value>Account recovery failed. Please verify the code and try again.</value></data>
+  <data name="Auth.Login.Action.ForgotPassword" xml:space="preserve"><value>Forgot password?</value></data>
+  <data name="Auth.Login.Action.RecoverAccount" xml:space="preserve"><value>I have a recovery code</value></data>
 </root>

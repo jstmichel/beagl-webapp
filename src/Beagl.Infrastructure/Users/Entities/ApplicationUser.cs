@@ -7,4 +7,8 @@ namespace Beagl.Infrastructure.Users.Entities;
 /// </summary>
 public class ApplicationUser : Microsoft.AspNetCore.Identity.IdentityUser
 {
+    /// <summary>
+    /// Gets or sets the active account recovery code.
+    /// </summary>
+    public string? RecoveryCode { get; set; }
 }
