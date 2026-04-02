@@ -248,8 +248,10 @@ public sealed partial class UserManagementService(
             return Result.Success();
         }
 
+        string trimmedIdentifier = identifier.Trim();
+
         UserAccount? user = await _userRepository
-            .FindByIdentifierAsync(identifier.Trim(), cancellationToken)
+            .FindByIdentifierAsync(trimmedIdentifier, cancellationToken)
             .ConfigureAwait(false);
 
         if (user is null)
@@ -263,7 +265,7 @@ public sealed partial class UserManagementService(
 
         if (result.IsSuccess)
         {
-            LogRecoveryCodeRequested(_logger, identifier.Trim());
+            LogRecoveryCodeRequested(_logger, trimmedIdentifier);
         }
 
         return Result.Success();
