@@ -1,6 +1,7 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using Beagl.Application.CitizenProfiles.Dtos;
+using Beagl.Application.EmailProviders.Services;
 using Beagl.Domain;
 using Beagl.Domain.Results;
 using Beagl.Domain.Users;
@@ -12,13 +13,23 @@ namespace Beagl.Application.CitizenProfiles.Services;
 /// Implements citizen profile management workflows.
 /// </summary>
 /// <param name="citizenProfileRepository">The citizen profile repository.</param>
+/// <param name="userRepository">The user repository.</param>
+/// <param name="emailSender">The email sender.</param>
 /// <param name="logger">The logger.</param>
 public sealed partial class CitizenProfileService(
     ICitizenProfileRepository citizenProfileRepository,
+    IUserRepository userRepository,
+    IEmailSender emailSender,
     ILogger<CitizenProfileService> logger) : ICitizenProfileService
 {
     private readonly ICitizenProfileRepository _citizenProfileRepository =
         citizenProfileRepository ?? throw new ArgumentNullException(nameof(citizenProfileRepository));
+
+    private readonly IUserRepository _userRepository =
+        userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+
+    private readonly IEmailSender _emailSender =
+        emailSender ?? throw new ArgumentNullException(nameof(emailSender));
 
     private readonly ILogger<CitizenProfileService> _logger =
         logger ?? throw new ArgumentNullException(nameof(logger));
@@ -32,17 +43,24 @@ public sealed partial class CitizenProfileService(
                 new ResultError("citizen_profile.invalid_user_id", "A user identifier is required."));
         }
 
+        string trimmedUserId = userId.Trim();
+
         CitizenProfile? profile = await _citizenProfileRepository
-            .GetByUserIdAsync(userId.Trim(), cancellationToken)
+            .GetByUserIdAsync(trimmedUserId, cancellationToken)
+            .ConfigureAwait(false);
+
+        UserAccount? user = await _userRepository
+            .GetByIdAsync(trimmedUserId, cancellationToken)
             .ConfigureAwait(false);
 
         if (profile is null)
         {
-            return Result.Failure<CitizenProfileDto>(
-                new ResultError("citizen_profile.not_found", "The citizen profile could not be found."));
+            return Result.Success(MapDto(
+                new CitizenProfile(Guid.Empty, trimmedUserId, string.Empty, string.Empty, null, null, CommunicationPreference.None, LanguagePreference.None),
+                user));
         }
 
-        return Result.Success(MapDto(profile));
+        return Result.Success(MapDto(profile, user));
     }
 
     /// <inheritdoc />
@@ -80,8 +98,12 @@ public sealed partial class CitizenProfileService(
             return Result.Failure<CitizenProfileDto>(result.Error!);
         }
 
+        UserAccount? user = await _userRepository
+            .GetByIdAsync(request.UserId.Trim(), cancellationToken)
+            .ConfigureAwait(false);
+
         LogProfileUpdated(_logger, result.Value!.UserId);
-        return Result.Success(MapDto(result.Value));
+        return Result.Success(MapDto(result.Value, user));
     }
 
     /// <inheritdoc />
@@ -97,7 +119,131 @@ public sealed partial class CitizenProfileService(
             .ConfigureAwait(false);
     }
 
-    private static CitizenProfileDto MapDto(CitizenProfile profile)
+    /// <inheritdoc />
+    public async Task<Result<CitizenProfileDto>> UpdateIdentityAsync(
+        UpdateCitizenIdentityRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        Result validation = ValidateIdentityRequest(request);
+        if (validation.IsFailure)
+        {
+            return Result.Failure<CitizenProfileDto>(validation.Error!);
+        }
+
+        string trimmedUserId = request.UserId.Trim();
+
+        UpdateCitizenIdentity identity = new(
+            trimmedUserId,
+            request.PhoneNumber.Trim(),
+            string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim());
+
+        Result<UserAccount> identityResult = await _userRepository
+            .UpdateCitizenIdentityAsync(identity, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (identityResult.IsFailure)
+        {
+            return Result.Failure<CitizenProfileDto>(identityResult.Error!);
+        }
+
+        CitizenProfile? profile = await _citizenProfileRepository
+            .GetByUserIdAsync(trimmedUserId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (profile is null)
+        {
+            return Result.Failure<CitizenProfileDto>(
+                new ResultError("citizen_profile.not_found", "The citizen profile could not be found."));
+        }
+
+        LogIdentityUpdated(_logger, trimmedUserId);
+        return Result.Success(MapDto(profile, identityResult.Value));
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> SendEmailConfirmationAsync(
+        string userId,
+        Uri confirmationBaseUrl,
+        LanguagePreference languagePreference,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(confirmationBaseUrl);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Result.Failure(
+                new ResultError("citizen_profile.invalid_user_id", "A user identifier is required."));
+        }
+
+        string trimmedUserId = userId.Trim();
+
+        UserAccount? user = await _userRepository
+            .GetByIdAsync(trimmedUserId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is null)
+        {
+            return Result.Failure(new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        if (string.IsNullOrWhiteSpace(user.Email))
+        {
+            return Result.Failure(new ResultError("users.email_required", "An email address is required."));
+        }
+
+        if (user.EmailConfirmed)
+        {
+            return Result.Failure(
+                new ResultError("users.already_confirmed", "The email address is already confirmed."));
+        }
+
+        Result<string> tokenResult = await _userRepository
+            .GenerateEmailConfirmationTokenAsync(trimmedUserId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (tokenResult.IsFailure)
+        {
+            return Result.Failure(tokenResult.Error!);
+        }
+
+        string encodedToken = Uri.EscapeDataString(tokenResult.Value!);
+        string confirmationLink = $"{confirmationBaseUrl.GetLeftPart(UriPartial.Path)}?userId={Uri.EscapeDataString(trimmedUserId)}&token={encodedToken}";
+
+        bool isFrench = languagePreference == LanguagePreference.French;
+
+        string subject = isFrench
+            ? "Confirmez votre adresse courriel"
+            : "Confirm your email address";
+
+        string linkText = isFrench
+            ? "Confirmer mon adresse courriel"
+            : "Confirm my email address";
+
+        string bodyText = isFrench
+            ? "Veuillez confirmer votre adresse courriel en cliquant sur le lien ci-dessous :"
+            : "Please confirm your email address by clicking the link below:";
+
+        string htmlContent = $"""
+            <p>{bodyText}</p>
+            <p><a href="{confirmationLink}">{linkText}</a></p>
+            """;
+
+        Result sendResult = await _emailSender
+            .SendAsync(user.Email, user.UserName, subject, htmlContent, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (sendResult.IsFailure)
+        {
+            return sendResult;
+        }
+
+        LogConfirmationEmailSent(_logger, trimmedUserId);
+        return Result.Success();
+    }
+
+    private static CitizenProfileDto MapDto(CitizenProfile profile, UserAccount? user)
     {
         bool isComplete = !string.IsNullOrWhiteSpace(profile.FirstName)
             && !string.IsNullOrWhiteSpace(profile.LastName)
@@ -119,7 +265,33 @@ public sealed partial class CitizenProfileService(
             profile.DateOfBirth,
             profile.CommunicationPreference,
             profile.LanguagePreference,
-            isComplete);
+            isComplete,
+            user?.Email,
+            user?.PhoneNumber,
+            user?.EmailConfirmed ?? false);
+    }
+
+    private static Result ValidateIdentityRequest(UpdateCitizenIdentityRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.UserId))
+        {
+            return Result.Failure(
+                new ResultError("citizen_profile.invalid_user_id", "A user identifier is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+        {
+            return Result.Failure(
+                new ResultError("citizen_profile.phone_number_required", "A phone number is required."));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Email) && !EmailValidator.IsValid(request.Email.Trim()))
+        {
+            return Result.Failure(
+                new ResultError("citizen_profile.email_invalid", "The email address is not valid."));
+        }
+
+        return Result.Success();
     }
 
     private static Result ValidateUpdateRequest(UpdateCitizenProfileRequest request)
@@ -237,4 +409,10 @@ public sealed partial class CitizenProfileService(
 
     [LoggerMessage(EventId = 2001, Level = LogLevel.Information, Message = "Updated citizen profile for user {UserId}")]
     private static partial void LogProfileUpdated(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 2002, Level = LogLevel.Information, Message = "Updated citizen identity for user {UserId}")]
+    private static partial void LogIdentityUpdated(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 2003, Level = LogLevel.Information, Message = "Sent email confirmation for user {UserId}")]
+    private static partial void LogConfirmationEmailSent(ILogger logger, string userId);
 }

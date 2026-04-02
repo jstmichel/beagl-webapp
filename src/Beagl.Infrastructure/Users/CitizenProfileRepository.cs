@@ -44,8 +44,12 @@ public sealed class CitizenProfileRepository(
 
         if (entity is null)
         {
-            return Result.Failure<CitizenProfile>(
-                new ResultError("citizen_profile.not_found", "The citizen profile could not be found."));
+            entity = new CitizenProfileEntity
+            {
+                Id = Guid.NewGuid(),
+                UserId = profile.UserId,
+            };
+            _applicationDbContext.CitizenProfiles.Add(entity);
         }
 
         entity.FirstName = profile.FirstName;

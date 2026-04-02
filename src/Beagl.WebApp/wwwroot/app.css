@@ -933,3 +933,21 @@ body {
     flex-wrap: wrap;
     gap: 0.75rem;
 }
+
+.email-field-wrapper {
+    position: relative;
+}
+
+.email-field-wrapper .email-confirmed {
+    padding-right: 2.5rem;
+}
+
+.email-confirmed-icon {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    color: #26b050;
+    font-size: 1.1rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+}

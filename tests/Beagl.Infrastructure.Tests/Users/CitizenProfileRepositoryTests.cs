@@ -231,7 +231,7 @@ public sealed class CitizenProfileRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_WhenProfileDoesNotExist_ShouldReturnFailure()
+    public async Task UpdateAsync_WhenProfileDoesNotExist_ShouldCreateAndReturnProfile()
     {
         // Arrange
         ApplicationDbContext context = CreateDbContext();
@@ -250,8 +250,12 @@ public sealed class CitizenProfileRepositoryTests
         Result<CitizenProfile> result = await repository.UpdateAsync(update, CancellationToken.None);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error!.Code.Should().Be("citizen_profile.not_found");
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.UserId.Should().Be("missing-user");
+        result.Value.FirstName.Should().Be("John");
+        result.Value.LastName.Should().Be("Doe");
+        result.Value.Address.Should().Be(ValidAddress);
+        result.Value.DateOfBirth.Should().Be(new DateOnly(1990, 5, 15));
     }
 
     [Fact]

@@ -84,6 +84,8 @@ builder.Services.AddSingleton<SetupStatusCache>();
 builder.Services.AddScoped<IInitialSetupService, InitialSetupService>();
 builder.Services.AddScoped<IEmailProviderConfigRepository, EmailProviderConfigRepository>();
 builder.Services.AddScoped<IEmailProviderConfigService, EmailProviderConfigService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IEmailSender, BrevoEmailSender>();
 builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
 builder.Services.AddScoped<ICitizenProfileRepository, CitizenProfileRepository>();
 builder.Services.AddScoped<ICitizenProfileService, CitizenProfileService>();

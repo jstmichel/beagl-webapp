@@ -122,6 +122,16 @@ public interface IUserRepository
     public Task<Result> ResetPasswordByRecoveryCodeAsync(string code, string newPassword, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Updates the identity contact information (email and phone number) for a citizen.
+    /// </summary>
+    /// <param name="identity">The identity contact data to apply.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The updated user account or a failure result.</returns>
+    public Task<Result<UserAccount>> UpdateCitizenIdentityAsync(
+        UpdateCitizenIdentity identity,
+        CancellationToken cancellationToken);
+
+    /// <summary>
     /// Clears any active recovery code for the specified user.
     /// </summary>
     /// <param name="userId">The user identifier.</param>
