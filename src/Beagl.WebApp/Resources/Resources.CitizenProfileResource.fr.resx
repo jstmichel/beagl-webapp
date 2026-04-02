@@ -47,4 +47,19 @@
   <data name="citizen_profile.last_name_too_long" xml:space="preserve"><value>Le nom de famille doit contenir au plus 256 caractères.</value></data>
   <data name="citizen_profile.not_found" xml:space="preserve"><value>Le profil citoyen est introuvable.</value></data>
   <data name="citizen_profile.invalid_user_id" xml:space="preserve"><value>Un identifiant d'utilisateur est requis.</value></data>
+  <data name="CitizenProfile.Form.PhoneNumber" xml:space="preserve"><value>Numéro de téléphone</value></data>
+  <data name="CitizenProfile.Form.Email" xml:space="preserve"><value>Courriel</value></data>
+  <data name="CitizenProfile.Email.Confirmed" xml:space="preserve"><value>Confirmé</value></data>
+  <data name="CitizenProfile.Email.NotConfirmed" xml:space="preserve"><value>Non confirmé</value></data>
+  <data name="CitizenProfile.Email.SendConfirmation" xml:space="preserve"><value>Envoyer la confirmation</value></data>
+  <data name="CitizenProfile.Email.NoProvider" xml:space="preserve"><value>Fournisseur de courriel non configuré</value></data>
+  <data name="CitizenProfile.ConfirmationEmail.Sent" xml:space="preserve"><value>Un courriel de confirmation a été envoyé.</value></data>
+  <data name="citizen_profile.phone_number_required" xml:space="preserve"><value>Un numéro de téléphone est requis.</value></data>
+  <data name="citizen_profile.email_invalid" xml:space="preserve"><value>L'adresse courriel n'est pas valide.</value></data>
+  <data name="users.duplicate_email" xml:space="preserve"><value>L'adresse courriel est déjà utilisée.</value></data>
+  <data name="users.not_found" xml:space="preserve"><value>L'utilisateur demandé est introuvable.</value></data>
+  <data name="users.email_required" xml:space="preserve"><value>Une adresse courriel est requise.</value></data>
+  <data name="users.already_confirmed" xml:space="preserve"><value>L'adresse courriel est déjà confirmée.</value></data>
+  <data name="email.no_provider_configured" xml:space="preserve"><value>Aucun fournisseur de courriel n'est configuré.</value></data>
+  <data name="email.send_failed" xml:space="preserve"><value>Le courriel n'a pas pu être envoyé.</value></data>
 </root>

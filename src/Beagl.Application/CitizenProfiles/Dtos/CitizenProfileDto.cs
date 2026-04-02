@@ -17,6 +17,9 @@ namespace Beagl.Application.CitizenProfiles.Dtos;
 /// <param name="CommunicationPreference">The communication preference.</param>
 /// <param name="LanguagePreference">The language of communication preference.</param>
 /// <param name="IsComplete">A value indicating whether the profile is complete.</param>
+/// <param name="Email">The email address from Identity.</param>
+/// <param name="PhoneNumber">The phone number from Identity.</param>
+/// <param name="EmailConfirmed">A value indicating whether the email address is confirmed.</param>
 public sealed record CitizenProfileDto(
     Guid Id,
     string UserId,
@@ -26,4 +29,7 @@ public sealed record CitizenProfileDto(
     DateOnly? DateOfBirth,
     CommunicationPreference CommunicationPreference,
     LanguagePreference LanguagePreference,
-    bool IsComplete);
+    bool IsComplete,
+    string? Email = null,
+    string? PhoneNumber = null,
+    bool EmailConfirmed = false);

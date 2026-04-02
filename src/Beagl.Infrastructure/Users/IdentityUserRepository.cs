@@ -453,6 +453,56 @@ public sealed class IdentityUserRepository(
         await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserAccount>> UpdateCitizenIdentityAsync(
+        UpdateCitizenIdentity identity,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(identity.UserId).ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure<UserAccount>(
+                new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        if (identity.Email is not null)
+        {
+            string normalizedEmail = identity.Email.ToUpperInvariant();
+            bool emailExists = await EmailExistsAsync(
+                    normalizedEmail,
+                    identityUser.Id,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (emailExists)
+            {
+                return Result.Failure<UserAccount>(
+                    new ResultError("users.duplicate_email", "The email address is already in use."));
+            }
+        }
+
+        bool emailChanged = !string.Equals(identityUser.Email, identity.Email, StringComparison.OrdinalIgnoreCase);
+
+        identityUser.PhoneNumber = identity.PhoneNumber;
+        identityUser.Email = identity.Email;
+
+        if (emailChanged)
+        {
+            identityUser.EmailConfirmed = false;
+            identityUser.NormalizedEmail = identity.Email?.ToUpperInvariant();
+        }
+
+        IdentityResult updateResult = await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
+        if (!updateResult.Succeeded)
+        {
+            return Result.Failure<UserAccount>(MapIdentityError(updateResult));
+        }
+
+        return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
+    }
+
     private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);

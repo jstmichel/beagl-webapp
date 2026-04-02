@@ -87,6 +87,52 @@
                             </div>
                         </div>
 
+                        @if (!_isFirstLogin)
+                        {
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="phoneNumber">@L["CitizenProfile.Form.PhoneNumber"]</label>
+                                    <InputText id="phoneNumber" class="form-control" @bind-Value="_model.PhoneNumber" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="auth-field">
+                                    <label class="form-label" for="email">@L["CitizenProfile.Form.Email"]</label>
+                                    <div class="email-field-wrapper">
+                                        <InputText id="email" class="@EmailInputCssClass" @bind-Value="_model.Email" />
+                                        @if (IsEmailSaved && _model.EmailConfirmed)
+                                        {
+                                            <i class="bi bi-check-circle-fill email-confirmed-icon" aria-label="@L["CitizenProfile.Email.Confirmed"]"></i>
+                                        }
+                                    </div>
+                                    @if (IsEmailSaved && !_model.EmailConfirmed)
+                                    {
+                                        if (_hasEmailProvider)
+                                        {
+                                            <button type="button" class="btn btn-outline-secondary btn-sm text-nowrap mt-1"
+                                                    disabled="@_isSendingConfirmation"
+                                                    @onclick="HandleSendConfirmationAsync">
+                                                @if (_isSendingConfirmation)
+                                                {
+                                                    <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                                                }
+                                                @L["CitizenProfile.Email.SendConfirmation"]
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark mt-1" title="@L["CitizenProfile.Email.NoProvider"]">
+                                                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                                                @L["CitizenProfile.Email.NotConfirmed"]
+                                            </span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        }
+
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="auth-field">

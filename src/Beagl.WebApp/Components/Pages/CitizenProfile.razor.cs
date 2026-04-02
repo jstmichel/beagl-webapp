@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Beagl.Application.CitizenProfiles.Dtos;
 using Beagl.Application.CitizenProfiles.Services;
+using Beagl.Application.EmailProviders.Services;
 using Beagl.Domain;
 using Beagl.Domain.Results;
 using Beagl.Domain.Users;
@@ -25,6 +26,9 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
     private ICitizenProfileService CitizenProfileService { get; set; } = null!;
 
     [Inject]
+    private IEmailProviderConfigService EmailProviderConfigService { get; set; } = null!;
+
+    [Inject]
     private IStringLocalizer<CitizenProfileResource> L { get; set; } = null!;
 
     [Inject]
@@ -37,10 +41,13 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
     private EditContext _editContext = null!;
     private bool _isLoading = true;
     private bool _isSaving;
+    private bool _isSendingConfirmation;
     private bool _isFirstLogin;
+    private bool _hasEmailProvider;
     private string? _successMessage;
     private string? _errorMessage;
     private string _userId = string.Empty;
+    private string _savedEmail = string.Empty;
 
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
@@ -74,6 +81,10 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
             _model.DateOfBirth = profile.DateOfBirth;
             _model.CommunicationPreference = profile.CommunicationPreference;
             _model.LanguagePreference = profile.LanguagePreference;
+            _model.Email = profile.Email ?? string.Empty;
+            _model.PhoneNumber = profile.PhoneNumber ?? string.Empty;
+            _model.EmailConfirmed = profile.EmailConfirmed;
+            _savedEmail = _model.Email;
             _isFirstLogin = !profile.IsComplete;
         }
         else
@@ -83,6 +94,11 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
 
         _editContext = new EditContext(_model);
         _isLoading = false;
+
+        Application.EmailProviders.Dtos.EmailProviderConfigDto? emailConfig = await EmailProviderConfigService
+            .GetActiveAsync(CancellationToken.None)
+            .ConfigureAwait(false);
+        _hasEmailProvider = emailConfig is not null;
     }
 
     private async Task HandleSubmitAsync()
@@ -108,18 +124,75 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
             .UpdateProfileAsync(request, CancellationToken.None)
             .ConfigureAwait(false);
 
-        _isSaving = false;
-
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            _successMessage = L["CitizenProfile.Form.Success"];
-            _isFirstLogin = false;
+            _isSaving = false;
+            _errorMessage = L.LocalizeError(result.Error!);
+            return;
+        }
+
+        if (!_isFirstLogin)
+        {
+            UpdateCitizenIdentityRequest identityRequest = new(
+                _userId,
+                _model.PhoneNumber,
+                string.IsNullOrWhiteSpace(_model.Email) ? null : _model.Email);
+
+            Result<CitizenProfileDto> identityResult = await CitizenProfileService
+                .UpdateIdentityAsync(identityRequest, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            _isSaving = false;
+
+            if (identityResult.IsSuccess)
+            {
+                _model.EmailConfirmed = identityResult.Value!.EmailConfirmed;
+                _savedEmail = _model.Email;
+                _successMessage = L["CitizenProfile.Form.Success"];
+            }
+            else
+            {
+                _errorMessage = L.LocalizeError(identityResult.Error!);
+            }
         }
         else
         {
-            _errorMessage = L.LocalizeError(result.Error!);
+            _isSaving = false;
+            _successMessage = L["CitizenProfile.Form.Success"];
+            _isFirstLogin = false;
         }
     }
+
+    private async Task HandleSendConfirmationAsync()
+    {
+        _successMessage = null;
+        _errorMessage = null;
+        _isSendingConfirmation = true;
+
+        Uri baseUrl = new(NavigationManager.BaseUri.TrimEnd('/') + "/account/confirm-email");
+
+        Result sendResult = await CitizenProfileService
+            .SendEmailConfirmationAsync(_userId, baseUrl, _model.LanguagePreference, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        _isSendingConfirmation = false;
+
+        if (sendResult.IsSuccess)
+        {
+            _successMessage = L["CitizenProfile.ConfirmationEmail.Sent"];
+        }
+        else
+        {
+            _errorMessage = L.LocalizeError(sendResult.Error!);
+        }
+    }
+
+    private bool IsEmailSaved =>
+        !string.IsNullOrWhiteSpace(_model.Email)
+        && string.Equals(_model.Email, _savedEmail, StringComparison.Ordinal);
+
+    private string EmailInputCssClass =>
+        IsEmailSaved && _model.EmailConfirmed ? "form-control email-confirmed" : "form-control";
 
     /// <inheritdoc />
     public void Dispose()
@@ -177,6 +250,21 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
         /// </summary>
         public LanguagePreference LanguagePreference { get; set; }
 
+        /// <summary>
+        /// Gets or sets the email address.
+        /// </summary>
+        public string Email { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the phone number.
+        /// </summary>
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the email address is confirmed.
+        /// </summary>
+        public bool EmailConfirmed { get; set; }
+
         /// <inheritdoc />
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -196,6 +284,16 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
             else if (LastName.Trim().Length > ValidationConstants.LastNameMaxLength)
             {
                 yield return new ValidationResult("citizen_profile.last_name_too_long", [nameof(LastName)]);
+            }
+
+            if (string.IsNullOrWhiteSpace(PhoneNumber))
+            {
+                yield return new ValidationResult("citizen_profile.phone_number_required", [nameof(PhoneNumber)]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Email) && !EmailValidator.IsValid(Email.Trim()))
+            {
+                yield return new ValidationResult("citizen_profile.email_invalid", [nameof(Email)]);
             }
 
             if (string.IsNullOrWhiteSpace(Street))
