@@ -77,6 +77,11 @@ internal sealed class LoginModel(
             return LocalRedirect("/");
         }
 
+        if (status == SharedLoginStatus.MustChangePassword)
+        {
+            return LocalRedirect("/account/change-password");
+        }
+
         string message = status switch
         {
             SharedLoginStatus.LockedOut => localizer["Auth.Login.Error.LockedOut"],

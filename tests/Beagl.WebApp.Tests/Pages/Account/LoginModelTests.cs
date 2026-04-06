@@ -134,6 +134,25 @@ public sealed class LoginModelTests
         modelStateEntry.Errors.Should().ContainSingle(error => error.ErrorMessage == expectedErrorKey);
     }
 
+    [Fact]
+    public async Task OnPostAsync_ShouldRedirectToChangePassword_WhenMustChangePassword()
+    {
+        LoginModel model = CreateModel(out TestSharedLoginService service, out _);
+        model.Input = new LoginModel.LoginInputModel
+        {
+            Identifier = "employee1",
+            Password = "StrongPassword!1",
+            RememberMe = false,
+        };
+
+        service.NextStatus = SharedLoginStatus.MustChangePassword;
+
+        IActionResult result = await model.OnPostAsync("/employee/users");
+
+        LocalRedirectResult redirectResult = result.Should().BeOfType<LocalRedirectResult>().Subject;
+        redirectResult.Url.Should().Be("/account/change-password");
+    }
+
     private static LoginModel CreateModel(
         out TestSharedLoginService service,
         out Mock<IUrlHelper> urlHelperMock)
@@ -169,6 +188,11 @@ public sealed class LoginModelTests
         }
 
         public Task SignOutAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task RefreshSignInAsync(string userId)
         {
             return Task.CompletedTask;
         }

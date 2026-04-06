@@ -3,6 +3,7 @@
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Results;
+using Beagl.Domain.Users;
 using Beagl.WebApp.Pages.Account;
 using Beagl.WebApp.Resources;
 using FluentAssertions;
@@ -219,6 +220,62 @@ public sealed class ChangePasswordModelTests
     }
 
     [Fact]
+    public async Task OnPostAsync_WhenServiceSucceeds_ShouldRefreshSignIn()
+    {
+        // Arrange
+        Mock<ISharedLoginService> loginServiceMock = new();
+        ChangePasswordModel model = CreateModel(
+            out Mock<IUserManagementService> serviceMock,
+            userId: "user-42",
+            loginServiceMock: loginServiceMock);
+        model.Input = new ChangePasswordModel.ChangePasswordInputModel
+        {
+            CurrentPassword = "OldPassword!1",
+            NewPassword = "NewStrongPassword!1",
+            ConfirmNewPassword = "NewStrongPassword!1",
+        };
+        serviceMock
+            .Setup(service => service.ChangePasswordAsync(It.IsAny<ChangePasswordRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        // Act
+        await model.OnPostAsync();
+
+        // Assert
+        loginServiceMock.Verify(
+            service => service.RefreshSignInAsync("user-42"),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task OnPostAsync_WhenServiceFails_ShouldNotRefreshSignIn()
+    {
+        // Arrange
+        Mock<ISharedLoginService> loginServiceMock = new();
+        ChangePasswordModel model = CreateModel(
+            out Mock<IUserManagementService> serviceMock,
+            userId: "user-42",
+            loginServiceMock: loginServiceMock);
+        model.Input = new ChangePasswordModel.ChangePasswordInputModel
+        {
+            CurrentPassword = "WrongPassword!1",
+            NewPassword = "NewStrongPassword!1",
+            ConfirmNewPassword = "NewStrongPassword!1",
+        };
+        serviceMock
+            .Setup(service => service.ChangePasswordAsync(It.IsAny<ChangePasswordRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(new ResultError("users.identity_error", "The user operation could not be completed.")));
+
+        // Act
+        await model.OnPostAsync();
+
+        // Assert
+        loginServiceMock.Verify(
+            service => service.RefreshSignInAsync(It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
     public async Task OnPostAsync_WhenServiceFails_ShouldReturnPageWithModelError()
     {
         // Arrange
@@ -347,9 +404,11 @@ public sealed class ChangePasswordModelTests
         out Mock<IUserManagementService> serviceMock,
         string? userId = "user-1",
         IStringLocalizer<AuthResource>? authLocalizer = null,
-        IStringLocalizer<UsersResource>? usersLocalizer = null)
+        IStringLocalizer<UsersResource>? usersLocalizer = null,
+        Mock<ISharedLoginService>? loginServiceMock = null)
     {
         serviceMock = new Mock<IUserManagementService>();
+        loginServiceMock ??= new Mock<ISharedLoginService>();
 
         DefaultHttpContext httpContext = new();
         if (userId is not null)
@@ -361,6 +420,7 @@ public sealed class ChangePasswordModelTests
 
         ChangePasswordModel model = new(
             serviceMock.Object,
+            loginServiceMock.Object,
             authLocalizer ?? new TestAuthLocalizer(),
             usersLocalizer ?? new TestUsersLocalizer())
         {
