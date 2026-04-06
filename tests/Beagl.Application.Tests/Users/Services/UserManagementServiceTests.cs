@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Tests.Utilities;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
@@ -19,7 +20,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Func<Task> act = async () => await service.CreateAsync(null!, CancellationToken.None);
@@ -33,7 +37,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Func<Task> act = async () => await service.UpdateAsync(null!, CancellationToken.None);
@@ -47,7 +54,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Func<Task> act = async () => await service.GetUsersPageAsync(null!, CancellationToken.None);
@@ -65,7 +75,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.GetMetricsAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new UsersMetrics(27, 4, 2));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         UsersMetricsDto result = await service.GetUsersMetricsAsync(CancellationToken.None);
@@ -88,7 +101,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.GetMetricsAsync(cancellationToken))
             .ReturnsAsync(new UsersMetrics(1, 0, 0));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         _ = await service.GetUsersMetricsAsync(cancellationToken);
@@ -113,7 +129,10 @@ public class UserManagementServiceTests
                 1,
                 10));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         GetUsersPageRequest request = new("  alex  ", 0, 0);
 
         // Act
@@ -142,7 +161,10 @@ public class UserManagementServiceTests
             .Callback<GetUsersPageQuery, CancellationToken>((query, _) => capturedQuery = query)
             .ReturnsAsync(new UsersPage([], 0, 1, 10));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         GetUsersPageRequest request = new("   ", 1, 10);
 
         // Act
@@ -165,7 +187,10 @@ public class UserManagementServiceTests
             .Callback<GetUsersPageQuery, CancellationToken>((query, _) => capturedQuery = query)
             .ReturnsAsync(new UsersPage([], 0, 1, 100));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         GetUsersPageRequest request = new(null, 1, 101);
 
         // Act
@@ -181,7 +206,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.GetUserByIdAsync(" ", CancellationToken.None);
@@ -198,7 +226,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.GetUserByIdAsync(null!, CancellationToken.None);
@@ -219,7 +250,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.GetByIdAsync("missing", It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserAccount?)null);
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.GetUserByIdAsync("missing", CancellationToken.None);
@@ -239,7 +273,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.GetByIdAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(new UserAccount("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.GetUserByIdAsync("  user-1  ", CancellationToken.None);
@@ -257,7 +294,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "invalid-email", null, "Password123!", UserRole.Employee);
 
         // Act
@@ -275,7 +315,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "alex@example.com", "555-0100", "Password123!", UserRole.None);
 
         // Act
@@ -292,7 +335,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new(" ", "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -309,7 +355,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new(new string('a', 257), "alex@example.com", "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -326,7 +375,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("admin", null, "555-0100", "Password123!", UserRole.Administrator);
 
         // Act
@@ -343,7 +395,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("employee", null, "555-0100", "Password123!", UserRole.Employee);
 
         // Act
@@ -361,7 +416,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "alex@example.com", "555-0100", " ", UserRole.Employee);
 
         // Act
@@ -378,7 +436,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "alex@example.com", "555-0100", "Short1!", UserRole.Employee);
 
         // Act
@@ -399,7 +460,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "+1234567890", false, false, UserRole.Employee, "confirmation-token")));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "alex@example.com", "+1234567890", "Password123!", UserRole.Employee);
 
         // Act
@@ -425,7 +489,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<UserAccount>(expectedError));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("alex", "alex@example.com", "+1234567890", "Password123!", UserRole.Employee);
 
         // Act
@@ -445,7 +512,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", null, false, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("  alex  ", "  alex@example.com  ", "  555-0100  ", "Password123!", UserRole.Employee);
 
         // Act
@@ -468,7 +538,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("citizen-1", null, null, "Password123!", UserRole.Citizen);
 
         // Act
@@ -486,7 +559,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         CreateUserRequest request = new("emp-1", "emp@example.com", null, "Password123!", UserRole.Employee);
 
         // Act
@@ -508,7 +584,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<UserAccount>(new ResultError("users.not_found", "The requested user could not be found.")));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("missing", "alex", "alex@example.com", "+1234567890", UserRole.Employee);
 
         // Act
@@ -525,7 +604,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.None);
 
         // Act
@@ -542,7 +624,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", " ", "alex@example.com", "555-0100", UserRole.Employee);
 
         // Act
@@ -559,7 +644,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", new string('a', 257), "alex@example.com", "555-0100", UserRole.Employee);
 
         // Act
@@ -576,7 +664,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", "alex", "bad-email", "555-0100", UserRole.Employee);
 
         // Act
@@ -593,7 +684,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", "alex", "alex@example.com", " ", UserRole.Employee);
 
         // Act
@@ -610,7 +704,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", "admin", null, "555-0100", UserRole.Administrator);
 
         // Act
@@ -628,7 +725,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", "employee", null, "555-0100", UserRole.Employee);
 
         // Act
@@ -650,7 +750,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "555-0100", true, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("user-1", "alex", "alex@example.com", "555-0100", UserRole.Employee);
 
         // Act
@@ -669,7 +772,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("   ", "alex", "alex@example.com", "+1234567890", UserRole.Employee);
 
         // Act
@@ -691,7 +797,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         UpdateUserRequest request = new("  user-1  ", "  alex  ", "  alex@example.com  ", "  555-0100  ", UserRole.Employee);
 
         // Act
@@ -715,7 +824,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.DeleteAsync(string.Empty, CancellationToken.None);
@@ -736,7 +848,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.DeleteAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.DeleteAsync("  user-1  ", CancellationToken.None);
@@ -757,7 +872,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.DeleteAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure(expectedError));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.DeleteAsync("user-1", CancellationToken.None);
@@ -779,7 +897,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.DeleteAsync("user-1", cancellationToken))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         _ = await service.DeleteAsync("user-1", cancellationToken);
@@ -793,7 +914,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.ConfirmAccountAsync(string.Empty, CancellationToken.None);
@@ -814,7 +938,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.ConfirmAccountAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-1", "alex", "alex@example.com", "555-0100", true, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.ConfirmAccountAsync("  user-1  ", CancellationToken.None);
@@ -837,7 +964,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.ConfirmAccountAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<UserAccount>(expectedError));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.ConfirmAccountAsync("user-1", CancellationToken.None);
@@ -857,7 +987,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.ConfirmAccountAsync("user-123", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-123", "alex", "alex@example.com", "+1234567890", true, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, fakeLogger);
 
         // Act
         _ = await service.ConfirmAccountAsync("user-123", CancellationToken.None);
@@ -880,7 +1013,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.CreateAsync(It.IsAny<CreateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-123", "alex", "alex@example.com", "+1234567890", false, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, fakeLogger);
         CreateUserRequest request = new("alex", "alex@example.com", "+1234567890", "Password123!", UserRole.Employee);
 
         // Act
@@ -904,7 +1040,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new UserAccount("user-456", "bob", "bob@example.com", "555-0100", true, false, UserRole.Employee)));
 
-        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, fakeLogger);
         UpdateUserRequest request = new("user-456", "bob", "bob@example.com", "555-0100", UserRole.Employee);
 
         // Act
@@ -928,7 +1067,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.DeleteAsync("user-789", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, fakeLogger);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, fakeLogger);
 
         // Act
         _ = await service.DeleteAsync("user-789", CancellationToken.None);
@@ -946,7 +1088,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<string> result = await service.GenerateEmailConfirmationTokenAsync(" ", CancellationToken.None);
@@ -968,7 +1113,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.GenerateEmailConfirmationTokenAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success("generated-token"));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<string> result = await service.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
@@ -987,7 +1135,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.GenerateEmailConfirmationTokenAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<string>(new ResultError("users.already_confirmed", "The account is already confirmed.")));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<string> result = await service.GenerateEmailConfirmationTokenAsync("user-1", CancellationToken.None);
@@ -1002,7 +1153,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.ConfirmAccountByTokenAsync(" ", "some-token", CancellationToken.None);
@@ -1017,7 +1171,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.ConfirmAccountByTokenAsync("user-1", " ", CancellationToken.None);
@@ -1036,7 +1193,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.ConfirmAccountByTokenAsync("user-1", "valid-token", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.ConfirmAccountByTokenAsync("user-1", "valid-token", CancellationToken.None);
@@ -1054,7 +1214,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.ConfirmAccountByTokenAsync("user-1", "bad-token", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure(new ResultError("users.invalid_token", "The confirmation token is invalid or has expired.")));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.ConfirmAccountByTokenAsync("user-1", "bad-token", CancellationToken.None);
@@ -1069,7 +1232,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Func<Task> act = async () => await service.RegisterCitizenAsync(null!, CancellationToken.None);
@@ -1083,7 +1249,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new(" ", "Smith", "jsmith", "555-0100", null, "Password123!");
 
         // Act
@@ -1100,7 +1269,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", " ", "jsmith", "555-0100", null, "Password123!");
 
         // Act
@@ -1117,7 +1289,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", " ", "555-0100", null, "Password123!");
 
         // Act
@@ -1134,7 +1309,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", " ", null, "Password123!");
 
         // Act
@@ -1151,7 +1329,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", "not-an-email", "Password123!");
 
         // Act
@@ -1168,7 +1349,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, " ");
 
         // Act
@@ -1185,7 +1369,10 @@ public class UserManagementServiceTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "short");
 
         // Act
@@ -1208,7 +1395,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(createdUser));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "Password123!");
 
         // Act
@@ -1235,7 +1425,10 @@ public class UserManagementServiceTests
             .Callback<RegisterCitizenAccount, CancellationToken>((account, _) => capturedAccount = account)
             .ReturnsAsync(Result.Success(createdUser));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "  jsmith  ", "  555-0100  ", "  john@example.com  ", "Password123!");
 
         // Act
@@ -1262,7 +1455,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<UserAccount>(repositoryError));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "Password123!");
 
         // Act
@@ -1287,7 +1483,10 @@ public class UserManagementServiceTests
             .Setup(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), cancellationToken))
             .ReturnsAsync(Result.Success(createdUser));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
         RegisterCitizenRequest request = new("John", "Smith", "jsmith", "555-0100", null, "Password123!");
 
         // Act

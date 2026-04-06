@@ -15,11 +15,13 @@ namespace Beagl.Application.CitizenProfiles.Services;
 /// <param name="citizenProfileRepository">The citizen profile repository.</param>
 /// <param name="userRepository">The user repository.</param>
 /// <param name="emailSender">The email sender.</param>
+/// <param name="emailTemplateService">The email template service.</param>
 /// <param name="logger">The logger.</param>
 public sealed partial class CitizenProfileService(
     ICitizenProfileRepository citizenProfileRepository,
     IUserRepository userRepository,
     IEmailSender emailSender,
+    IEmailTemplateService emailTemplateService,
     ILogger<CitizenProfileService> logger) : ICitizenProfileService
 {
     private readonly ICitizenProfileRepository _citizenProfileRepository =
@@ -30,6 +32,9 @@ public sealed partial class CitizenProfileService(
 
     private readonly IEmailSender _emailSender =
         emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+
+    private readonly IEmailTemplateService _emailTemplateService =
+        emailTemplateService ?? throw new ArgumentNullException(nameof(emailTemplateService));
 
     private readonly ILogger<CitizenProfileService> _logger =
         logger ?? throw new ArgumentNullException(nameof(logger));
@@ -211,27 +216,11 @@ public sealed partial class CitizenProfileService(
         string encodedToken = Uri.EscapeDataString(tokenResult.Value!);
         string confirmationLink = $"{confirmationBaseUrl.GetLeftPart(UriPartial.Path)}?userId={Uri.EscapeDataString(trimmedUserId)}&token={encodedToken}";
 
-        bool isFrench = languagePreference == LanguagePreference.French;
-
-        string subject = isFrench
-            ? "Confirmez votre adresse courriel"
-            : "Confirm your email address";
-
-        string linkText = isFrench
-            ? "Confirmer mon adresse courriel"
-            : "Confirm my email address";
-
-        string bodyText = isFrench
-            ? "Veuillez confirmer votre adresse courriel en cliquant sur le lien ci-dessous :"
-            : "Please confirm your email address by clicking the link below:";
-
-        string htmlContent = $"""
-            <p>{bodyText}</p>
-            <p><a href="{confirmationLink}">{linkText}</a></p>
-            """;
+        EmailConfirmationTokens tokens = new(user.UserName, confirmationLink);
+        EmailTemplateResult template = _emailTemplateService.RenderEmailConfirmation(languagePreference, tokens);
 
         Result sendResult = await _emailSender
-            .SendAsync(user.Email, user.UserName, subject, htmlContent, cancellationToken)
+            .SendAsync(user.Email, user.UserName, template.Subject, template.HtmlBody, cancellationToken)
             .ConfigureAwait(false);
 
         if (sendResult.IsFailure)

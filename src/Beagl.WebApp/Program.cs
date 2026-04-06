@@ -86,6 +86,7 @@ builder.Services.AddScoped<IEmailProviderConfigRepository, EmailProviderConfigRe
 builder.Services.AddScoped<IEmailProviderConfigService, EmailProviderConfigService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IEmailSender, BrevoEmailSender>();
+builder.Services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
 builder.Services.AddScoped<ICitizenProfileRepository, CitizenProfileRepository>();
 builder.Services.AddScoped<ICitizenProfileService, CitizenProfileService>();

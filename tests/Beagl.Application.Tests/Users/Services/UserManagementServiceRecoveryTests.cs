@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain;
@@ -18,7 +19,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.RequestRecoveryCodeAsync("", CancellationToken.None);
@@ -35,7 +39,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.RequestRecoveryCodeAsync("   ", CancellationToken.None);
@@ -56,7 +63,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.FindByIdentifierAsync("unknown", It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserAccount?)null);
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.RequestRecoveryCodeAsync("unknown", CancellationToken.None);
@@ -81,7 +91,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.GenerateRecoveryCodeAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.RequestRecoveryCodeAsync("alex", CancellationToken.None);
@@ -106,7 +119,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.GenerateRecoveryCodeAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result result = await service.RequestRecoveryCodeAsync("  alex  ", CancellationToken.None);
@@ -123,7 +139,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Func<Task> act = async () => await service.RecoverAccountAsync(null!, CancellationToken.None);
@@ -137,7 +156,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("", "NewP@ssw0rd");
 
@@ -154,7 +176,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("ABC", "NewP@ssw0rd");
 
@@ -171,7 +196,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("ABCDEF", "");
 
@@ -188,7 +216,10 @@ public class UserManagementServiceRecoveryTests
     {
         // Arrange
         Mock<IUserRepository> userRepositoryMock = new();
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("ABCDEF", "short");
 
@@ -209,7 +240,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.ResetPasswordByRecoveryCodeAsync("ABCDEF", "NewP@ssw0rd", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("ABCDEF", "NewP@ssw0rd");
 
@@ -232,7 +266,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.ResetPasswordByRecoveryCodeAsync("ABCDEF", "NewP@ssw0rd", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("abcdef", "NewP@ssw0rd");
 
@@ -255,7 +292,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.ResetPasswordByRecoveryCodeAsync("XYZABC", "NewP@ssw0rd", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure(new ResultError("users.invalid_recovery_code", "The recovery code is invalid.")));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("XYZABC", "NewP@ssw0rd");
 
@@ -279,7 +319,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.ResetPasswordByRecoveryCodeAsync("ABCDEF", "NewP@ssw0rd", cancellationToken))
             .ReturnsAsync(Result.Success());
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         RecoverAccountRequest request = new("ABCDEF", "NewP@ssw0rd");
 
@@ -306,7 +349,10 @@ public class UserManagementServiceRecoveryTests
                 ],
                 2, 1, 10));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         GetUsersPageRequest request = new(null, 1, 10);
 
@@ -328,7 +374,10 @@ public class UserManagementServiceRecoveryTests
             .Setup(repository => repository.GetByIdAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(new UserAccount("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee, RecoveryCode: "XYZABC"));
 
-        UserManagementService service = new(userRepositoryMock.Object, NullLogger<UserManagementService>.Instance);
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
 
         // Act
         Result<UserDetailsDto> result = await service.GetUserByIdAsync("user-1", CancellationToken.None);
@@ -336,5 +385,172 @@ public class UserManagementServiceRecoveryTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value!.RecoveryCode.Should().Be("XYZABC");
+    }
+
+    [Fact]
+    public async Task RequestRecoveryCodeAsync_WhenUserHasEmailAndCode_ShouldSendRecoveryCodeEmail()
+    {
+        // Arrange
+        UserAccount user = new("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee);
+        UserAccount updatedUser = new("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee, RecoveryCode: "ABC123");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.FindByIdentifierAsync("alex", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        userRepositoryMock
+            .Setup(repository => repository.GenerateRecoveryCodeAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        userRepositoryMock
+            .Setup(repository => repository.GetByIdAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedUser);
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        citizenProfileRepositoryMock
+            .Setup(repository => repository.GetByUserIdAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CitizenProfile(Guid.NewGuid(), "user-1", "Alex", "Doe", null, null, CommunicationPreference.Email, LanguagePreference.French));
+
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        emailTemplateServiceMock
+            .Setup(t => t.RenderRecoveryCode(LanguagePreference.French, It.IsAny<RecoveryCodeTokens>()))
+            .Returns(new EmailTemplateResult("Subject FR", "<p>Body FR</p>"));
+
+        Mock<IEmailSender> emailSenderMock = new();
+        emailSenderMock
+            .Setup(s => s.SendAsync("alex@example.com", "alex", "Subject FR", "<p>Body FR</p>", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.RequestRecoveryCodeAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        emailSenderMock.Verify(
+            s => s.SendAsync("alex@example.com", "alex", "Subject FR", "<p>Body FR</p>", It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task RequestRecoveryCodeAsync_WhenUserHasNoEmail_ShouldNotSendEmail()
+    {
+        // Arrange
+        UserAccount user = new("user-1", "alex", "", "555-0100", true, false, UserRole.Citizen);
+        UserAccount updatedUser = new("user-1", "alex", "", "555-0100", true, false, UserRole.Citizen, RecoveryCode: "ABC123");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.FindByIdentifierAsync("alex", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        userRepositoryMock
+            .Setup(repository => repository.GenerateRecoveryCodeAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        userRepositoryMock
+            .Setup(repository => repository.GetByIdAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedUser);
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.RequestRecoveryCodeAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        emailSenderMock.Verify(
+            s => s.SendAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestRecoveryCodeAsync_WhenNoProfile_ShouldFallBackToEnglish()
+    {
+        // Arrange
+        UserAccount user = new("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee);
+        UserAccount updatedUser = new("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee, RecoveryCode: "ABC123");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.FindByIdentifierAsync("alex", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        userRepositoryMock
+            .Setup(repository => repository.GenerateRecoveryCodeAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        userRepositoryMock
+            .Setup(repository => repository.GetByIdAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedUser);
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        citizenProfileRepositoryMock
+            .Setup(repository => repository.GetByUserIdAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync((CitizenProfile?)null);
+
+        RecoveryCodeTokens? capturedTokens = null;
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        emailTemplateServiceMock
+            .Setup(t => t.RenderRecoveryCode(LanguagePreference.None, It.IsAny<RecoveryCodeTokens>()))
+            .Callback<LanguagePreference, RecoveryCodeTokens>((_, t) => capturedTokens = t)
+            .Returns(new EmailTemplateResult("Subject EN", "<p>Body EN</p>"));
+
+        Mock<IEmailSender> emailSenderMock = new();
+        emailSenderMock
+            .Setup(s => s.SendAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.RequestRecoveryCodeAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        capturedTokens.Should().NotBeNull();
+        capturedTokens!.UserName.Should().Be("alex");
+        capturedTokens.RecoveryCode.Should().Be("ABC123");
+        emailTemplateServiceMock.Verify(
+            t => t.RenderRecoveryCode(LanguagePreference.None, It.IsAny<RecoveryCodeTokens>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task RequestRecoveryCodeAsync_WhenEmailSendFails_ShouldStillReturnSuccess()
+    {
+        // Arrange
+        UserAccount user = new("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee);
+        UserAccount updatedUser = new("user-1", "alex", "alex@example.com", null, true, false, UserRole.Employee, RecoveryCode: "ABC123");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.FindByIdentifierAsync("alex", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        userRepositoryMock
+            .Setup(repository => repository.GenerateRecoveryCodeAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        userRepositoryMock
+            .Setup(repository => repository.GetByIdAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedUser);
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        emailTemplateServiceMock
+            .Setup(t => t.RenderRecoveryCode(It.IsAny<LanguagePreference>(), It.IsAny<RecoveryCodeTokens>()))
+            .Returns(new EmailTemplateResult("Subject", "<p>Body</p>"));
+
+        Mock<IEmailSender> emailSenderMock = new();
+        emailSenderMock
+            .Setup(s => s.SendAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(new ResultError("email.send_failed", "Failed.")));
+
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result result = await service.RequestRecoveryCodeAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
     }
 }

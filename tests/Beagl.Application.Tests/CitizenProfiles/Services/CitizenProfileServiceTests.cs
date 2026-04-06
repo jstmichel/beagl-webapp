@@ -62,7 +62,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Result<CitizenProfileDto> result = await service.GetProfileAsync(null!, CancellationToken.None);
@@ -79,7 +80,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Result<CitizenProfileDto> result = await service.GetProfileAsync("   ", CancellationToken.None);
@@ -105,7 +107,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(user);
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Result<CitizenProfileDto> result = await service.GetProfileAsync("user-1", CancellationToken.None);
@@ -133,7 +136,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Result<CitizenProfileDto> result = await service.GetProfileAsync("user-1", CancellationToken.None);
@@ -166,7 +170,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Result<CitizenProfileDto> result = await service.GetProfileAsync("user-1", CancellationToken.None);
@@ -187,7 +192,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         _ = await service.GetProfileAsync("  user-1  ", CancellationToken.None);
@@ -210,7 +216,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         _ = await service.GetProfileAsync("user-1", token);
@@ -226,7 +233,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Func<Task> act = async () => await service.UpdateProfileAsync(null!, CancellationToken.None);
@@ -242,7 +250,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(userId: "  ");
 
@@ -261,7 +270,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(firstName: "");
 
@@ -280,7 +290,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         string longFirstName = new('A', ValidationConstants.FirstNameMaxLength + 1);
         UpdateCitizenProfileRequest request = CreateRequest(firstName: longFirstName);
@@ -300,7 +311,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(lastName: "");
 
@@ -319,7 +331,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         string longLastName = new('B', ValidationConstants.LastNameMaxLength + 1);
         UpdateCitizenProfileRequest request = CreateRequest(lastName: longLastName);
@@ -339,7 +352,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = new(
             "user-1",
@@ -365,7 +379,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Address address = ValidAddress with { Street = "" };
         UpdateCitizenProfileRequest request = CreateRequest(address: address);
@@ -385,7 +400,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         string longStreet = new('S', ValidationConstants.StreetMaxLength + 1);
         Address address = ValidAddress with { Street = longStreet };
@@ -406,7 +422,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Address address = ValidAddress with { City = "" };
         UpdateCitizenProfileRequest request = CreateRequest(address: address);
@@ -426,7 +443,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         string longCity = new('C', ValidationConstants.CityMaxLength + 1);
         Address address = ValidAddress with { City = longCity };
@@ -447,7 +465,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Address address = ValidAddress with { Province = "" };
         UpdateCitizenProfileRequest request = CreateRequest(address: address);
@@ -467,7 +486,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         string longProvince = new('P', ValidationConstants.ProvinceMaxLength + 1);
         Address address = ValidAddress with { Province = longProvince };
@@ -488,7 +508,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Address address = ValidAddress with { PostalCode = "" };
         UpdateCitizenProfileRequest request = CreateRequest(address: address);
@@ -508,7 +529,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         string longPostalCode = new('Z', ValidationConstants.PostalCodeMaxLength + 1);
         Address address = ValidAddress with { PostalCode = longPostalCode };
@@ -529,7 +551,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = new(
             "user-1",
@@ -555,7 +578,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(communicationPreference: CommunicationPreference.None);
 
@@ -574,7 +598,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(communicationPreference: (CommunicationPreference)999);
 
@@ -593,7 +618,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(languagePreference: LanguagePreference.None);
 
@@ -612,7 +638,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest(languagePreference: (LanguagePreference)999);
 
@@ -638,7 +665,8 @@ public class CitizenProfileServiceTests
         FakeLogger<CitizenProfileService> logger = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, logger);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, logger);
 
         UpdateCitizenProfileRequest request = CreateRequest();
 
@@ -664,7 +692,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Address paddedAddress = new("  123 Main St  ", "  Montreal  ", "  Quebec  ", "  H1A 1A1  ");
         UpdateCitizenProfileRequest request = new(
@@ -704,7 +733,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest();
 
@@ -730,7 +760,8 @@ public class CitizenProfileServiceTests
         FakeLogger<CitizenProfileService> logger = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, logger);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, logger);
 
         UpdateCitizenProfileRequest request = CreateRequest();
 
@@ -755,7 +786,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenProfileRequest request = CreateRequest();
 
@@ -773,7 +805,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         bool result = await service.IsProfileCompleteAsync(null!, CancellationToken.None);
@@ -789,7 +822,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         bool result = await service.IsProfileCompleteAsync("   ", CancellationToken.None);
@@ -809,7 +843,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         bool result = await service.IsProfileCompleteAsync("user-1", CancellationToken.None);
@@ -829,7 +864,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         bool result = await service.IsProfileCompleteAsync("user-1", CancellationToken.None);
@@ -849,7 +885,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         _ = await service.IsProfileCompleteAsync("  user-1  ", CancellationToken.None);
@@ -872,7 +909,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         _ = await service.IsProfileCompleteAsync("user-1", token);
@@ -923,7 +961,8 @@ public class CitizenProfileServiceTests
 
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Result<CitizenProfileDto> result = await service.GetProfileAsync("user-1", CancellationToken.None);
@@ -942,7 +981,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Func<Task> act = () => service.UpdateIdentityAsync(null!, CancellationToken.None);
@@ -961,7 +1001,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new(userId!, "514-555-0000", "test@example.com");
 
@@ -983,7 +1024,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", phone!, "test@example.com");
 
@@ -1002,7 +1044,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", "514-555-0000", "not-an-email");
 
@@ -1034,7 +1077,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Success(user));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", "514-555-0000", "   ");
 
@@ -1062,7 +1106,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Failure<UserAccount>(duplicateError));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", "514-555-0000", "taken@example.com");
 
@@ -1091,7 +1136,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Success(user));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", "514-555-0000", "john@example.com");
 
@@ -1121,7 +1167,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Success(user));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", "514-555-0000", "john@example.com");
 
@@ -1158,7 +1205,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Success(user));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("  user-1  ", "  514-555-0000  ", "  john@example.com  ");
 
@@ -1197,7 +1245,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Success(user));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         UpdateCitizenIdentityRequest request = new("user-1", "514-555-0000", "john@example.com");
 
@@ -1220,7 +1269,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         // Act
         Func<Task> act = () => service.SendEmailConfirmationAsync("user-1", null!, LanguagePreference.English, CancellationToken.None);
@@ -1239,7 +1289,8 @@ public class CitizenProfileServiceTests
         Mock<ICitizenProfileRepository> repositoryMock = new();
         Mock<IUserRepository> userRepositoryMock = new();
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1262,7 +1313,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync((UserAccount?)null);
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1290,7 +1342,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(user);
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1315,7 +1368,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(user);
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1344,7 +1398,8 @@ public class CitizenProfileServiceTests
             .ReturnsAsync(Result.Failure<string>(tokenError));
 
         Mock<IEmailSender> emailSenderMock = new();
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1382,7 +1437,11 @@ public class CitizenProfileServiceTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure(sendError));
 
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        emailTemplateServiceMock
+            .Setup(t => t.RenderEmailConfirmation(LanguagePreference.English, It.IsAny<EmailConfirmationTokens>()))
+            .Returns(new EmailTemplateResult("Confirm your email address", "<p>Confirm</p>"));
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1409,19 +1468,24 @@ public class CitizenProfileServiceTests
             .Setup(r => r.GenerateEmailConfirmationTokenAsync("user-1", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success("token-abc"));
 
-        string? capturedHtml = null;
+        EmailConfirmationTokens? capturedTokens = null;
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        emailTemplateServiceMock
+            .Setup(t => t.RenderEmailConfirmation(LanguagePreference.English, It.IsAny<EmailConfirmationTokens>()))
+            .Callback<LanguagePreference, EmailConfirmationTokens>((_, t) => capturedTokens = t)
+            .Returns(new EmailTemplateResult("Confirm your email address", "<p>Rendered HTML</p>"));
+
         Mock<IEmailSender> emailSenderMock = new();
         emailSenderMock
             .Setup(s => s.SendAsync(
                 "john@example.com",
                 "john",
                 "Confirm your email address",
-                It.IsAny<string>(),
+                "<p>Rendered HTML</p>",
                 It.IsAny<CancellationToken>()))
-            .Callback<string, string, string, string, CancellationToken>((_, _, _, html, _) => capturedHtml = html)
             .ReturnsAsync(Result.Success());
 
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
@@ -1430,10 +1494,11 @@ public class CitizenProfileServiceTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        capturedHtml.Should().NotBeNull();
-        capturedHtml.Should().Contain("userId=user-1");
-        capturedHtml.Should().Contain("token=token-abc");
-        capturedHtml.Should().Contain("https://example.com/confirm");
+        capturedTokens.Should().NotBeNull();
+        capturedTokens!.UserName.Should().Be("john");
+        capturedTokens.ConfirmationLink.Should().Contain("userId=user-1");
+        capturedTokens.ConfirmationLink.Should().Contain("token=token-abc");
+        capturedTokens.ConfirmationLink.Should().Contain("https://example.com/confirm");
     }
 
     [Fact]
@@ -1463,7 +1528,11 @@ public class CitizenProfileServiceTests
                 token))
             .ReturnsAsync(Result.Success());
 
-        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, NullLogger<CitizenProfileService>.Instance);
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        emailTemplateServiceMock
+            .Setup(t => t.RenderEmailConfirmation(It.IsAny<LanguagePreference>(), It.IsAny<EmailConfirmationTokens>()))
+            .Returns(new EmailTemplateResult("Subject", "<p>Body</p>"));
+        CitizenProfileService service = new(repositoryMock.Object, userRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<CitizenProfileService>.Instance);
 
         Uri baseUrl = new("https://example.com/confirm");
 
