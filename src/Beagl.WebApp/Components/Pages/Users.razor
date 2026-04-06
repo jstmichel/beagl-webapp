@@ -234,6 +234,7 @@
                                 OnEdit="() => OpenEditPanelAsync(_selectedUser.Id)"
                                 OnDelete="() => OpenDeletePanelAsync(_selectedUser.Id)"
                                 OnCopyConfirmationLink="CopyConfirmationLinkAsync"
+                                OnUnlock="UnlockSelectedUserAsync"
                                 OnClose="ClosePanel" />
                             break;
                         case UserPanelMode.Edit when _selectedUser is not null:

@@ -113,4 +113,12 @@ public interface IUserManagementService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The outcome of the password change.</returns>
     public Task<Result> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Unlocks a locked-out user account.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The unlocked user or a failure result.</returns>
+    public Task<Result<UserDetailsDto>> UnlockUserAsync(string userId, CancellationToken cancellationToken);
 }

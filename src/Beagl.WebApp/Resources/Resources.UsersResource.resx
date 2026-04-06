@@ -107,4 +107,7 @@
   <data name="users.recovery_code_required" xml:space="preserve"><value>A recovery code is required.</value></data>
   <data name="users.invalid_recovery_code" xml:space="preserve"><value>The recovery code is invalid.</value></data>
   <data name="users.current_password_required" xml:space="preserve"><value>The current password is required.</value></data>
+  <data name="users.not_locked_out" xml:space="preserve"><value>The user is not currently locked out.</value></data>
+  <data name="Users.Action.UnlockUser" xml:space="preserve"><value>Unlock user</value></data>
+  <data name="Users.Success.Unlocked" xml:space="preserve"><value>User account unlocked successfully.</value></data>
 </root>

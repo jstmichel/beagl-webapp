@@ -282,6 +282,24 @@ public sealed partial class Users : IDisposable
         await HandleMutationResultAsync(result, L["Users.Success.AccountConfirmed"], UserPanelMode.Details).ConfigureAwait(false);
     }
 
+    private async Task UnlockSelectedUserAsync()
+    {
+        if (_selectedUser is null)
+        {
+            return;
+        }
+
+        _isSaving = true;
+        _errorMessage = null;
+        _statusMessage = null;
+        _confirmationUrl = null;
+
+        Result<UserDetailsDto> result = await UserManagementService
+            .UnlockUserAsync(_selectedUser.Id, _cts.Token)
+            .ConfigureAwait(false);
+        await HandleMutationResultAsync(result, L["Users.Success.Unlocked"], UserPanelMode.Details).ConfigureAwait(false);
+    }
+
     private async Task CopyConfirmationLinkAsync()
     {
         if (_selectedUser is null || _selectedUser.EmailConfirmed)

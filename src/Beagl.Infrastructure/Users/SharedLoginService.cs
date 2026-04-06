@@ -42,7 +42,7 @@ public sealed class SharedLoginService(
         }
 
         SignInResult signInResult = await signInManager
-            .PasswordSignInAsync(user, password, rememberMe, lockoutOnFailure: false)
+            .PasswordSignInAsync(user, password, rememberMe, lockoutOnFailure: true)
             .ConfigureAwait(false);
 
         if (signInResult.Succeeded)

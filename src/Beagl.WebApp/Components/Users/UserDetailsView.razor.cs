@@ -33,6 +33,10 @@ public sealed partial class UserDetailsView
     [Parameter]
     public EventCallback OnCopyConfirmationLink { get; set; }
 
+    /// <summary>Gets or sets the callback invoked when the unlock action is triggered.</summary>
+    [Parameter]
+    public EventCallback OnUnlock { get; set; }
+
     /// <summary>Gets or sets the callback invoked when the panel is closed.</summary>
     [Parameter]
     public EventCallback OnClose { get; set; }

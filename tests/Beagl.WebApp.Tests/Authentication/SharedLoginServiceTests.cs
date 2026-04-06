@@ -26,7 +26,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee1@local"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -50,7 +50,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByEmailAsync("employee1@beagl.local"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -72,7 +72,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee3"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", true, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", true, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -115,7 +115,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("+1 (555) 000-1111"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -137,7 +137,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee2"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.LockedOut);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -157,7 +157,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee4"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Administrator);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.NotAllowed);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -198,7 +198,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("citizen1"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Citizen);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -206,7 +206,7 @@ public sealed class SharedLoginServiceTests
         SharedLoginStatus result = await service.AuthenticateAsync("citizen1", "StrongPassword!1", false);
 
         result.Should().Be(SharedLoginStatus.Succeeded);
-        signInManagerMock.Verify(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false), Times.Once);
+        signInManagerMock.Verify(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true), Times.Once);
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("citizen2"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Citizen);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.LockedOut);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -239,7 +239,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("citizen3"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Citizen);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "WrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "WrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Failed);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -259,7 +259,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee1"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
         userManagerMock.Setup(manager => manager.UpdateAsync(user))
             .ReturnsAsync(IdentityResult.Success);
@@ -283,7 +283,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee2"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -304,7 +304,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee5"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
@@ -324,7 +324,7 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Setup(manager => manager.FindByNameAsync("employee6"))
             .ReturnsAsync(user);
         SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
-        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, true))
             .ReturnsAsync(SignInResult.Success);
 
         SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
