@@ -45,3 +45,8 @@ partial class ReplaceAddressWithStructuredFields
 partial class AddRecoveryCodeToUsers
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddMustChangePasswordToUsers
+{
+}

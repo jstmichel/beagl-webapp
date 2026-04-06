@@ -115,7 +115,8 @@ public sealed class IdentityUserRepository(
             identityUser.EmailConfirmed,
             identityUser.LockoutEnd.HasValue && identityUser.LockoutEnd.Value > DateTimeOffset.UtcNow,
             role,
-            RecoveryCode: identityUser.RecoveryCode);
+            RecoveryCode: identityUser.RecoveryCode,
+            MustChangePassword: identityUser.MustChangePassword);
     }
 
     /// <inheritdoc />
@@ -144,6 +145,7 @@ public sealed class IdentityUserRepository(
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             EmailConfirmed = user.EmailConfirmed,
+            MustChangePassword = true,
         };
 
         IdentityResult createResult = await _userManager.CreateAsync(identityUser, user.Password).ConfigureAwait(false);
@@ -463,6 +465,12 @@ public sealed class IdentityUserRepository(
             return Result.Failure(MapIdentityError(changeResult));
         }
 
+        if (identityUser.MustChangePassword)
+        {
+            identityUser.MustChangePassword = false;
+            await _userManager.UpdateAsync(identityUser).ConfigureAwait(false);
+        }
+
         return Result.Success();
     }
 
@@ -584,7 +592,8 @@ public sealed class IdentityUserRepository(
             user.EmailConfirmed,
             user.LockoutEnd is not null && user.LockoutEnd > DateTimeOffset.UtcNow,
             role,
-            RecoveryCode: user.RecoveryCode);
+            RecoveryCode: user.RecoveryCode,
+            MustChangePassword: user.MustChangePassword);
     }
 
     private static string GenerateRandomCode()

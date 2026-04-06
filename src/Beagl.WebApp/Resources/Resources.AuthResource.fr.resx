@@ -102,4 +102,5 @@
   <data name="Auth.ChangePassword.Validation.PasswordTooShort" xml:space="preserve"><value>Le mot de passe doit comporter au moins 8 caractères.</value></data>
   <data name="Auth.ChangePassword.Validation.PasswordMismatch" xml:space="preserve"><value>Le nouveau mot de passe et la confirmation ne correspondent pas.</value></data>
   <data name="Auth.ChangePassword.Error.ChangeFailed" xml:space="preserve"><value>Le mot de passe n'a pas pu être changé. Veuillez vérifier votre mot de passe actuel et réessayer.</value></data>
+  <data name="Auth.ChangePassword.ForcedDescription" xml:space="preserve"><value>Vous devez changer votre mot de passe temporaire avant de continuer.</value></data>
 </root>

@@ -294,6 +294,92 @@ public sealed class SharedLoginServiceTests
         userManagerMock.Verify(manager => manager.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never);
     }
 
+    [Fact]
+    public async Task AuthenticateAsync_WhenSucceededAndMustChangePasswordIsTrue_ShouldReturnMustChangePassword()
+    {
+        ApplicationUser user = new() { UserName = "employee5", Email = "employee5@beagl.local", MustChangePassword = true };
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = CreateSignInManagerMock(userManagerMock.Object);
+
+        userManagerMock.Setup(manager => manager.FindByNameAsync("employee5"))
+            .ReturnsAsync(user);
+        SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+            .ReturnsAsync(SignInResult.Success);
+
+        SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
+
+        SharedLoginStatus result = await service.AuthenticateAsync("employee5", "StrongPassword!1", false);
+
+        result.Should().Be(SharedLoginStatus.MustChangePassword);
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WhenSucceededAndMustChangePasswordIsFalse_ShouldReturnSucceeded()
+    {
+        ApplicationUser user = new() { UserName = "employee6", Email = "employee6@beagl.local", MustChangePassword = false };
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = CreateSignInManagerMock(userManagerMock.Object);
+
+        userManagerMock.Setup(manager => manager.FindByNameAsync("employee6"))
+            .ReturnsAsync(user);
+        SetEmployeeAccess(userManagerMock, user, UserRole.Employee);
+        signInManagerMock.Setup(manager => manager.PasswordSignInAsync(user, "StrongPassword!1", false, false))
+            .ReturnsAsync(SignInResult.Success);
+
+        SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
+
+        SharedLoginStatus result = await service.AuthenticateAsync("employee6", "StrongPassword!1", false);
+
+        result.Should().Be(SharedLoginStatus.Succeeded);
+    }
+
+    [Fact]
+    public async Task RefreshSignInAsync_WhenUserExists_ShouldRefreshSignIn()
+    {
+        ApplicationUser user = new() { Id = "user-1", UserName = "employee1", Email = "employee1@beagl.local" };
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = CreateSignInManagerMock(userManagerMock.Object);
+
+        userManagerMock.Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(user);
+
+        SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
+
+        await service.RefreshSignInAsync("user-1");
+
+        signInManagerMock.Verify(manager => manager.RefreshSignInAsync(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task RefreshSignInAsync_WhenUserDoesNotExist_ShouldNotRefreshSignIn()
+    {
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = CreateSignInManagerMock(userManagerMock.Object);
+
+        userManagerMock.Setup(manager => manager.FindByIdAsync("nonexistent"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
+
+        await service.RefreshSignInAsync("nonexistent");
+
+        signInManagerMock.Verify(manager => manager.RefreshSignInAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RefreshSignInAsync_WhenUserIdIsNull_ShouldThrowArgumentNullException()
+    {
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = CreateSignInManagerMock(userManagerMock.Object);
+
+        SharedLoginService service = new(userManagerMock.Object, signInManagerMock.Object);
+
+        Func<Task> act = () => service.RefreshSignInAsync(null!);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
     {
         Mock<IUserStore<ApplicationUser>> storeMock = new();

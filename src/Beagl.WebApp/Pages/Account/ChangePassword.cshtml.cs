@@ -6,6 +6,7 @@ using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain;
 using Beagl.Domain.Results;
+using Beagl.Domain.Users;
 using Beagl.WebApp.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace Beagl.WebApp.Pages.Account;
 [Authorize]
 internal sealed class ChangePasswordModel(
     IUserManagementService userManagementService,
+    ISharedLoginService sharedLoginService,
     IStringLocalizer<AuthResource> localizer,
     IStringLocalizer<UsersResource> usersLocalizer) : PageModel
 {
@@ -98,6 +100,8 @@ internal sealed class ChangePasswordModel(
             ModelState.AddModelError(string.Empty, ResolveErrorMessage(result.Error!.Code));
             return Page();
         }
+
+        await sharedLoginService.RefreshSignInAsync(userId).ConfigureAwait(false);
 
         IsSuccess = true;
         return Page();

@@ -53,6 +53,11 @@ public sealed class SharedLoginService(
                 await userManager.UpdateAsync(user).ConfigureAwait(false);
             }
 
+            if (user.MustChangePassword)
+            {
+                return SharedLoginStatus.MustChangePassword;
+            }
+
             return SharedLoginStatus.Succeeded;
         }
 
@@ -68,6 +73,18 @@ public sealed class SharedLoginService(
     public async Task SignOutAsync()
     {
         await signInManager.SignOutAsync().ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task RefreshSignInAsync(string userId)
+    {
+        ArgumentNullException.ThrowIfNull(userId);
+
+        ApplicationUser? user = await userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (user is not null)
+        {
+            await signInManager.RefreshSignInAsync(user).ConfigureAwait(false);
+        }
     }
 
     private async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier)

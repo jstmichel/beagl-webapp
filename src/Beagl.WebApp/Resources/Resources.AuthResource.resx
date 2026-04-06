@@ -102,4 +102,5 @@
   <data name="Auth.ChangePassword.Validation.PasswordTooShort" xml:space="preserve"><value>The password must be at least 8 characters long.</value></data>
   <data name="Auth.ChangePassword.Validation.PasswordMismatch" xml:space="preserve"><value>The new password and confirmation do not match.</value></data>
   <data name="Auth.ChangePassword.Error.ChangeFailed" xml:space="preserve"><value>The password could not be changed. Please verify your current password and try again.</value></data>
+  <data name="Auth.ChangePassword.ForcedDescription" xml:space="preserve"><value>You must change your temporary password before continuing.</value></data>
 </root>

@@ -393,7 +393,8 @@ public sealed partial class UserManagementService(
             user.IsLockedOut,
             user.Role,
             user.EmailConfirmationToken,
-            user.RecoveryCode);
+            user.RecoveryCode,
+            user.MustChangePassword);
     }
 
     private static Result ValidateCreateRequest(CreateUserRequest request)

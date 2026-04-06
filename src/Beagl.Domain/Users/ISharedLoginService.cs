@@ -21,4 +21,11 @@ public interface ISharedLoginService
     /// </summary>
     /// <returns>A task that represents the asynchronous sign-out operation.</returns>
     public Task SignOutAsync();
+
+    /// <summary>
+    /// Refreshes the authentication cookie for the specified user, updating claims.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <returns>A task that represents the asynchronous refresh operation.</returns>
+    public Task RefreshSignInAsync(string userId);
 }
