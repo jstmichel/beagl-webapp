@@ -1495,4 +1495,197 @@ public class UserManagementServiceTests
         // Assert
         userRepositoryMock.Verify(repository => repository.RegisterCitizenAsync(It.IsAny<RegisterCitizenAccount>(), cancellationToken), Times.Once);
     }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithNullRequest_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Func<Task> act = async () => await service.ChangePasswordAsync(null!, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithMissingUserId_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new(" ", "OldPassword1!", "NewPassword1!");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_id");
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithMissingCurrentPassword_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("user-1", " ", "NewPassword1!");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.current_password_required");
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithMissingNewPassword_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("user-1", "OldPassword1!", " ");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.password_required");
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithShortNewPassword_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("user-1", "OldPassword1!", "Short1!");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.password_too_short");
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WhenRepositorySucceeds_ShouldReturnSuccess()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ChangePasswordAsync("user-1", "OldPassword1!", "NewPassword1!", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("user-1", "OldPassword1!", "NewPassword1!");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync("user-1", "OldPassword1!", "NewPassword1!", It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WhenRepositoryFails_ShouldReturnSameError()
+    {
+        // Arrange
+        ResultError expectedError = new("users.identity_error", "The user operation could not be completed.");
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ChangePasswordAsync("user-1", "WrongPassword!", "NewPassword1!", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(expectedError));
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("user-1", "WrongPassword!", "NewPassword1!");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(expectedError);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithWhitespaceAroundUserId_ShouldTrimBeforeRepositoryCall()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ChangePasswordAsync("user-1", "OldPassword1!", "NewPassword1!", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("  user-1  ", "OldPassword1!", "NewPassword1!");
+
+        // Act
+        Result result = await service.ChangePasswordAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync("user-1", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_ShouldForwardCancellationTokenToRepository()
+    {
+        // Arrange
+        CancellationTokenSource cancellationTokenSource = new();
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.ChangePasswordAsync("user-1", "OldPassword1!", "NewPassword1!", cancellationToken))
+            .ReturnsAsync(Result.Success());
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        ChangePasswordRequest request = new("user-1", "OldPassword1!", "NewPassword1!");
+
+        // Act
+        _ = await service.ChangePasswordAsync(request, cancellationToken);
+
+        // Assert
+        userRepositoryMock.Verify(repository => repository.ChangePasswordAsync("user-1", "OldPassword1!", "NewPassword1!", cancellationToken), Times.Once);
+    }
 }

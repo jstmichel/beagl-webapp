@@ -439,6 +439,34 @@ public sealed class IdentityUserRepository(
     }
 
     /// <inheritdoc />
+    public async Task<Result> ChangePasswordAsync(
+        string userId,
+        string currentPassword,
+        string newPassword,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+
+        if (identityUser is null)
+        {
+            return Result.Failure(new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        IdentityResult changeResult = await _userManager
+            .ChangePasswordAsync(identityUser, currentPassword, newPassword)
+            .ConfigureAwait(false);
+
+        if (!changeResult.Succeeded)
+        {
+            return Result.Failure(MapIdentityError(changeResult));
+        }
+
+        return Result.Success();
+    }
+
+    /// <inheritdoc />
     public async Task ClearRecoveryCodeAsync(string userId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

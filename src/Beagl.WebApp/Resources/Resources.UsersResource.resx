@@ -106,4 +106,5 @@
   <data name="Users.Details.RecoveryCode.None" xml:space="preserve"><value>None</value></data>
   <data name="users.recovery_code_required" xml:space="preserve"><value>A recovery code is required.</value></data>
   <data name="users.invalid_recovery_code" xml:space="preserve"><value>The recovery code is invalid.</value></data>
+  <data name="users.current_password_required" xml:space="preserve"><value>The current password is required.</value></data>
 </root>
