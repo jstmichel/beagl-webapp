@@ -1,4 +1,5 @@
 ---
+name: Implement
 description: "Automate the implementation of a GitHub issue in the current codebase, strictly following Beagl coding guidelines, best practices, SOLID principles, Clean Architecture, and ensuring testability."
 tools: [read, edit, search, execute, todo, agent, web]
 model: Claude Opus 4.6 (copilot)
