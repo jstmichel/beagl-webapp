@@ -105,4 +105,12 @@ public interface IUserManagementService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The outcome of the recovery.</returns>
     public Task<Result> RecoverAccountAsync(RecoverAccountRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Changes the password for an authenticated user.
+    /// </summary>
+    /// <param name="request">The password change request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the password change.</returns>
+    public Task<Result> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken);
 }

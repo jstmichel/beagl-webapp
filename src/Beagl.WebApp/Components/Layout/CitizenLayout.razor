@@ -16,6 +16,7 @@
             <nav class="nav nav-pills app-shell__nav" aria-label="@L["MainLayout.Navigation"]">
                 <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">@L["Nav.Home"]</NavLink>
                 <NavLink class="nav-link" href="/profile" Match="NavLinkMatch.All">@L["Nav.Profile"]</NavLink>
+                <NavLink class="nav-link" href="/account/change-password" Match="NavLinkMatch.All">@L["Nav.ChangePassword"]</NavLink>
                 <AuthorizeView>
                     <form method="post" action="/account/logout">
                         <AntiforgeryToken />

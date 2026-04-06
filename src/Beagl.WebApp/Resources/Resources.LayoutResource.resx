@@ -13,4 +13,5 @@
   <data name="Nav.EmailConfig" xml:space="preserve"><value>Email</value></data>
   <data name="Nav.Logout" xml:space="preserve"><value>Sign out</value></data>
   <data name="Nav.Profile" xml:space="preserve"><value>My profile</value></data>
+  <data name="Nav.ChangePassword" xml:space="preserve"><value>Change password</value></data>
 </root>

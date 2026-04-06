@@ -86,4 +86,20 @@
   <data name="Auth.RecoverAccount.Error.RecoveryFailed" xml:space="preserve"><value>Account recovery failed. Please verify the code and try again.</value></data>
   <data name="Auth.Login.Action.ForgotPassword" xml:space="preserve"><value>Forgot password?</value></data>
   <data name="Auth.Login.Action.RecoverAccount" xml:space="preserve"><value>I have a recovery code</value></data>
+  <data name="Auth.ChangePassword.PageTitle" xml:space="preserve"><value>Change password</value></data>
+  <data name="Auth.ChangePassword.Kicker" xml:space="preserve"><value>Account security</value></data>
+  <data name="Auth.ChangePassword.Title" xml:space="preserve"><value>Change your password</value></data>
+  <data name="Auth.ChangePassword.Description" xml:space="preserve"><value>Enter your current password and choose a new one.</value></data>
+  <data name="Auth.ChangePassword.CurrentPassword.Label" xml:space="preserve"><value>Current password</value></data>
+  <data name="Auth.ChangePassword.NewPassword.Label" xml:space="preserve"><value>New password</value></data>
+  <data name="Auth.ChangePassword.NewPassword.Hint" xml:space="preserve"><value>Use at least 8 characters including uppercase, lowercase, a digit, and a special character.</value></data>
+  <data name="Auth.ChangePassword.ConfirmNewPassword.Label" xml:space="preserve"><value>Confirm new password</value></data>
+  <data name="Auth.ChangePassword.Action.Submit" xml:space="preserve"><value>Change password</value></data>
+  <data name="Auth.ChangePassword.Action.BackToHome" xml:space="preserve"><value>Back to home</value></data>
+  <data name="Auth.ChangePassword.Success" xml:space="preserve"><value>Your password has been changed successfully.</value></data>
+  <data name="Auth.ChangePassword.Validation.CurrentPasswordRequired" xml:space="preserve"><value>Enter your current password.</value></data>
+  <data name="Auth.ChangePassword.Validation.NewPasswordRequired" xml:space="preserve"><value>Enter a new password.</value></data>
+  <data name="Auth.ChangePassword.Validation.PasswordTooShort" xml:space="preserve"><value>The password must be at least 8 characters long.</value></data>
+  <data name="Auth.ChangePassword.Validation.PasswordMismatch" xml:space="preserve"><value>The new password and confirmation do not match.</value></data>
+  <data name="Auth.ChangePassword.Error.ChangeFailed" xml:space="preserve"><value>The password could not be changed. Please verify your current password and try again.</value></data>
 </root>

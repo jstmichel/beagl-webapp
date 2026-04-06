@@ -132,6 +132,16 @@ public interface IUserRepository
         CancellationToken cancellationToken);
 
     /// <summary>
+    /// Changes the password for a user after verifying the current password.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="currentPassword">The current password.</param>
+    /// <param name="newPassword">The new password.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The outcome of the password change.</returns>
+    public Task<Result> ChangePasswordAsync(string userId, string currentPassword, string newPassword, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Clears any active recovery code for the specified user.
     /// </summary>
     /// <param name="userId">The user identifier.</param>

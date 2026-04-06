@@ -86,4 +86,20 @@
   <data name="Auth.RecoverAccount.Error.RecoveryFailed" xml:space="preserve"><value>La récupération du compte a échoué. Veuillez vérifier le code et réessayer.</value></data>
   <data name="Auth.Login.Action.ForgotPassword" xml:space="preserve"><value>Mot de passe oublié&#160;?</value></data>
   <data name="Auth.Login.Action.RecoverAccount" xml:space="preserve"><value>J'ai un code de récupération</value></data>
+  <data name="Auth.ChangePassword.PageTitle" xml:space="preserve"><value>Changer le mot de passe</value></data>
+  <data name="Auth.ChangePassword.Kicker" xml:space="preserve"><value>Sécurité du compte</value></data>
+  <data name="Auth.ChangePassword.Title" xml:space="preserve"><value>Changez votre mot de passe</value></data>
+  <data name="Auth.ChangePassword.Description" xml:space="preserve"><value>Saisissez votre mot de passe actuel et choisissez-en un nouveau.</value></data>
+  <data name="Auth.ChangePassword.CurrentPassword.Label" xml:space="preserve"><value>Mot de passe actuel</value></data>
+  <data name="Auth.ChangePassword.NewPassword.Label" xml:space="preserve"><value>Nouveau mot de passe</value></data>
+  <data name="Auth.ChangePassword.NewPassword.Hint" xml:space="preserve"><value>Utilisez au moins 8 caractères incluant une majuscule, une minuscule, un chiffre et un caractère spécial.</value></data>
+  <data name="Auth.ChangePassword.ConfirmNewPassword.Label" xml:space="preserve"><value>Confirmer le nouveau mot de passe</value></data>
+  <data name="Auth.ChangePassword.Action.Submit" xml:space="preserve"><value>Changer le mot de passe</value></data>
+  <data name="Auth.ChangePassword.Action.BackToHome" xml:space="preserve"><value>Retour à l'accueil</value></data>
+  <data name="Auth.ChangePassword.Success" xml:space="preserve"><value>Votre mot de passe a été changé avec succès.</value></data>
+  <data name="Auth.ChangePassword.Validation.CurrentPasswordRequired" xml:space="preserve"><value>Saisissez votre mot de passe actuel.</value></data>
+  <data name="Auth.ChangePassword.Validation.NewPasswordRequired" xml:space="preserve"><value>Saisissez un nouveau mot de passe.</value></data>
+  <data name="Auth.ChangePassword.Validation.PasswordTooShort" xml:space="preserve"><value>Le mot de passe doit comporter au moins 8 caractères.</value></data>
+  <data name="Auth.ChangePassword.Validation.PasswordMismatch" xml:space="preserve"><value>Le nouveau mot de passe et la confirmation ne correspondent pas.</value></data>
+  <data name="Auth.ChangePassword.Error.ChangeFailed" xml:space="preserve"><value>Le mot de passe n'a pas pu être changé. Veuillez vérifier votre mot de passe actuel et réessayer.</value></data>
 </root>

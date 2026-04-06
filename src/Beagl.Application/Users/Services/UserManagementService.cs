@@ -331,6 +331,44 @@ public sealed partial class UserManagementService(
         return result;
     }
 
+    /// <inheritdoc />
+    public async Task<Result> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.UserId))
+        {
+            return Result.Failure(new ResultError("users.invalid_id", "A user identifier is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.CurrentPassword))
+        {
+            return Result.Failure(new ResultError("users.current_password_required", "The current password is required."));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.NewPassword))
+        {
+            return Result.Failure(new ResultError("users.password_required", "A password is required."));
+        }
+
+        if (request.NewPassword.Trim().Length < ValidationConstants.PasswordMinLength)
+        {
+            return Result.Failure(new ResultError("users.password_too_short", "The password must contain at least 8 characters."));
+        }
+
+        string trimmedUserId = request.UserId.Trim();
+        Result result = await _userRepository
+            .ChangePasswordAsync(trimmedUserId, request.CurrentPassword, request.NewPassword, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.IsSuccess)
+        {
+            LogPasswordChanged(_logger, trimmedUserId);
+        }
+
+        return result;
+    }
+
     private static UserListItemDto MapListItem(UserAccount user)
     {
         return new UserListItemDto(
@@ -527,6 +565,9 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1010, Level = LogLevel.Information, Message = "Recovery code email sent for user {UserId}")]
     private static partial void LogRecoveryCodeEmailSent(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1011, Level = LogLevel.Information, Message = "Password changed for user {UserId}")]
+    private static partial void LogPasswordChanged(ILogger logger, string userId);
 
     private async Task SendRecoveryCodeEmailAsync(UserAccount user, CancellationToken cancellationToken)
     {
