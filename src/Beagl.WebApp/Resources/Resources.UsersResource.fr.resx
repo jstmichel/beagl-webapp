@@ -107,4 +107,7 @@
   <data name="users.recovery_code_required" xml:space="preserve"><value>Un code de récupération est requis.</value></data>
   <data name="users.invalid_recovery_code" xml:space="preserve"><value>Le code de récupération est invalide.</value></data>
   <data name="users.current_password_required" xml:space="preserve"><value>Le mot de passe actuel est requis.</value></data>
+  <data name="users.not_locked_out" xml:space="preserve"><value>L'utilisateur n'est pas actuellement verrouillé.</value></data>
+  <data name="Users.Action.UnlockUser" xml:space="preserve"><value>Déverrouiller l'utilisateur</value></data>
+  <data name="Users.Success.Unlocked" xml:space="preserve"><value>Compte utilisateur déverrouillé avec succès.</value></data>
 </root>

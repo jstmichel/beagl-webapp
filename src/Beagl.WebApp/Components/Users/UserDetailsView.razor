@@ -58,7 +58,28 @@
             </div>
             <div>
                 <dt>@L["Users.Details.Lockout"]</dt>
-                <dd>@(User.IsLockedOut ? L["Users.Details.Locked"] : L["Users.Details.Active"])</dd>
+                <dd>
+                    <span class="d-inline-flex align-items-center gap-2">
+                        @if (User.IsLockedOut)
+                        {
+                            @L["Users.Details.Locked"]
+                            <button
+                                type="button"
+                                class="users-icon-action users-icon-action--inline"
+                                @onclick="OnUnlock"
+                                data-testid="unlock-user"
+                                aria-label='@L["Users.Action.UnlockUser"]'
+                                title='@L["Users.Action.UnlockUser"]'
+                                disabled="@IsSaving">
+                                <i class="bi bi-unlock" aria-hidden="true"></i>
+                            </button>
+                        }
+                        else
+                        {
+                            @L["Users.Details.Active"]
+                        }
+                    </span>
+                </dd>
             </div>
             <div>
                 <dt>@L["Users.Details.RecoveryCode"]</dt>

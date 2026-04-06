@@ -148,4 +148,12 @@ public interface IUserRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     public Task ClearRecoveryCodeAsync(string userId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Unlocks a locked-out user by clearing the lockout end date and resetting the access failed count.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The unlocked user or a failure result.</returns>
+    public Task<Result<UserAccount>> UnlockUserAsync(string userId, CancellationToken cancellationToken);
 }

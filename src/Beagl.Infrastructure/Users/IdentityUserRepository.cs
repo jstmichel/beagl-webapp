@@ -539,6 +539,45 @@ public sealed class IdentityUserRepository(
         return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserAccount>> UnlockUserAsync(string userId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplicationUser? identityUser = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+        if (identityUser is null)
+        {
+            return Result.Failure<UserAccount>(
+                new ResultError("users.not_found", "The requested user could not be found."));
+        }
+
+        bool isLockedOut = identityUser.LockoutEnd.HasValue
+            && identityUser.LockoutEnd.Value > DateTimeOffset.UtcNow;
+        if (!isLockedOut)
+        {
+            return Result.Failure<UserAccount>(
+                new ResultError("users.not_locked_out", "The user is not currently locked out."));
+        }
+
+        IdentityResult lockoutResult = await _userManager
+            .SetLockoutEndDateAsync(identityUser, null)
+            .ConfigureAwait(false);
+        if (!lockoutResult.Succeeded)
+        {
+            return Result.Failure<UserAccount>(MapIdentityError(lockoutResult));
+        }
+
+        IdentityResult resetResult = await _userManager
+            .ResetAccessFailedCountAsync(identityUser)
+            .ConfigureAwait(false);
+        if (!resetResult.Succeeded)
+        {
+            return Result.Failure<UserAccount>(MapIdentityError(resetResult));
+        }
+
+        return Result.Success(await MapAsync(identityUser).ConfigureAwait(false));
+    }
+
     private async Task<UserAccount> MapAsync(ApplicationUser user)
     {
         UserRole role = await GetPrimaryRoleAsync(user).ConfigureAwait(false);

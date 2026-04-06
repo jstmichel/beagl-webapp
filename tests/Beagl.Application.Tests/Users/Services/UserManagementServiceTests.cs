@@ -1688,4 +1688,125 @@ public class UserManagementServiceTests
         // Assert
         userRepositoryMock.Verify(repository => repository.ChangePasswordAsync("user-1", "OldPassword1!", "NewPassword1!", cancellationToken), Times.Once);
     }
+
+    [Fact]
+    public async Task UnlockUserAsync_WithNullUserId_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UnlockUserAsync(null!, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_id");
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WithEmptyUserId_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UnlockUserAsync("  ", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.invalid_id");
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenRepositoryFails_ShouldReturnFailure()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.UnlockUserAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<UserAccount>(new ResultError("users.not_locked_out", "The user is not currently locked out.")));
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.not_locked_out");
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenRepositorySucceeds_ShouldReturnMappedUser()
+    {
+        // Arrange
+        UserAccount unlockedUser = new(
+            "user-1",
+            "testuser",
+            "test@example.com",
+            null,
+            true,
+            false,
+            UserRole.Employee);
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.UnlockUserAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(unlockedUser));
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Id.Should().Be("user-1");
+        result.Value.IsLockedOut.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_ShouldTrimUserId()
+    {
+        // Arrange
+        UserAccount unlockedUser = new(
+            "user-1",
+            "testuser",
+            "test@example.com",
+            null,
+            true,
+            false,
+            UserRole.Employee);
+
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.UnlockUserAsync("user-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(unlockedUser));
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UnlockUserAsync("  user-1  ", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        userRepositoryMock.Verify(repository => repository.UnlockUserAsync("user-1", It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

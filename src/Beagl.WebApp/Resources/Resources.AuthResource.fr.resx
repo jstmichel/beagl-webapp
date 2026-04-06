@@ -18,7 +18,7 @@
   <data name="Auth.Login.NoAccount" xml:space="preserve"><value>Pas encore de compte ?</value></data>
   <data name="Auth.Login.Action.Register" xml:space="preserve"><value>Créer un compte</value></data>
   <data name="Auth.Login.Error.InvalidCredentials" xml:space="preserve"><value>Nom d'utilisateur/courriel ou mot de passe invalide.</value></data>
-  <data name="Auth.Login.Error.LockedOut" xml:space="preserve"><value>Ce compte est verrouillé.</value></data>
+  <data name="Auth.Login.Error.LockedOut" xml:space="preserve"><value>Ce compte est temporairement verrouillé. Veuillez contacter un administrateur pour le déverrouiller.</value></data>
   <data name="Auth.Login.Error.NotAllowed" xml:space="preserve"><value>Ce compte n'est pas encore confirmé.</value></data>
   <data name="Auth.Login.Validation.IdentifierRequired" xml:space="preserve"><value>Saisissez votre nom d'utilisateur ou votre courriel.</value></data>
   <data name="Auth.Login.Validation.PasswordRequired" xml:space="preserve"><value>Saisissez votre mot de passe.</value></data>

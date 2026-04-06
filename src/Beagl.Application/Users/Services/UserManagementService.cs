@@ -369,6 +369,28 @@ public sealed partial class UserManagementService(
         return result;
     }
 
+    /// <inheritdoc />
+    public async Task<Result<UserDetailsDto>> UnlockUserAsync(string userId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Result.Failure<UserDetailsDto>(new ResultError("users.invalid_id", "A user identifier is required."));
+        }
+
+        string trimmedUserId = userId.Trim();
+        Result<UserAccount> result = await _userRepository
+            .UnlockUserAsync(trimmedUserId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.IsFailure)
+        {
+            return Result.Failure<UserDetailsDto>(result.Error!);
+        }
+
+        LogUserUnlocked(_logger, trimmedUserId);
+        return Result.Success(MapDetails(result.Value!));
+    }
+
     private static UserListItemDto MapListItem(UserAccount user)
     {
         return new UserListItemDto(
@@ -569,6 +591,9 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1011, Level = LogLevel.Information, Message = "Password changed for user {UserId}")]
     private static partial void LogPasswordChanged(ILogger logger, string userId);
+
+    [LoggerMessage(EventId = 1012, Level = LogLevel.Information, Message = "Unlocked user {UserId}")]
+    private static partial void LogUserUnlocked(ILogger logger, string userId);
 
     private async Task SendRecoveryCodeEmailAsync(UserAccount user, CancellationToken cancellationToken)
     {

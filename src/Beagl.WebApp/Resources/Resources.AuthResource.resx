@@ -18,7 +18,7 @@
   <data name="Auth.Login.NoAccount" xml:space="preserve"><value>Don't have an account?</value></data>
   <data name="Auth.Login.Action.Register" xml:space="preserve"><value>Create one</value></data>
   <data name="Auth.Login.Error.InvalidCredentials" xml:space="preserve"><value>Invalid username/email or password.</value></data>
-  <data name="Auth.Login.Error.LockedOut" xml:space="preserve"><value>This account is locked.</value></data>
+  <data name="Auth.Login.Error.LockedOut" xml:space="preserve"><value>This account is temporarily locked. Please contact an administrator to unlock it.</value></data>
   <data name="Auth.Login.Error.NotAllowed" xml:space="preserve"><value>This account is not confirmed yet.</value></data>
   <data name="Auth.Login.Validation.IdentifierRequired" xml:space="preserve"><value>Enter your username or email.</value></data>
   <data name="Auth.Login.Validation.PasswordRequired" xml:space="preserve"><value>Enter your password.</value></data>
