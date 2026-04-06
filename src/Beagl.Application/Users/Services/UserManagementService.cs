@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Users.Dtos;
 using Beagl.Domain;
 using Beagl.Domain.Results;
@@ -12,12 +13,23 @@ namespace Beagl.Application.Users.Services;
 /// Implements user management workflows.
 /// </summary>
 /// <param name="userRepository">The user repository.</param>
+/// <param name="citizenProfileRepository">The citizen profile repository.</param>
+/// <param name="emailSender">The email sender.</param>
+/// <param name="emailTemplateService">The email template service.</param>
 /// <param name="logger">The logger.</param>
 public sealed partial class UserManagementService(
     IUserRepository userRepository,
+    ICitizenProfileRepository citizenProfileRepository,
+    IEmailSender emailSender,
+    IEmailTemplateService emailTemplateService,
     ILogger<UserManagementService> logger) : IUserManagementService
 {
     private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly ICitizenProfileRepository _citizenProfileRepository =
+        citizenProfileRepository ?? throw new ArgumentNullException(nameof(citizenProfileRepository));
+    private readonly IEmailSender _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+    private readonly IEmailTemplateService _emailTemplateService =
+        emailTemplateService ?? throw new ArgumentNullException(nameof(emailTemplateService));
     private readonly ILogger<UserManagementService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc />
@@ -263,9 +275,20 @@ public sealed partial class UserManagementService(
             .GenerateRecoveryCodeAsync(user.Id, cancellationToken)
             .ConfigureAwait(false);
 
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            LogRecoveryCodeRequested(_logger, trimmedIdentifier);
+            return Result.Success();
+        }
+
+        LogRecoveryCodeRequested(_logger, trimmedIdentifier);
+
+        UserAccount? updatedUser = await _userRepository
+            .GetByIdAsync(user.Id, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (updatedUser?.RecoveryCode is not null && !string.IsNullOrWhiteSpace(updatedUser.Email))
+        {
+            await SendRecoveryCodeEmailAsync(updatedUser, cancellationToken).ConfigureAwait(false);
         }
 
         return Result.Success();
@@ -501,4 +524,28 @@ public sealed partial class UserManagementService(
 
     [LoggerMessage(EventId = 1009, Level = LogLevel.Information, Message = "Account recovered by recovery code")]
     private static partial void LogAccountRecovered(ILogger logger);
+
+    [LoggerMessage(EventId = 1010, Level = LogLevel.Information, Message = "Recovery code email sent for user {UserId}")]
+    private static partial void LogRecoveryCodeEmailSent(ILogger logger, string userId);
+
+    private async Task SendRecoveryCodeEmailAsync(UserAccount user, CancellationToken cancellationToken)
+    {
+        CitizenProfile? profile = await _citizenProfileRepository
+            .GetByUserIdAsync(user.Id, cancellationToken)
+            .ConfigureAwait(false);
+
+        LanguagePreference languagePreference = profile?.LanguagePreference ?? LanguagePreference.None;
+
+        RecoveryCodeTokens tokens = new(user.UserName, user.RecoveryCode!);
+        EmailTemplateResult template = _emailTemplateService.RenderRecoveryCode(languagePreference, tokens);
+
+        Result sendResult = await _emailSender
+            .SendAsync(user.Email!, user.UserName, template.Subject, template.HtmlBody, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (sendResult.IsSuccess)
+        {
+            LogRecoveryCodeEmailSent(_logger, user.Id);
+        }
+    }
 }
