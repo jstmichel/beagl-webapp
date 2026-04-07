@@ -3,6 +3,7 @@
 // Blazor event handlers catch all exceptions to prevent SignalR circuit failures.
 #pragma warning disable CA1031 // Do not catch general exception types
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Application.Users.Dtos;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Results;
@@ -434,18 +435,23 @@ public sealed partial class Users : IDisposable
             : user.UserName[..1].ToUpperInvariant();
     }
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Failed to load users metrics")]
     private static partial void LogLoadUsersMetricsFailed(ILogger logger, Exception exception);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "Failed to load managed users")]
     private static partial void LogLoadUsersFailed(ILogger logger, Exception exception);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Failed to create user")]
     private static partial void LogCreateUserFailed(ILogger logger, Exception exception);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 4, Level = LogLevel.Error, Message = "Failed to update user")]
     private static partial void LogUpdateUserFailed(ILogger logger, Exception exception);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 5, Level = LogLevel.Warning, Message = "Clipboard write failed")]
     private static partial void LogClipboardWriteFailed(ILogger logger, Exception exception);
 

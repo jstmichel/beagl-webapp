@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Users.Dtos;
 using Beagl.Domain;
@@ -559,39 +560,51 @@ public sealed partial class UserManagementService(
         return Result.Success();
     }
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1001, Level = LogLevel.Information, Message = "Created managed user {UserId}")]
     private static partial void LogUserCreated(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1002, Level = LogLevel.Information, Message = "Updated managed user {UserId}")]
     private static partial void LogUserUpdated(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1003, Level = LogLevel.Information, Message = "Deleted managed user {UserId}")]
     private static partial void LogUserDeleted(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1004, Level = LogLevel.Information, Message = "Confirmed managed user account {UserId}")]
     private static partial void LogUserConfirmed(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1005, Level = LogLevel.Information, Message = "Generated email confirmation token for managed user {UserId}")]
     private static partial void LogTokenGenerated(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1006, Level = LogLevel.Information, Message = "Confirmed managed user account {UserId} by token")]
     private static partial void LogUserConfirmedByToken(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1007, Level = LogLevel.Information, Message = "Citizen self-registered user {UserId}")]
     private static partial void LogCitizenRegistered(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1008, Level = LogLevel.Information, Message = "Recovery code requested for identifier {Identifier}")]
     private static partial void LogRecoveryCodeRequested(ILogger logger, string identifier);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1009, Level = LogLevel.Information, Message = "Account recovered by recovery code")]
     private static partial void LogAccountRecovered(ILogger logger);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1010, Level = LogLevel.Information, Message = "Recovery code email sent for user {UserId}")]
     private static partial void LogRecoveryCodeEmailSent(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1011, Level = LogLevel.Information, Message = "Password changed for user {UserId}")]
     private static partial void LogPasswordChanged(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 1012, Level = LogLevel.Information, Message = "Unlocked user {UserId}")]
     private static partial void LogUserUnlocked(ILogger logger, string userId);
 
