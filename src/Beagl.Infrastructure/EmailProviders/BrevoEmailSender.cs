@@ -2,6 +2,7 @@
 
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Application.EmailProviders.Services;
 using Beagl.Domain.EmailProviders;
 using Beagl.Domain.Results;
@@ -86,12 +87,15 @@ public sealed partial class BrevoEmailSender(
         }
     }
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 3001, Level = LogLevel.Information, Message = "Email sent to {RecipientEmail}")]
     private static partial void LogEmailSent(ILogger logger, string recipientEmail);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 3002, Level = LogLevel.Error, Message = "Failed to send email to {RecipientEmail}: HTTP {StatusCode} - {ResponseBody}")]
     private static partial void LogSendFailed(ILogger logger, string recipientEmail, int statusCode, string responseBody);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 3003, Level = LogLevel.Error, Message = "Exception sending email to {RecipientEmail}")]
     private static partial void LogSendException(ILogger logger, string recipientEmail, Exception exception);
 

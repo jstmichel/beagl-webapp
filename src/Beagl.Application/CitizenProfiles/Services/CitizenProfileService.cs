@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Application.CitizenProfiles.Dtos;
 using Beagl.Application.EmailProviders.Services;
 using Beagl.Domain;
@@ -396,12 +397,15 @@ public sealed partial class CitizenProfileService(
         return Result.Success();
     }
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 2001, Level = LogLevel.Information, Message = "Updated citizen profile for user {UserId}")]
     private static partial void LogProfileUpdated(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 2002, Level = LogLevel.Information, Message = "Updated citizen identity for user {UserId}")]
     private static partial void LogIdentityUpdated(ILogger logger, string userId);
 
+    [ExcludeFromCodeCoverage]
     [LoggerMessage(EventId = 2003, Level = LogLevel.Information, Message = "Sent email confirmation for user {UserId}")]
     private static partial void LogConfirmationEmailSent(ILogger logger, string userId);
 }
