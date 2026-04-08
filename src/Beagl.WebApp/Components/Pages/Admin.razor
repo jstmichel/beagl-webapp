@@ -1,0 +1,42 @@
+@page "/admin"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize(Policy = AuthorizationPolicies.EmployeeAccess, Roles = AuthorizationPolicies.AdministratorRole)]
+
+<PageTitle>@L["Admin.PageTitle"]</PageTitle>
+
+<section class="admin-page-shell">
+    <div class="container-xxl py-4 py-lg-5">
+        <div class="admin-hero mb-4 mb-lg-5">
+            <div>
+                <p class="admin-kicker mb-2">@L["Admin.Kicker"]</p>
+                <h1 class="display-5 fw-semibold mb-3">@L["Admin.Title"]</h1>
+                <p class="admin-hero__copy mb-0">@L["Admin.Copy"]</p>
+            </div>
+        </div>
+
+        <div class="admin-tabs mb-3">
+            <ul class="nav nav-tabs admin-tabs__nav" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button type="button"
+                            class="nav-link @(_activeTab == _tabEmail ? "active" : string.Empty)"
+                            id="tab-email"
+                            role="tab"
+                            aria-controls="tab-panel-email"
+                            aria-selected="@(_activeTab == _tabEmail)"
+                            @onclick='() => SetTab(_tabEmail)'>
+                        @L["Admin.Tab.Email"]
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div id="tab-panel-email"
+                 class="tab-pane @(_activeTab == _tabEmail ? "show active" : string.Empty)"
+                 role="tabpanel"
+                 aria-labelledby="tab-email">
+                <EmailConfigTab />
+            </div>
+        </div>
+    </div>
+</section>

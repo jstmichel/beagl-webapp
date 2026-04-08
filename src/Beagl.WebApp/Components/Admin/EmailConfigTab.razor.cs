@@ -8,12 +8,12 @@ using Beagl.WebApp.Resources;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 
-namespace Beagl.WebApp.Components.Pages;
+namespace Beagl.WebApp.Components.Admin;
 
 /// <summary>
-/// Code-behind for the email provider configuration page.
+/// Code-behind for the email provider configuration tab component.
 /// </summary>
-public sealed partial class EmailConfig : IDisposable
+public sealed partial class EmailConfigTab : IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly List<string> _formErrors = [];
