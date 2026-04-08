@@ -38,6 +38,13 @@ internal sealed class AuthResource
 }
 
 /// <summary>
+/// Marker type for administration portal localization resources.
+/// </summary>
+internal sealed class AdminResource
+{
+}
+
+/// <summary>
 /// Marker type for first-run setup localization resources.
 /// </summary>
 internal sealed class SetupResource

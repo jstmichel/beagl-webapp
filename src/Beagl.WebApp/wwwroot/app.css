@@ -951,3 +951,175 @@ body {
     transform: translateY(-50%);
     pointer-events: none;
 }
+
+/* ── Admin portal ────────────────────────────────────────────── */
+
+.admin-page-shell {
+    position: relative;
+}
+
+.admin-page-shell::before {
+    position: absolute;
+    inset: 1rem auto auto 50%;
+    width: min(56vw, 32rem);
+    height: min(56vw, 32rem);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(78, 170, 171, 0.22), transparent 70%);
+    filter: blur(70px);
+    transform: translateX(-8%);
+    content: "";
+    pointer-events: none;
+}
+
+.admin-hero {
+    position: relative;
+    z-index: 1;
+    animation: reveal-up var(--speed-med) var(--ease-standard) both;
+}
+
+.admin-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--brand-2);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.admin-hero__copy {
+    max-width: 56rem;
+    color: var(--ink-soft);
+    font-size: 1.03rem;
+}
+
+.admin-tabs {
+    position: relative;
+    z-index: 1;
+}
+
+.admin-tabs__nav {
+    border-bottom: 2px solid var(--surface-border);
+    gap: 0.25rem;
+}
+
+.admin-tabs__nav .nav-link {
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    margin-bottom: -2px;
+    padding: 0.6rem 1.1rem;
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: color var(--speed-fast) var(--ease-standard), border-color var(--speed-fast) var(--ease-standard);
+}
+
+.admin-tabs__nav .nav-link:hover,
+.admin-tabs__nav .nav-link:focus-visible {
+    color: var(--brand-1);
+    border-bottom-color: color-mix(in srgb, var(--brand-1) 48%, transparent);
+    background: transparent;
+}
+
+.admin-tabs__nav .nav-link.active {
+    color: var(--brand-2);
+    border-bottom-color: var(--brand-1);
+    background: transparent;
+}
+
+/* ── Email config tab ────────────────────────────────────────── */
+
+.email-config-loading {
+    display: grid;
+    place-items: center;
+    min-height: 10rem;
+}
+
+.email-config-surface {
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    backdrop-filter: blur(15px);
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem;
+    animation: reveal-up var(--speed-med) var(--ease-standard) both;
+}
+
+.email-config-surface__header {
+    margin-bottom: 1.5rem;
+}
+
+.email-config-form-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.email-config-detail-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.email-config-detail-section__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.75rem;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.email-config-detail-section__heading::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--surface-border);
+}
+
+.email-config-detail-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.email-config-detail-grid > div {
+    padding: 1rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--surface-solid) 82%, #edf2fa 18%);
+}
+
+.email-config-detail-grid dt {
+    margin-bottom: 0.35rem;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.email-config-detail-grid dd {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.email-config-empty-state {
+    display: grid;
+    gap: 0.8rem;
+    place-items: center;
+    text-align: center;
+}
+
+.email-config-empty-state__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius-lg);
+    color: var(--brand-2);
+    background: rgba(78, 170, 171, 0.16);
+    font-size: 1.6rem;
+}

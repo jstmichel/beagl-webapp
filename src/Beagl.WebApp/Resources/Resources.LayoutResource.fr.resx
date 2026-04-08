@@ -10,7 +10,7 @@
   <data name="MainLayout.Navigation" xml:space="preserve"><value>Navigation principale</value></data>
   <data name="Nav.Home" xml:space="preserve"><value>Accueil</value></data>
   <data name="Nav.Users" xml:space="preserve"><value>Utilisateurs</value></data>
-  <data name="Nav.EmailConfig" xml:space="preserve"><value>Courriel</value></data>
+  <data name="Nav.Admin" xml:space="preserve"><value>Administration</value></data>
   <data name="Nav.Logout" xml:space="preserve"><value>Déconnexion</value></data>
   <data name="Nav.Profile" xml:space="preserve"><value>Mon profil</value></data>
   <data name="Nav.ChangePassword" xml:space="preserve"><value>Changer le mot de passe</value></data>

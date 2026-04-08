@@ -16,7 +16,9 @@
             <nav class="nav nav-pills app-shell__nav" aria-label="@L["MainLayout.Navigation"]">
                 <NavLink class="nav-link" href="/employee" Match="NavLinkMatch.All">@L["Nav.Home"]</NavLink>
                 <NavLink class="nav-link" href="/employee/users" Match="NavLinkMatch.All">@L["Nav.Users"]</NavLink>
-                <NavLink class="nav-link" href="/admin/email-config" Match="NavLinkMatch.All">@L["Nav.EmailConfig"]</NavLink>
+                <AuthorizeView Roles="@AuthorizationPolicies.AdministratorRole">
+                    <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.All">@L["Nav.Admin"]</NavLink>
+                </AuthorizeView>
                 <NavLink class="nav-link" href="/account/change-password" Match="NavLinkMatch.All">@L["Nav.ChangePassword"]</NavLink>
                 <AuthorizeView>
                     <form method="post" action="/account/logout">
