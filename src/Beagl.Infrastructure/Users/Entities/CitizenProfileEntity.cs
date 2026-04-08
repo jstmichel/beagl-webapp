@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Domain.Users;
 using Beagl.Infrastructure.Database;
 
@@ -8,6 +9,7 @@ namespace Beagl.Infrastructure.Users.Entities;
 /// <summary>
 /// Represents the citizen profile row, linked to a user identity entry.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class CitizenProfileEntity
 {
     /// <summary>

@@ -46,6 +46,18 @@ Apply these conventions to all C# files.
 - When behavior is added or changed, add or update unit tests in the same change.
 - Do not automatically create integration tests; add them only when explicitly requested.
 
+## Code Coverage Exclusions
+
+- Use `[ExcludeFromCodeCoverage]` (from `System.Diagnostics.CodeAnalysis`) to exclude types or members from coverage — do not rely on coverlet file-pattern exclusions for this purpose.
+- Apply `[ExcludeFromCodeCoverage]` at the **class level** for:
+  - EF Core entity POCO classes (no behavior to test)
+  - `DbContext` subclasses (schema config only; requires a real database)
+  - Static constants-only classes (no executable logic)
+  - Infrastructure bootstrap helpers (composition root wiring)
+- Apply `[ExcludeFromCodeCoverage]` at the **method level** for individual methods that are infrastructure glue with no testable logic.
+- For `Program.cs` (top-level statements), use the assembly-level form: `[assembly: ExcludeFromCodeCoverage]` placed after the `using` directives.
+- Keep coverlet `.runsettings` `ExcludeByFile` patterns limited to generated files only: migrations, model snapshots, and Razor-generated files (`*.g.cs`, `*.b.cs`).
+
 ## Quality Bar
 
 - Follow `.editorconfig` strictly.

@@ -75,6 +75,32 @@ jobs:
         name: test-results
         path: ./TestResults
 
+    - name: Install ReportGenerator
+      if: steps.versionize.outcome == 'success'
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+    - name: Merge coverage reports
+      if: steps.versionize.outcome == 'success'
+      run: |
+        reportgenerator \
+          "-reports:./TestResults/**/coverage.cobertura.xml" \
+          "-targetdir:./TestResults/merged" \
+          "-reporttypes:Cobertura" \
+          "-assemblyfilters:-*.Tests"
+
+    - name: Update README coverage badge
+      if: steps.versionize.outcome == 'success'
+      run: |
+        LINE_RATE=$(grep -oP '(?<=line-rate=")[^"]*' ./TestResults/merged/Cobertura.xml | head -1)
+        COVERAGE=$(printf "%.0f" "$(echo "$LINE_RATE * 100" | bc -l)")
+        if [ "$COVERAGE" -ge 80 ]; then COLOR="brightgreen"
+        elif [ "$COVERAGE" -ge 60 ]; then COLOR="yellow"
+        else COLOR="red"
+        fi
+        sed -i "s|!\[Coverage\](https://img.shields.io/badge/coverage-[^)]*)|![Coverage](https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR})|" README.md
+        git add README.md
+        git diff --cached --quiet || git commit -m "chore(docs): update test coverage to ${COVERAGE}%"
+
     - name: Log in to GitHub Container Registry
       if: steps.versionize.outcome == 'success'
       uses: docker/login-action@v3
