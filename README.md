@@ -1,6 +1,6 @@
 # Beagl-WebApp
 
-![Coverage](https://img.shields.io/badge/coverage-0%25-lightgrey)
+![Coverage](https://img.shields.io/badge/coverage-92%25-brightgreen)
 
 Beagl-WebApp is an open source application designed for animal centers. It centralizes the management of animals, owners, employees, provides a self-service portal, facilitates adoption and annual fee payments, and offers reporting tools.
 
