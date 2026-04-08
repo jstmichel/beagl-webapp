@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.6.0"></a>
+## [0.6.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.6.0) (2026-04-08)
+
+### Features
+
+* **application:** add localized email templates for transactional emails ([#78](https://www.github.com/jstmichel/beagl-webapp/issues/78)) ([e87a439](https://www.github.com/jstmichel/beagl-webapp/commit/e87a439f6dcf9e32683b57de514cb6367933b7ce))
+* **infrastructure:** enforce must-change-password at first login ([#81](https://www.github.com/jstmichel/beagl-webapp/issues/81)) ([942b120](https://www.github.com/jstmichel/beagl-webapp/commit/942b12049b7c3556902a9cd7b386cb2c09884432))
+* **users:** add unlock and lockout feature for users ([#82](https://www.github.com/jstmichel/beagl-webapp/issues/82)) ([7d4c6c1](https://www.github.com/jstmichel/beagl-webapp/commit/7d4c6c1f40f8aaf0fa7e4804db94d394d267fc56))
+* **webapp:** add authenticated change password workflow ([#79](https://www.github.com/jstmichel/beagl-webapp/issues/79)) ([4ee124d](https://www.github.com/jstmichel/beagl-webapp/commit/4ee124d5e4b688be164c4b36bfd333ba0e148167))
+* **webapp:** add citizen profile page with structured address ([#68](https://www.github.com/jstmichel/beagl-webapp/issues/68)) ([4f42b1c](https://www.github.com/jstmichel/beagl-webapp/commit/4f42b1ca48f4dcbc41939bc9a0cd243c31c72f13))
+
 <a name="0.5.0"></a>
 ## [0.5.0](https://www.github.com/jstmichel/beagl-webapp/releases/tag/v0.5.0) (2026-03-30)
 
