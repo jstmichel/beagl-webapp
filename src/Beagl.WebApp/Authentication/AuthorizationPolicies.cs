@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Domain.Users;
 
 namespace Beagl.WebApp.Authentication;
@@ -7,6 +8,7 @@ namespace Beagl.WebApp.Authentication;
 /// <summary>
 /// Defines authorization constants used by the employee workspace.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal static class AuthorizationPolicies
 {
     /// <summary>

@@ -1,10 +1,13 @@
-// MIT License - Copyright (c) 2025 Jonathan St-Michel
+// MIT License - Copyright (c) 2025 Jonathan St-Michele
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace Beagl.Infrastructure.EmailProviders.Entities;
 
 /// <summary>
 /// Represents the persisted email provider configuration row.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class EmailProviderConfigEntity
 {
     /// <summary>

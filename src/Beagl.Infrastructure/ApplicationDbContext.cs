@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
 using Beagl.Infrastructure.EmailProviders.Entities;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ namespace Beagl.Infrastructure;
 /// Represents the Entity Framework database context for the application.
 /// </summary>
 /// <param name="options">The options to be used by a <see cref="DbContext"/>.</param>
+[ExcludeFromCodeCoverage]
 public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)

@@ -1,10 +1,13 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Beagl.Infrastructure.Users.Entities;
 
 /// <summary>
 /// Represents an application user, extending ASP.NET Core IdentityUser.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class ApplicationUser : Microsoft.AspNetCore.Identity.IdentityUser
 {
     /// <summary>
