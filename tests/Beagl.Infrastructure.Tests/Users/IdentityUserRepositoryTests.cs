@@ -1622,6 +1622,182 @@ public class IdentityUserRepositoryTests
         userManagerMock.Verify(manager => manager.UpdateAsync(identityUser), Times.Once);
     }
 
+    [Fact]
+    public async Task UnlockUserAsync_WhenUserNotFound_ShouldReturnNotFoundError()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("missing-id"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UnlockUserAsync("missing-id", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.not_found");
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenUserIsNotLockedOut_ShouldReturnNotLockedOutError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            LockoutEnd = null,
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.not_locked_out");
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenLockoutEndIsInThePast_ShouldReturnNotLockedOutError()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(-1),
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("users.not_locked_out");
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenSetLockoutEndFails_ShouldReturnFailure()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(10),
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.SetLockoutEndDateAsync(identityUser, null))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "LockoutError", Description = "Lockout error." }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        userManagerMock.Verify(manager => manager.ResetAccessFailedCountAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenResetAccessFailedCountFails_ShouldReturnFailure()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(10),
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.SetLockoutEndDateAsync(identityUser, null))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.ResetAccessFailedCountAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "ResetError", Description = "Reset error." }));
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task UnlockUserAsync_WhenSucceeds_ShouldReturnMappedUser()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(10),
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByIdAsync("user-1"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.SetLockoutEndDateAsync(identityUser, null))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.ResetAccessFailedCountAsync(identityUser))
+            .ReturnsAsync(IdentityResult.Success);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        Beagl.Domain.Results.Result<UserAccount> result = await repository.UnlockUserAsync("user-1", CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.Id.Should().Be("user-1");
+        result.Value.UserName.Should().Be("alex");
+        result.Value.Role.Should().Be(UserRole.Employee);
+        userManagerMock.Verify(manager => manager.SetLockoutEndDateAsync(identityUser, null), Times.Once);
+        userManagerMock.Verify(manager => manager.ResetAccessFailedCountAsync(identityUser), Times.Once);
+    }
+
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
     {
         Mock<IUserStore<ApplicationUser>> userStoreMock = new();

@@ -50,3 +50,13 @@ partial class AddRecoveryCodeToUsers
 partial class AddMustChangePasswordToUsers
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddBreeds
+{
+}
+
+[ExcludeFromCodeCoverage]
+partial class SeedBreeds
+{
+}

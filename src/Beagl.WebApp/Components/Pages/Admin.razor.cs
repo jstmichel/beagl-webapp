@@ -12,6 +12,7 @@ namespace Beagl.WebApp.Components.Pages;
 public sealed partial class Admin
 {
     private const string _tabEmail = "email";
+    private const string _tabBreeds = "breeds";
 
     private string _activeTab = _tabEmail;
 

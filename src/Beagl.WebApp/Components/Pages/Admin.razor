@@ -27,6 +27,17 @@
                         @L["Admin.Tab.Email"]
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button type="button"
+                            class="nav-link @(_activeTab == _tabBreeds ? "active" : string.Empty)"
+                            id="tab-breeds"
+                            role="tab"
+                            aria-controls="tab-panel-breeds"
+                            aria-selected="@(_activeTab == _tabBreeds)"
+                            @onclick='() => SetTab(_tabBreeds)'>
+                        @L["Admin.Tab.Breeds"]
+                    </button>
+                </li>
             </ul>
         </div>
 
@@ -36,6 +47,12 @@
                  role="tabpanel"
                  aria-labelledby="tab-email">
                 <EmailConfigTab />
+            </div>
+            <div id="tab-panel-breeds"
+                 class="tab-pane @(_activeTab == _tabBreeds ? "show active" : string.Empty)"
+                 role="tabpanel"
+                 aria-labelledby="tab-breeds">
+                <BreedsTab />
             </div>
         </div>
     </div>
