@@ -184,4 +184,43 @@ public class BrevoEmailSenderTests
         // Assert
         configRepositoryMock.Verify(r => r.GetActiveAsync(token), Times.Once);
     }
+
+    [Fact]
+    public void Constructor_WithNullHttpClientFactory_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new BrevoEmailSender(
+            null!,
+            new Mock<IEmailProviderConfigRepository>().Object,
+            NullLogger<BrevoEmailSender>.Instance);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullEmailProviderConfigRepository_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new BrevoEmailSender(
+            new Mock<IHttpClientFactory>().Object,
+            null!,
+            NullLogger<BrevoEmailSender>.Instance);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullLogger_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new BrevoEmailSender(
+            new Mock<IHttpClientFactory>().Object,
+            new Mock<IEmailProviderConfigRepository>().Object,
+            null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
 }

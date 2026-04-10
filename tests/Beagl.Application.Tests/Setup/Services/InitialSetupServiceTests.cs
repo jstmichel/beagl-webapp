@@ -141,6 +141,26 @@ public class InitialSetupServiceTests
         capturedCreateUser.EmailConfirmed.Should().BeTrue();
     }
 
+    [Fact]
+    public void Constructor_WithNullUserRepository_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new InitialSetupService(null!, new SetupStatusCache());
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullSetupStatusCache_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new InitialSetupService(new Mock<IUserRepository>().Object, null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
     [Theory]
     [InlineData("", "admin@example.com", "Password123!", "setup.user_name_required")]
     [InlineData("admin", "", "Password123!", "setup.email_required")]
