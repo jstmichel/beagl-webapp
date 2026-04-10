@@ -16,6 +16,81 @@ namespace Beagl.Application.Tests.Users.Services;
 public class UserManagementServiceTests
 {
     [Fact]
+    public void Constructor_WithNullUserRepository_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new UserManagementService(
+            null!,
+            new Mock<ICitizenProfileRepository>().Object,
+            new Mock<IEmailSender>().Object,
+            new Mock<IEmailTemplateService>().Object,
+            NullLogger<UserManagementService>.Instance);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullCitizenProfileRepository_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new UserManagementService(
+            new Mock<IUserRepository>().Object,
+            null!,
+            new Mock<IEmailSender>().Object,
+            new Mock<IEmailTemplateService>().Object,
+            NullLogger<UserManagementService>.Instance);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullEmailSender_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new UserManagementService(
+            new Mock<IUserRepository>().Object,
+            new Mock<ICitizenProfileRepository>().Object,
+            null!,
+            new Mock<IEmailTemplateService>().Object,
+            NullLogger<UserManagementService>.Instance);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullEmailTemplateService_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new UserManagementService(
+            new Mock<IUserRepository>().Object,
+            new Mock<ICitizenProfileRepository>().Object,
+            new Mock<IEmailSender>().Object,
+            null!,
+            NullLogger<UserManagementService>.Instance);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Constructor_WithNullLogger_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Action act = () => _ = new UserManagementService(
+            new Mock<IUserRepository>().Object,
+            new Mock<ICitizenProfileRepository>().Object,
+            new Mock<IEmailSender>().Object,
+            new Mock<IEmailTemplateService>().Object,
+            null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
     public async Task CreateAsync_WithNullRequest_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -1808,5 +1883,30 @@ public class UserManagementServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         userRepositoryMock.Verify(repository => repository.UnlockUserAsync("user-1", It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ForCitizenWithNullEmail_ShouldNotRequireEmailAndSucceed()
+    {
+        // Arrange
+        Mock<IUserRepository> userRepositoryMock = new();
+        userRepositoryMock
+            .Setup(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new UserAccount("user-1", "citizen", string.Empty, "555-0100", false, false, UserRole.Citizen)));
+
+        Mock<ICitizenProfileRepository> citizenProfileRepositoryMock = new();
+        Mock<IEmailSender> emailSenderMock = new();
+        Mock<IEmailTemplateService> emailTemplateServiceMock = new();
+        UserManagementService service = new(userRepositoryMock.Object, citizenProfileRepositoryMock.Object, emailSenderMock.Object, emailTemplateServiceMock.Object, NullLogger<UserManagementService>.Instance);
+        UpdateUserRequest request = new("user-1", "citizen", null, "555-0100", UserRole.Citizen);
+
+        // Act
+        Result<UserDetailsDto> result = await service.UpdateAsync(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.Id.Should().Be("user-1");
+        userRepositoryMock.Verify(repository => repository.UpdateAsync(It.IsAny<UpdateUserAccount>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

@@ -1798,6 +1798,67 @@ public class IdentityUserRepositoryTests
         userManagerMock.Verify(manager => manager.ResetAccessFailedCountAsync(identityUser), Times.Once);
     }
 
+    [Fact]
+    public async Task FindByIdentifierAsync_WhenLockoutEndIsExpired_ShouldMapUserAsNotLockedOut()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            EmailConfirmed = true,
+            LockoutEnd = DateTimeOffset.UtcNow.AddDays(-1),
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("alex"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync([UserRole.Employee.ToString()]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.IsLockedOut.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task FindByIdentifierAsync_WhenUserHasUnknownRole_ShouldMapRoleAsNone()
+    {
+        // Arrange
+        ApplicationUser identityUser = new()
+        {
+            Id = "user-1",
+            UserName = "alex",
+            Email = "alex@example.com",
+            EmailConfirmed = true,
+        };
+
+        Mock<UserManager<ApplicationUser>> userManagerMock = CreateUserManagerMock();
+        userManagerMock
+            .Setup(manager => manager.FindByNameAsync("alex"))
+            .ReturnsAsync(identityUser);
+        userManagerMock
+            .Setup(manager => manager.GetRolesAsync(identityUser))
+            .ReturnsAsync(["UnknownCustomRole"]);
+
+        IdentityUserRepository repository = new(userManagerMock.Object, CreateDbContext());
+
+        // Act
+        UserAccount? result = await repository.FindByIdentifierAsync("alex", CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Role.Should().Be(UserRole.None);
+    }
+
     private static Mock<UserManager<ApplicationUser>> CreateUserManagerMock()
     {
         Mock<IUserStore<ApplicationUser>> userStoreMock = new();
