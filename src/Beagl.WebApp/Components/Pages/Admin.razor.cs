@@ -13,6 +13,7 @@ public sealed partial class Admin
 {
     private const string _tabEmail = "email";
     private const string _tabBreeds = "breeds";
+    private const string _tabColors = "colors";
 
     private string _activeTab = _tabEmail;
 

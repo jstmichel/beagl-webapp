@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+
+  <!-- Table headers -->
+  <data name="Colors.Table.Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Colors.Table.NameEn" xml:space="preserve"><value>Nom (AN)</value></data>
+  <data name="Colors.Table.NameFr" xml:space="preserve"><value>Nom (FR)</value></data>
+  <data name="Colors.Table.Actions" xml:space="preserve"><value>Actions</value></data>
+
+  <!-- Actions -->
+  <data name="Colors.Action.Create" xml:space="preserve"><value>Ajouter une couleur</value></data>
+  <data name="Colors.Action.Edit" xml:space="preserve"><value>Modifier la couleur</value></data>
+  <data name="Colors.Action.Delete" xml:space="preserve"><value>Supprimer la couleur</value></data>
+  <data name="Colors.Action.Save" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="Colors.Action.Cancel" xml:space="preserve"><value>Annuler</value></data>
+
+  <!-- Modal -->
+  <data name="Colors.Modal.Title.Create" xml:space="preserve"><value>Ajouter une couleur</value></data>
+  <data name="Colors.Modal.Title.Edit" xml:space="preserve"><value>Modifier la couleur</value></data>
+  <data name="Colors.Modal.Description.Create" xml:space="preserve"><value>Remplissez les informations pour ajouter une nouvelle couleur.</value></data>
+  <data name="Colors.Modal.Description.Edit" xml:space="preserve"><value>Mettez à jour les informations de la couleur ci-dessous.</value></data>
+
+  <!-- Delete confirmation -->
+  <data name="Colors.Delete.Title" xml:space="preserve"><value>Supprimer la couleur</value></data>
+  <data name="Colors.Delete.Confirmation" xml:space="preserve"><value>Êtes-vous sûr de vouloir supprimer cette couleur ? Cette action est irréversible.</value></data>
+  <data name="Colors.Delete.Confirm" xml:space="preserve"><value>Supprimer</value></data>
+
+  <!-- Form -->
+  <data name="Colors.Form.NameEn" xml:space="preserve"><value>Nom (anglais)</value></data>
+  <data name="Colors.Form.NameFr" xml:space="preserve"><value>Nom (français)</value></data>
+
+  <!-- Success messages -->
+  <data name="Colors.Success.Created" xml:space="preserve"><value>Couleur créée avec succès.</value></data>
+  <data name="Colors.Success.Updated" xml:space="preserve"><value>Couleur mise à jour avec succès.</value></data>
+  <data name="Colors.Success.Deleted" xml:space="preserve"><value>Couleur supprimée avec succès.</value></data>
+
+  <!-- Loading -->
+  <data name="Colors.Loading" xml:space="preserve"><value>Chargement des couleurs…</value></data>
+
+  <!-- Empty state -->
+  <data name="Colors.Empty.Title" xml:space="preserve"><value>Aucune couleur trouvée</value></data>
+  <data name="Colors.Empty.Description" xml:space="preserve"><value>Aucune couleur n'a encore été ajoutée.</value></data>
+
+  <!-- Pagination -->
+  <data name="Colors.Pagination.Summary" xml:space="preserve"><value>Affichage de {0}–{1} sur {2} couleurs</value></data>
+  <data name="Colors.Pagination.Aria" xml:space="preserve"><value>Pagination des couleurs</value></data>
+  <data name="Colors.Pagination.Previous" xml:space="preserve"><value>Précédent</value></data>
+  <data name="Colors.Pagination.Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Colors.Pagination.Page" xml:space="preserve"><value>Page {0} sur {1}</value></data>
+
+  <!-- Surface header -->
+  <data name="Colors.Directory.Title" xml:space="preserve"><value>Répertoire des couleurs</value></data>
+  <data name="Colors.Directory.Description" xml:space="preserve"><value>Gérez les couleurs d'animaux disponibles pour la sélection dans le système.</value></data>
+
+  <!-- Error codes from ColorService -->
+  <data name="color.name_en_required" xml:space="preserve"><value>Le nom en anglais est requis.</value></data>
+  <data name="color.name_en_too_long" xml:space="preserve"><value>Le nom en anglais ne doit pas dépasser 100 caractères.</value></data>
+  <data name="color.name_fr_required" xml:space="preserve"><value>Le nom en français est requis.</value></data>
+  <data name="color.name_fr_too_long" xml:space="preserve"><value>Le nom en français ne doit pas dépasser 100 caractères.</value></data>
+  <data name="color.duplicate_name" xml:space="preserve"><value>Une couleur avec ce nom existe déjà.</value></data>
+  <data name="color.not_found" xml:space="preserve"><value>La couleur est introuvable.</value></data>
+  <data name="color.in_use" xml:space="preserve"><value>Impossible de supprimer une couleur actuellement utilisée.</value></data>
+
+  <!-- General errors -->
+  <data name="Colors.Error.LoadFailed" xml:space="preserve"><value>Impossible de charger les couleurs. Veuillez réessayer.</value></data>
+  <data name="Colors.Error.UnexpectedError" xml:space="preserve"><value>Une erreur inattendue s'est produite. Veuillez réessayer.</value></data>
+</root>

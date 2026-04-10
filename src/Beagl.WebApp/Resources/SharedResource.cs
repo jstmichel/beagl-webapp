@@ -66,6 +66,13 @@ internal sealed class BreedsResource
 }
 
 /// <summary>
+/// Marker type for color management localization resources.
+/// </summary>
+internal sealed class ColorsResource
+{
+}
+
+/// <summary>
 /// Marker type for citizen profile page localization resources.
 /// </summary>
 internal sealed class CitizenProfileResource

@@ -38,22 +38,48 @@
                         @L["Admin.Tab.Breeds"]
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button type="button"
+                            class="nav-link @(_activeTab == _tabColors ? "active" : string.Empty)"
+                            id="tab-colors"
+                            role="tab"
+                            aria-controls="tab-panel-colors"
+                            aria-selected="@(_activeTab == _tabColors)"
+                            @onclick='() => SetTab(_tabColors)'>
+                        @L["Admin.Tab.Colors"]
+                    </button>
+                </li>
             </ul>
         </div>
 
         <div class="tab-content">
-            <div id="tab-panel-email"
-                 class="tab-pane @(_activeTab == _tabEmail ? "show active" : string.Empty)"
-                 role="tabpanel"
-                 aria-labelledby="tab-email">
-                <EmailConfigTab />
-            </div>
-            <div id="tab-panel-breeds"
-                 class="tab-pane @(_activeTab == _tabBreeds ? "show active" : string.Empty)"
-                 role="tabpanel"
-                 aria-labelledby="tab-breeds">
-                <BreedsTab />
-            </div>
+            @if (_activeTab == _tabEmail)
+            {
+                <div id="tab-panel-email"
+                     class="tab-pane show active"
+                     role="tabpanel"
+                     aria-labelledby="tab-email">
+                    <EmailConfigTab />
+                </div>
+            }
+            @if (_activeTab == _tabBreeds)
+            {
+                <div id="tab-panel-breeds"
+                     class="tab-pane show active"
+                     role="tabpanel"
+                     aria-labelledby="tab-breeds">
+                    <BreedsTab />
+                </div>
+            }
+            @if (_activeTab == _tabColors)
+            {
+                <div id="tab-panel-colors"
+                     class="tab-pane show active"
+                     role="tabpanel"
+                     aria-labelledby="tab-colors">
+                    <ColorsTab />
+                </div>
+            }
         </div>
     </div>
 </section>

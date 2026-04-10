@@ -3,6 +3,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Beagl.Infrastructure.Breeds;
 using Beagl.Infrastructure.Breeds.Entities;
+using Beagl.Infrastructure.Colors;
+using Beagl.Infrastructure.Colors.Entities;
 using Beagl.Infrastructure.EmailProviders.Entities;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +26,11 @@ public class ApplicationDbContext(
     /// Gets the breeds table.
     /// </summary>
     public DbSet<BreedEntity> Breeds => Set<BreedEntity>();
+
+    /// <summary>
+    /// Gets the colors table.
+    /// </summary>
+    public DbSet<ColorEntity> Colors => Set<ColorEntity>();
 
     /// <summary>
     /// Gets the email provider configuration table.
@@ -64,6 +71,15 @@ public class ApplicationDbContext(
             entity.Property(e => e.DescriptionFr).IsRequired().HasMaxLength(500);
             entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
             entity.HasData(BreedSeedData.GetAll());
+        });
+
+        builder.Entity<ColorEntity>(entity =>
+        {
+            entity.ToTable("Colors");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NameEn).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.NameFr).IsRequired().HasMaxLength(100);
+            entity.HasData(ColorSeedData.GetAll());
         });
 
         builder.Entity<EmailProviderConfigEntity>(entity =>
