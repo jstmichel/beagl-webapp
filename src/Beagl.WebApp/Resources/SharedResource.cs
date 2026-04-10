@@ -59,6 +59,13 @@ internal sealed class EmailConfigResource
 }
 
 /// <summary>
+/// Marker type for breed management localization resources.
+/// </summary>
+internal sealed class BreedsResource
+{
+}
+
+/// <summary>
 /// Marker type for citizen profile page localization resources.
 /// </summary>
 internal sealed class CitizenProfileResource

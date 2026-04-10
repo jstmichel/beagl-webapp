@@ -1,0 +1,195 @@
+@if (!string.IsNullOrWhiteSpace(_statusMessage))
+{
+    <div class="alert alert-success mb-4" role="status" aria-live="polite">@_statusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <div class="alert alert-danger mb-4" role="alert" aria-live="assertive">@_errorMessage</div>
+}
+
+@if (_isLoading)
+{
+    <div class="breeds-loading py-5" role="status" aria-live="polite">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Breeds.Loading"]</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="breeds-surface">
+        <div class="breeds-surface__header">
+            <div>
+                <h2 class="h4 mb-1">@L["Breeds.Directory.Title"]</h2>
+                <p class="text-secondary mb-0">@L["Breeds.Directory.Description"]</p>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <select class="form-select form-select-sm"
+                            aria-label="@L["Breeds.Filter.AnimalType"]"
+                            @bind="_animalTypeFilterRaw"
+                            @bind:after="OnFilterChangedAsync">
+                        <option value="">@L["Breeds.Filter.All"]</option>
+                        <option value="1">@L["Breeds.AnimalType.Cat"]</option>
+                        <option value="2">@L["Breeds.AnimalType.Dog"]</option>
+                    </select>
+                    <select class="form-select form-select-sm"
+                            aria-label="@L["Breeds.Filter.Status"]"
+                            @bind="_isActiveFilterRaw"
+                            @bind:after="OnFilterChangedAsync">
+                        <option value="">@L["Breeds.Filter.All"]</option>
+                        <option value="true">@L["Breeds.Status.Active"]</option>
+                        <option value="false">@L["Breeds.Status.Inactive"]</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" @onclick="OpenCreateModal">
+                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                    @L["Breeds.Action.Create"]
+                </button>
+            </div>
+        </div>
+
+        @if (_breeds.Count == 0)
+        {
+            <div class="breeds-empty-state py-5" data-testid="breeds-empty-state">
+                <div class="breeds-empty-state__icon"><i class="bi bi-tags"></i></div>
+                <h3 class="h5">@L["Breeds.Empty.Title"]</h3>
+                <p class="text-secondary mb-0">@L["Breeds.Empty.Description"]</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle breeds-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">@L["Breeds.Table.NameEn"]</th>
+                            <th scope="col">@L["Breeds.Table.NameFr"]</th>
+                            <th scope="col">@L["Breeds.Table.AnimalType"]</th>
+                            <th scope="col">@L["Breeds.Table.Status"]</th>
+                            <th scope="col" class="text-end">@L["Breeds.Table.Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (BreedDto breed in _breeds)
+                        {
+                            <tr>
+                                <td>@breed.NameEn</td>
+                                <td>@breed.NameFr</td>
+                                <td>@LocalizeAnimalType(breed.AnimalType)</td>
+                                <td>
+                                    @if (breed.IsActive)
+                                    {
+                                        <span class="badge text-bg-success">@L["Breeds.Status.Active"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-secondary">@L["Breeds.Status.Inactive"]</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button
+                                            type="button"
+                                            class="breeds-icon-action"
+                                            @onclick="() => OpenEditModal(breed)"
+                                            data-testid="edit-@breed.Id"
+                                            aria-label='@L["Breeds.Action.Edit"]'
+                                            title='@L["Breeds.Action.Edit"]'
+                                            disabled="@_isSaving">
+                                            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="breeds-icon-action @(breed.IsActive ? "breeds-icon-action--danger" : string.Empty)"
+                                            @onclick="() => ToggleActiveAsync(breed.Id)"
+                                            data-testid="toggle-@breed.Id"
+                                            aria-label='@L["Breeds.Action.ToggleActive"]'
+                                            title='@L["Breeds.Action.ToggleActive"]'
+                                            disabled="@_isSaving">
+                                            <i class="bi @(breed.IsActive ? "bi-toggle-on" : "bi-toggle-off")" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="breeds-pagination">
+                <p class="text-secondary mb-0">@L["Breeds.Pagination.Summary", PageStartIndex, PageEndIndex, _totalCount]</p>
+                <div class="btn-group" role="group" aria-label="@L["Breeds.Pagination.Aria"]">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="GoToPreviousPageAsync" disabled="@(!CanGoPreviousPage)">@L["Breeds.Pagination.Previous"]</button>
+                    <span class="btn btn-outline-secondary disabled">@L["Breeds.Pagination.Page", _currentPage, TotalPages]</span>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="GoToNextPageAsync" disabled="@(!CanGoNextPage)">@L["Breeds.Pagination.Next"]</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (_showModal)
+{
+    <div class="breeds-modal-backdrop" @onclick="CloseModal">
+        <div class="breeds-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="breeds-modal-title"
+             @onclick:stopPropagation="true">
+            <div class="breeds-modal__header">
+                <div>
+                    <h2 id="breeds-modal-title" class="h4 mb-1">@(_editingBreedId is null ? L["Breeds.Modal.Title.Create"] : L["Breeds.Modal.Title.Edit"])</h2>
+                    <p class="text-secondary mb-0">@(_editingBreedId is null ? L["Breeds.Modal.Description.Create"] : L["Breeds.Modal.Description.Edit"])</p>
+                </div>
+            </div>
+
+            @if (_formErrors.Count > 0)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0 ps-3">
+                        @foreach (string error in _formErrors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <EditForm Model="_form" OnValidSubmit="SaveBreedAsync">
+                <div class="breeds-form-grid">
+                    <div>
+                        <label class="form-label" for="breedAnimalType">@L["Breeds.Form.AnimalType"]</label>
+                        <InputSelect id="breedAnimalType" class="form-select" @bind-Value="_form.AnimalType">
+                            <option value="@AnimalType.None">@L["Breeds.Form.SelectAnimalType"]</option>
+                            <option value="@AnimalType.Cat">@L["Breeds.AnimalType.Cat"]</option>
+                            <option value="@AnimalType.Dog">@L["Breeds.AnimalType.Dog"]</option>
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label class="form-label" for="breedNameEn">@L["Breeds.Form.NameEn"]</label>
+                        <InputText id="breedNameEn" class="form-control" @bind-Value="_form.NameEn" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="breedNameFr">@L["Breeds.Form.NameFr"]</label>
+                        <InputText id="breedNameFr" class="form-control" @bind-Value="_form.NameFr" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="breedDescriptionEn">@L["Breeds.Form.DescriptionEn"]</label>
+                        <InputTextArea id="breedDescriptionEn" class="form-control" rows="3" @bind-Value="_form.DescriptionEn" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="breedDescriptionFr">@L["Breeds.Form.DescriptionFr"]</label>
+                        <InputTextArea id="breedDescriptionFr" class="form-control" rows="3" @bind-Value="_form.DescriptionFr" />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">@L["Breeds.Action.Cancel"]</button>
+                    <button type="submit" class="btn btn-primary" disabled="@_isSaving">@L["Breeds.Action.Save"]</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}

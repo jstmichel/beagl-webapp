@@ -5,7 +5,8 @@
         "git merge-base": true,
         "gh": true,
         "git push": true,
-        "open": true
+        "open": true,
+        "dotnet ef": true
     }
 
 }

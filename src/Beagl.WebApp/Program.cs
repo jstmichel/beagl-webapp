@@ -3,13 +3,16 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Beagl.Infrastructure;
+using Beagl.Infrastructure.Breeds;
 using Beagl.Infrastructure.EmailProviders;
 using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
+using Beagl.Application.Breeds.Services;
 using Beagl.Application.CitizenProfiles.Services;
 using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Setup.Services;
 using Beagl.Application.Users.Services;
+using Beagl.Domain.Breeds;
 using Beagl.Domain.EmailProviders;
 using Beagl.Domain.Users;
 using Beagl.WebApp.Authentication;
@@ -97,6 +100,8 @@ builder.Services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<ISharedLoginService, SharedLoginService>();
 builder.Services.AddScoped<ICitizenProfileRepository, CitizenProfileRepository>();
 builder.Services.AddScoped<ICitizenProfileService, CitizenProfileService>();
+builder.Services.AddScoped<IBreedRepository, BreedRepository>();
+builder.Services.AddScoped<IBreedService, BreedService>();
 
 builder.Services.AddHsts(options =>
 {

@@ -1123,3 +1123,143 @@ body {
     background: rgba(78, 170, 171, 0.16);
     font-size: 1.6rem;
 }
+
+/* ── Breeds tab ──────────────────────────────────────────────── */
+
+.breeds-loading {
+    display: grid;
+    place-items: center;
+    min-height: 10rem;
+}
+
+.breeds-surface {
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    backdrop-filter: blur(15px);
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem;
+    animation: reveal-up var(--speed-med) var(--ease-standard) both;
+}
+
+.breeds-surface__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.breeds-table thead th {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.breeds-table tbody tr {
+    border-color: var(--surface-border);
+}
+
+.breeds-empty-state {
+    display: grid;
+    gap: 0.8rem;
+    place-items: center;
+    text-align: center;
+}
+
+.breeds-empty-state__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius-lg);
+    color: var(--brand-2);
+    background: rgba(78, 170, 171, 0.16);
+    font-size: 1.6rem;
+}
+
+.breeds-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1080;
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 4vw, 2rem);
+    background: rgba(11, 15, 22, 0.46);
+    backdrop-filter: blur(5px);
+}
+
+.breeds-modal {
+    width: min(48rem, 100%);
+    max-height: min(90vh, 56rem);
+    overflow: auto;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    box-shadow: 0 2rem 3.5rem rgba(9, 12, 18, 0.28);
+    padding: 1.5rem;
+    animation: reveal-up var(--speed-med) var(--ease-standard) both;
+}
+
+.breeds-modal__header {
+    margin-bottom: 1.5rem;
+}
+
+.breeds-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.breeds-icon-action {
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    color: var(--brand-primary);
+    background: transparent;
+    transition: background-color var(--motion-fast), color var(--motion-fast), transform var(--motion-fast);
+}
+
+.breeds-icon-action:hover,
+.breeds-icon-action:focus-visible {
+    color: color-mix(in srgb, var(--brand-primary) 86%, #13373a 14%);
+    background: color-mix(in srgb, var(--brand-primary) 14%, #fff 86%);
+}
+
+.breeds-icon-action:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--brand-primary) 48%, #fff 52%);
+    outline-offset: 2px;
+}
+
+.breeds-icon-action:active {
+    transform: translateY(1px);
+}
+
+.breeds-icon-action--danger {
+    color: #cc3a3a;
+}
+
+.breeds-icon-action--danger:hover,
+.breeds-icon-action--danger:focus-visible {
+    color: #a82f2f;
+    background: color-mix(in srgb, #cc3a3a 14%, #fff 86%);
+}
+
+.breeds-icon-action--danger:focus-visible {
+    outline-color: color-mix(in srgb, #cc3a3a 48%, #fff 52%);
+}
+
+.breeds-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+}

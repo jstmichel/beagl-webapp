@@ -51,4 +51,14 @@ public static class ValidationConstants
     /// Length of the account recovery code.
     /// </summary>
     public const int RecoveryCodeLength = 6;
+
+    /// <summary>
+    /// Maximum allowed length for a breed name.
+    /// </summary>
+    public const int BreedNameMaxLength = 100;
+
+    /// <summary>
+    /// Maximum allowed length for a breed description.
+    /// </summary>
+    public const int BreedDescriptionMaxLength = 500;
 }

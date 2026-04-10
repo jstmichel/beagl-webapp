@@ -1,6 +1,8 @@
 // MIT License - Copyright (c) 2025 Jonathan St-Michel
 
 using System.Diagnostics.CodeAnalysis;
+using Beagl.Infrastructure.Breeds;
+using Beagl.Infrastructure.Breeds.Entities;
 using Beagl.Infrastructure.EmailProviders.Entities;
 using Beagl.Infrastructure.Users.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +20,11 @@ public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 {
+    /// <summary>
+    /// Gets the breeds table.
+    /// </summary>
+    public DbSet<BreedEntity> Breeds => Set<BreedEntity>();
+
     /// <summary>
     /// Gets the email provider configuration table.
     /// </summary>
@@ -45,6 +52,19 @@ public class ApplicationDbContext(
             .HasDatabaseName("EmailIndex")
             .IsUnique()
             .HasFilter("\"NormalizedEmail\" IS NOT NULL");
+
+        builder.Entity<BreedEntity>(entity =>
+        {
+            entity.ToTable("Breeds");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.AnimalType).IsRequired().HasConversion<int>();
+            entity.Property(e => e.NameEn).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.NameFr).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.DescriptionEn).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.DescriptionFr).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
+            entity.HasData(BreedSeedData.GetAll());
+        });
 
         builder.Entity<EmailProviderConfigEntity>(entity =>
         {
