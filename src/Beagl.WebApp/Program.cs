@@ -3,7 +3,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Beagl.Infrastructure;
+using Beagl.Application.Colors.Services;
 using Beagl.Infrastructure.Breeds;
+using Beagl.Infrastructure.Colors;
 using Beagl.Infrastructure.EmailProviders;
 using Beagl.Infrastructure.Users;
 using Beagl.Infrastructure.Users.Entities;
@@ -13,6 +15,7 @@ using Beagl.Application.EmailProviders.Services;
 using Beagl.Application.Setup.Services;
 using Beagl.Application.Users.Services;
 using Beagl.Domain.Breeds;
+using Beagl.Domain.Colors;
 using Beagl.Domain.EmailProviders;
 using Beagl.Domain.Users;
 using Beagl.WebApp.Authentication;
@@ -102,6 +105,8 @@ builder.Services.AddScoped<ICitizenProfileRepository, CitizenProfileRepository>(
 builder.Services.AddScoped<ICitizenProfileService, CitizenProfileService>();
 builder.Services.AddScoped<IBreedRepository, BreedRepository>();
 builder.Services.AddScoped<IBreedService, BreedService>();
+builder.Services.AddScoped<IColorRepository, ColorRepository>();
+builder.Services.AddScoped<IColorService, ColorService>();
 
 builder.Services.AddHsts(options =>
 {

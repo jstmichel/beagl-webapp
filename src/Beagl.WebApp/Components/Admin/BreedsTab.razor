@@ -64,8 +64,8 @@ else
                 <table class="table align-middle breeds-table mb-0">
                     <thead>
                         <tr>
-                            <th scope="col">@L["Breeds.Table.NameEn"]</th>
-                            <th scope="col">@L["Breeds.Table.NameFr"]</th>
+                            <th scope="col">@L["Breeds.Table.Name"]</th>
+                            <th scope="col">@L["Breeds.Table.Description"]</th>
                             <th scope="col">@L["Breeds.Table.AnimalType"]</th>
                             <th scope="col">@L["Breeds.Table.Status"]</th>
                             <th scope="col" class="text-end">@L["Breeds.Table.Actions"]</th>
@@ -75,8 +75,8 @@ else
                         @foreach (BreedDto breed in _breeds)
                         {
                             <tr>
-                                <td>@breed.NameEn</td>
-                                <td>@breed.NameFr</td>
+                                <td>@LocalizeName(breed.NameEn, breed.NameFr)</td>
+                                <td>@LocalizeName(breed.DescriptionEn, breed.DescriptionFr)</td>
                                 <td>@LocalizeAnimalType(breed.AnimalType)</td>
                                 <td>
                                     @if (breed.IsActive)

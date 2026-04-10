@@ -4,6 +4,7 @@
 #pragma warning disable CA1031 // Do not catch general exception types
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Beagl.Application.Breeds.Dtos;
 using Beagl.Application.Breeds.Services;
 using Beagl.Domain.Breeds;
@@ -269,6 +270,11 @@ public sealed partial class BreedsTab : IDisposable
         }
 
         _isSaving = false;
+    }
+
+    private static string LocalizeName(string en, string fr)
+    {
+        return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "fr" ? fr : en;
     }
 
     private string LocalizeAnimalType(AnimalType animalType)

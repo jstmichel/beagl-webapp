@@ -61,4 +61,9 @@ public static class ValidationConstants
     /// Maximum allowed length for a breed description.
     /// </summary>
     public const int BreedDescriptionMaxLength = 500;
+
+    /// <summary>
+    /// Maximum allowed length for a color name.
+    /// </summary>
+    public const int ColorNameMaxLength = 100;
 }

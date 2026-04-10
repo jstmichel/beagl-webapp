@@ -1,0 +1,170 @@
+@if (!string.IsNullOrWhiteSpace(_statusMessage))
+{
+    <div class="alert alert-success mb-4" role="status" aria-live="polite">@_statusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <div class="alert alert-danger mb-4" role="alert" aria-live="assertive">@_errorMessage</div>
+}
+
+@if (_isLoading)
+{
+    <div class="colors-loading py-5" role="status" aria-live="polite">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Colors.Loading"]</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="colors-surface">
+        <div class="breeds-surface__header">
+            <div>
+                <h2 class="h4 mb-1">@L["Colors.Directory.Title"]</h2>
+                <p class="text-secondary mb-0">@L["Colors.Directory.Description"]</p>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <button type="button" class="btn btn-primary" @onclick="OpenCreateModal">
+                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                    @L["Colors.Action.Create"]
+                </button>
+            </div>
+        </div>
+
+        @if (_colors.Count == 0)
+        {
+            <div class="colors-empty-state py-5" data-testid="colors-empty-state">
+                <div class="colors-empty-state__icon"><i class="bi bi-palette"></i></div>
+                <h3 class="h5">@L["Colors.Empty.Title"]</h3>
+                <p class="text-secondary mb-0">@L["Colors.Empty.Description"]</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle colors-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">@L["Colors.Table.Name"]</th>
+                            <th scope="col" class="text-end">@L["Colors.Table.Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ColorDto color in _colors)
+                        {
+                            <tr>
+                                <td>@LocalizeName(color.NameEn, color.NameFr)</td>
+                                <td>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button
+                                            type="button"
+                                            class="breeds-icon-action"
+                                            @onclick="() => OpenEditModal(color)"
+                                            data-testid="edit-@color.Id"
+                                            aria-label='@L["Colors.Action.Edit"]'
+                                            title='@L["Colors.Action.Edit"]'
+                                            disabled="@_isSaving">
+                                            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="breeds-icon-action colors-icon-action--danger"
+                                            @onclick="() => ConfirmDelete(color.Id)"
+                                            data-testid="delete-@color.Id"
+                                            aria-label='@L["Colors.Action.Delete"]'
+                                            title='@L["Colors.Action.Delete"]'
+                                            disabled="@_isSaving">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="colors-pagination">
+                <p class="text-secondary mb-0">@L["Colors.Pagination.Summary", PageStartIndex, PageEndIndex, _totalCount]</p>
+                <div class="btn-group" role="group" aria-label="@L["Colors.Pagination.Aria"]">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="GoToPreviousPageAsync" disabled="@(!CanGoPreviousPage)">@L["Colors.Pagination.Previous"]</button>
+                    <span class="btn btn-outline-secondary disabled">@L["Colors.Pagination.Page", _currentPage, TotalPages]</span>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="GoToNextPageAsync" disabled="@(!CanGoNextPage)">@L["Colors.Pagination.Next"]</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (_showModal)
+{
+    <div class="colors-modal-backdrop" @onclick="CloseModal">
+        <div class="colors-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="colors-modal-title"
+             @onclick:stopPropagation="true">
+            <div class="breeds-modal__header">
+                <div>
+                    <h2 id="colors-modal-title" class="h4 mb-1">@(_editingColorId is null ? L["Colors.Modal.Title.Create"] : L["Colors.Modal.Title.Edit"])</h2>
+                    <p class="text-secondary mb-0">@(_editingColorId is null ? L["Colors.Modal.Description.Create"] : L["Colors.Modal.Description.Edit"])</p>
+                </div>
+            </div>
+
+            @if (_formErrors.Count > 0)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0 ps-3">
+                        @foreach (string error in _formErrors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <EditForm Model="_form" OnValidSubmit="SaveColorAsync">
+                <div class="colors-form-grid">
+                    <div>
+                        <label class="form-label" for="colorNameEn">@L["Colors.Form.NameEn"]</label>
+                        <InputText id="colorNameEn" class="form-control" @bind-Value="_form.NameEn" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="colorNameFr">@L["Colors.Form.NameFr"]</label>
+                        <InputText id="colorNameFr" class="form-control" @bind-Value="_form.NameFr" />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">@L["Colors.Action.Cancel"]</button>
+                    <button type="submit" class="btn btn-primary" disabled="@_isSaving">@L["Colors.Action.Save"]</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@if (_showDeleteConfirm)
+{
+    <div class="colors-modal-backdrop" @onclick="CancelDelete">
+        <div class="colors-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="colors-delete-modal-title"
+             @onclick:stopPropagation="true">
+            <div class="breeds-modal__header">
+                <div>
+                    <h2 id="colors-delete-modal-title" class="h4 mb-1">@L["Colors.Delete.Title"]</h2>
+                </div>
+            </div>
+
+            <p class="text-secondary mb-4">@L["Colors.Delete.Confirmation"]</p>
+
+            <div class="d-flex justify-content-end gap-3">
+                <button type="button" class="btn btn-outline-secondary" @onclick="CancelDelete" disabled="@_isSaving">@L["Colors.Action.Cancel"]</button>
+                <button type="button" class="btn btn-danger" @onclick="DeleteColorAsync" disabled="@_isSaving">@L["Colors.Delete.Confirm"]</button>
+            </div>
+        </div>
+    </div>
+}

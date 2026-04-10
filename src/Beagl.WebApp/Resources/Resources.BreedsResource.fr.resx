@@ -6,6 +6,8 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
 
   <!-- Table headers -->
+  <data name="Breeds.Table.Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Breeds.Table.Description" xml:space="preserve"><value>Description</value></data>
   <data name="Breeds.Table.NameEn" xml:space="preserve"><value>Nom (AN)</value></data>
   <data name="Breeds.Table.NameFr" xml:space="preserve"><value>Nom (FR)</value></data>
   <data name="Breeds.Table.AnimalType" xml:space="preserve"><value>Type d'animal</value></data>

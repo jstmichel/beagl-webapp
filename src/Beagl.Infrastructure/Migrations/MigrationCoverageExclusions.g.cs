@@ -60,3 +60,8 @@ partial class AddBreeds
 partial class SeedBreeds
 {
 }
+
+[ExcludeFromCodeCoverage]
+partial class AddColors
+{
+}

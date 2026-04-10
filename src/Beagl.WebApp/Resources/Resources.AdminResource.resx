@@ -10,4 +10,5 @@
   <data name="Admin.Copy" xml:space="preserve"><value>Manage system-wide settings and configuration for the application.</value></data>
   <data name="Admin.Tab.Email" xml:space="preserve"><value>Email</value></data>
   <data name="Admin.Tab.Breeds" xml:space="preserve"><value>Breeds</value></data>
+  <data name="Admin.Tab.Colors" xml:space="preserve"><value>Colors</value></data>
 </root>
