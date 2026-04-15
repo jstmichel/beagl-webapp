@@ -5,29 +5,44 @@
 <PageTitle>@L["Home.Title"]</PageTitle>
 
 <section class="users-page-shell">
-    <div class="container-xxl py-4 py-lg-5">
-        <article class="home-hero">
-            <p class="home-kicker mb-0"><i class="bi bi-stars" aria-hidden="true"></i> @L["Home.Kicker"]</p>
-            <h1 class="home-title">@L["Home.Hero.Title"]</h1>
-            <p class="home-copy mb-0">@L["Home.Hero.Copy"]</p>
-            <div class="home-actions">
-                <a class="btn btn-primary btn-lg px-4" href="/employee/users">@L["Home.Action.Users"]</a>
-                <a class="btn btn-outline-secondary btn-lg px-4" href="/employee">@L["Home.Action.Overview"]</a>
-            </div>
-        </article>
+    <div class="crm-content">
+        <div class="crm-page-header">
+            <p class="crm-page-kicker mb-0"><i class="bi bi-house" aria-hidden="true"></i> @L["Home.Kicker"]</p>
+            <h1 class="crm-page-title">@L["Home.Hero.Title"]</h1>
+            <p class="crm-page-copy">@L["Home.Hero.Copy"]</p>
+        </div>
 
-        <section class="home-grid" aria-label="@L["Home.Highlights.Aria"]">
-            <article class="home-card">
-                <h2 class="home-card__title">@L["Home.Highlight.Workspace.Title"]</h2>
-                <p class="home-card__copy">@L["Home.Highlight.Workspace.Copy"]</p>
+        <div class="dash-actions mb-4">
+            <a class="btn btn-primary btn-lg px-4" href="/employee/users">
+                <i class="bi bi-people me-2" aria-hidden="true"></i>@L["Home.Action.Users"]
+            </a>
+            <a class="btn btn-outline-secondary btn-lg px-4" href="/employee">@L["Home.Action.Overview"]</a>
+        </div>
+
+        <section class="dash-cards" aria-label="@L["Home.Highlights.Aria"]">
+            <article class="dash-card">
+                <div class="dash-card__header">
+                    <h2 class="dash-card__title">
+                        <i class="bi bi-kanban me-2 text-primary" aria-hidden="true"></i>@L["Home.Highlight.Workspace.Title"]
+                    </h2>
+                </div>
+                <p class="dash-card__copy">@L["Home.Highlight.Workspace.Copy"]</p>
             </article>
-            <article class="home-card">
-                <h2 class="home-card__title">@L["Home.Highlight.Clarity.Title"]</h2>
-                <p class="home-card__copy">@L["Home.Highlight.Clarity.Copy"]</p>
+            <article class="dash-card">
+                <div class="dash-card__header">
+                    <h2 class="dash-card__title">
+                        <i class="bi bi-lightbulb me-2 text-primary" aria-hidden="true"></i>@L["Home.Highlight.Clarity.Title"]
+                    </h2>
+                </div>
+                <p class="dash-card__copy">@L["Home.Highlight.Clarity.Copy"]</p>
             </article>
-            <article class="home-card">
-                <h2 class="home-card__title">@L["Home.Highlight.Teams.Title"]</h2>
-                <p class="home-card__copy">@L["Home.Highlight.Teams.Copy"]</p>
+            <article class="dash-card">
+                <div class="dash-card__header">
+                    <h2 class="dash-card__title">
+                        <i class="bi bi-people-fill me-2 text-primary" aria-hidden="true"></i>@L["Home.Highlight.Teams.Title"]
+                    </h2>
+                </div>
+                <p class="dash-card__copy">@L["Home.Highlight.Teams.Copy"]</p>
             </article>
         </section>
     </div>

@@ -173,8 +173,6 @@ public sealed partial class BreedsTab : IDisposable
         _form.AnimalType = breed.AnimalType;
         _form.NameEn = breed.NameEn;
         _form.NameFr = breed.NameFr;
-        _form.DescriptionEn = breed.DescriptionEn;
-        _form.DescriptionFr = breed.DescriptionFr;
         _formErrors.Clear();
         _showModal = true;
         _statusMessage = null;
@@ -197,9 +195,7 @@ public sealed partial class BreedsTab : IDisposable
             SaveBreedRequest request = new(
                 _form.AnimalType,
                 _form.NameEn,
-                _form.NameFr,
-                _form.DescriptionEn,
-                _form.DescriptionFr);
+                _form.NameFr);
 
             if (_editingBreedId is null)
             {
@@ -303,17 +299,11 @@ public sealed partial class BreedsTab : IDisposable
 
         public string NameFr { get; set; } = string.Empty;
 
-        public string DescriptionEn { get; set; } = string.Empty;
-
-        public string DescriptionFr { get; set; } = string.Empty;
-
         public void Reset()
         {
             AnimalType = AnimalType.None;
             NameEn = string.Empty;
             NameFr = string.Empty;
-            DescriptionEn = string.Empty;
-            DescriptionFr = string.Empty;
         }
     }
 }

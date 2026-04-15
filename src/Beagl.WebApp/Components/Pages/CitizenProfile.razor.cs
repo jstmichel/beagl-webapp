@@ -39,6 +39,7 @@ public sealed partial class CitizenProfile : ComponentBase, IDisposable
 
     private ProfileFormModel _model = new();
     private EditContext _editContext = null!;
+    private string _activeTab = "personal";
     private bool _isLoading = true;
     private bool _isSaving;
     private bool _isSendingConfirmation;

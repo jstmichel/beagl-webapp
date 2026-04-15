@@ -21,8 +21,6 @@ public class BreedEntityTests
         entity.AnimalType.Should().Be(AnimalType.None);
         entity.NameEn.Should().Be(string.Empty);
         entity.NameFr.Should().Be(string.Empty);
-        entity.DescriptionEn.Should().Be(string.Empty);
-        entity.DescriptionFr.Should().Be(string.Empty);
         entity.IsActive.Should().BeFalse();
     }
 
@@ -39,8 +37,6 @@ public class BreedEntityTests
             AnimalType = AnimalType.Cat,
             NameEn = "Maine Coon",
             NameFr = "Maine Coon",
-            DescriptionEn = "Large cat",
-            DescriptionFr = "Grand chat",
             IsActive = true,
         };
 
@@ -49,8 +45,6 @@ public class BreedEntityTests
         entity.AnimalType.Should().Be(AnimalType.Cat);
         entity.NameEn.Should().Be("Maine Coon");
         entity.NameFr.Should().Be("Maine Coon");
-        entity.DescriptionEn.Should().Be("Large cat");
-        entity.DescriptionFr.Should().Be("Grand chat");
         entity.IsActive.Should().BeTrue();
     }
 }
@@ -157,8 +151,6 @@ public class BreedRepositoryTests
             AnimalType = AnimalType.Dog,
             NameEn = "Labrador",
             NameFr = "Labrador",
-            DescriptionEn = "Friendly dog",
-            DescriptionFr = "Chien amical",
             IsActive = true,
         });
 
@@ -174,7 +166,6 @@ public class BreedRepositoryTests
         result!.Id.Should().Be(id);
         result.AnimalType.Should().Be(AnimalType.Dog);
         result.NameEn.Should().Be("Labrador");
-        result.DescriptionEn.Should().Be("Friendly dog");
         result.IsActive.Should().BeTrue();
     }
 
@@ -295,7 +286,7 @@ public class BreedRepositoryTests
         BreedRepository repository = new(dbContext);
 
         Guid id = Guid.NewGuid();
-        Breed breed = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", "Large cat", "Grand chat", true);
+        Breed breed = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", true);
 
         // Act
         Breed created = await repository.CreateAsync(breed, CancellationToken.None);
@@ -305,8 +296,6 @@ public class BreedRepositoryTests
         created.AnimalType.Should().Be(AnimalType.Cat);
         created.NameEn.Should().Be("Maine Coon");
         created.NameFr.Should().Be("Maine Coon");
-        created.DescriptionEn.Should().Be("Large cat");
-        created.DescriptionFr.Should().Be("Grand chat");
         created.IsActive.Should().BeTrue();
 
         int rowCount = await dbContext.Breeds.CountAsync();
@@ -333,7 +322,7 @@ public class BreedRepositoryTests
         // Arrange
         await using ApplicationDbContext dbContext = CreateDbContext();
         BreedRepository repository = new(dbContext);
-        Breed breed = new(Guid.NewGuid(), AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        Breed breed = new(Guid.NewGuid(), AnimalType.Cat, "Maine Coon", "Maine Coon", true);
 
         // Act
         Func<Task> act = async () => await repository.UpdateAsync(breed, CancellationToken.None);
@@ -355,15 +344,13 @@ public class BreedRepositoryTests
             AnimalType = AnimalType.Cat,
             NameEn = "Maine Coon",
             NameFr = "Maine Coon",
-            DescriptionEn = string.Empty,
-            DescriptionFr = string.Empty,
             IsActive = true,
         });
 
         await dbContext.SaveChangesAsync();
 
         BreedRepository repository = new(dbContext);
-        Breed updated = new(id, AnimalType.Dog, "Labrador", "Labrador", "Friendly dog", "Chien amical", false);
+        Breed updated = new(id, AnimalType.Dog, "Labrador", "Labrador", false);
 
         // Act
         Breed result = await repository.UpdateAsync(updated, CancellationToken.None);
@@ -373,7 +360,6 @@ public class BreedRepositoryTests
         result.AnimalType.Should().Be(AnimalType.Dog);
         result.NameEn.Should().Be("Labrador");
         result.NameFr.Should().Be("Labrador");
-        result.DescriptionEn.Should().Be("Friendly dog");
         result.IsActive.Should().BeFalse();
 
         BreedEntity? persisted = await dbContext.Breeds.FindAsync(id);

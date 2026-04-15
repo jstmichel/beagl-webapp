@@ -14,4 +14,6 @@
   <data name="Nav.Logout" xml:space="preserve"><value>Sign out</value></data>
   <data name="Nav.Profile" xml:space="preserve"><value>My profile</value></data>
   <data name="Nav.ChangePassword" xml:space="preserve"><value>Change password</value></data>
+  <data name="MainLayout.Section.Main" xml:space="preserve"><value>Navigation</value></data>
+  <data name="MainLayout.ToggleMenu" xml:space="preserve"><value>Toggle menu</value></data>
 </root>

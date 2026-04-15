@@ -11,20 +11,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/app.css" />
     <link rel="stylesheet" href="~/Beagl.WebApp.styles.css" />
 </head>
-<body>
+<body class="auth-body">
     <section class="auth-page-shell" aria-label="@L["Auth.AccessDenied.PageTitle"]">
         <article class="auth-card">
-            <a class="app-shell__brand text-decoration-none mb-3" href="/">
-                <span class="app-shell__brand-mark">
-                    <img class="app-shell__brand-logo" src="~/images/beagl_logo.png" alt="@L["Auth.Login.Brand.Alt"]" />
-                </span>
-                <span>@L["Auth.Login.Brand.Name"]</span>
-            </a>
+            <div class="auth-brand">
+                <a class="auth-brand__mark" href="/">
+                    <img class="auth-brand__logo" src="~/images/beagl_logo.png" alt="@L["Auth.Login.Brand.Alt"]" />
+                </a>
+                <a class="auth-brand__name" href="/">@L["Auth.Login.Brand.Name"]</a>
+            </div>
             <p class="auth-kicker">@L["Auth.AccessDenied.Kicker"]</p>
             <h1 class="auth-heading">@L["Auth.AccessDenied.Title"]</h1>
             <p class="auth-copy">@L["Auth.AccessDenied.Description"]</p>

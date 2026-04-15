@@ -11,20 +11,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/app.css" />
     <link rel="stylesheet" href="~/Beagl.WebApp.styles.css" />
 </head>
-<body>
+<body class="auth-body">
     <section class="auth-page-shell" aria-label="@L["Auth.Register.PageTitle"]">
-        <article class="auth-card">
-            <a class="app-shell__brand text-decoration-none mb-3" href="/">
-                <span class="app-shell__brand-mark">
-                    <img class="app-shell__brand-logo" src="~/images/beagl_logo.png" alt="@L["Auth.Login.Brand.Alt"]" />
-                </span>
-                <span>@L["Auth.Login.Brand.Name"]</span>
-            </a>
+        <article class="auth-card auth-card--wide">
+            <div class="auth-brand">
+                <a class="auth-brand__mark" href="/">
+                    <img class="auth-brand__logo" src="~/images/beagl_logo.png" alt="@L["Auth.Login.Brand.Alt"]" />
+                </a>
+                <a class="auth-brand__name" href="/">@L["Auth.Login.Brand.Name"]</a>
+            </div>
             <p class="auth-kicker">@L["Auth.Register.Kicker"]</p>
             <h1 class="auth-heading">@L["Auth.Register.Title"]</h1>
             <p class="auth-copy">@L["Auth.Register.Description"]</p>
@@ -39,6 +41,7 @@
                     </div>
                 }
 
+                <div class="auth-form-grid">
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.FirstName">@L["Auth.Register.FirstName.Label"]</label>
                     <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name" />
@@ -48,7 +51,9 @@
                     <label class="form-label" asp-for="Input.LastName">@L["Auth.Register.LastName.Label"]</label>
                     <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" />
                 </div>
+                </div>
 
+                <div class="auth-form-grid">
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.UserName">@L["Auth.Register.UserName.Label"]</label>
                     <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
@@ -58,7 +63,9 @@
                     <label class="form-label" asp-for="Input.PhoneNumber">@L["Auth.Register.PhoneNumber.Label"]</label>
                     <input asp-for="Input.PhoneNumber" type="tel" class="form-control" autocomplete="tel" />
                 </div>
+                </div>
 
+                <div class="auth-form-grid">
                 <div class="auth-field">
                     <label class="form-label" asp-for="Input.Email">
                         @L["Auth.Register.Email.Label"]
@@ -71,6 +78,7 @@
                     <label class="form-label" asp-for="Input.Password">@L["Auth.Register.Password.Label"]</label>
                     <input asp-for="Input.Password" type="password" class="form-control" autocomplete="new-password" />
                     <p class="auth-hint">@L["Auth.Register.Password.Hint"]</p>
+                </div>
                 </div>
 
                 <div class="auth-actions">

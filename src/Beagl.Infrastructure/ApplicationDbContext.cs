@@ -67,8 +67,6 @@ public class ApplicationDbContext(
             entity.Property(e => e.AnimalType).IsRequired().HasConversion<int>();
             entity.Property(e => e.NameEn).IsRequired().HasMaxLength(100);
             entity.Property(e => e.NameFr).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.DescriptionEn).IsRequired().HasMaxLength(500);
-            entity.Property(e => e.DescriptionFr).IsRequired().HasMaxLength(500);
             entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
             entity.HasData(BreedSeedData.GetAll());
         });

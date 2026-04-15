@@ -119,7 +119,7 @@ public sealed class BreedsTabTests
     public async Task LoadBreedsAsync_WhenServiceReturnsResults_SetsBreedsList()
     {
         // Arrange
-        BreedDto breed = new(Guid.NewGuid(), AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        BreedDto breed = new(Guid.NewGuid(), AnimalType.Cat, "Maine Coon", "Maine Coon", true);
         SetupGetPageAsync(new BreedsPageDto([breed], 1));
 
         BreedsTab component = CreateComponent();
@@ -274,7 +274,7 @@ public sealed class BreedsTabTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        BreedDto breed = new(id, AnimalType.Dog, "Labrador", "Labrador", "Friendly", "Amical", true);
+        BreedDto breed = new(id, AnimalType.Dog, "Labrador", "Labrador", true);
         BreedsTab component = CreateComponent();
 
         // Act
@@ -292,9 +292,6 @@ public sealed class BreedsTabTests
 
         string nameEn = GetFormField<string>(component, "NameEn");
         nameEn.Should().Be("Labrador");
-
-        string descriptionEn = GetFormField<string>(component, "DescriptionEn");
-        descriptionEn.Should().Be("Friendly");
     }
 
     [Fact]
@@ -320,7 +317,7 @@ public sealed class BreedsTabTests
     public async Task SaveBreedAsync_Create_OnSuccess_ClosesModalAndReloads()
     {
         // Arrange
-        BreedDto created = new(Guid.NewGuid(), AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        BreedDto created = new(Guid.NewGuid(), AnimalType.Cat, "Maine Coon", "Maine Coon", true);
 
         _serviceMock
             .Setup(s => s.CreateAsync(It.IsAny<SaveBreedRequest>(), It.IsAny<CancellationToken>()))
@@ -370,7 +367,7 @@ public sealed class BreedsTabTests
     {
         // Arrange
         Guid editingId = Guid.NewGuid();
-        BreedDto updated = new(editingId, AnimalType.Dog, "Labrador", "Labrador", string.Empty, string.Empty, true);
+        BreedDto updated = new(editingId, AnimalType.Dog, "Labrador", "Labrador", true);
 
         _serviceMock
             .Setup(s => s.UpdateAsync(editingId, It.IsAny<SaveBreedRequest>(), It.IsAny<CancellationToken>()))

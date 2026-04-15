@@ -32,16 +32,6 @@ public class BreedEntity
     public string NameFr { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the breed description in English.
-    /// </summary>
-    public string DescriptionEn { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the breed description in French.
-    /// </summary>
-    public string DescriptionFr { get; set; } = string.Empty;
-
-    /// <summary>
     /// Gets or sets a value indicating whether the breed is active.
     /// </summary>
     public bool IsActive { get; set; }

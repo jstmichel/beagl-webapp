@@ -89,8 +89,6 @@ public sealed class BreedRepository(ApplicationDbContext dbContext) : IBreedRepo
             AnimalType = breed.AnimalType,
             NameEn = breed.NameEn,
             NameFr = breed.NameFr,
-            DescriptionEn = breed.DescriptionEn,
-            DescriptionFr = breed.DescriptionFr,
             IsActive = breed.IsActive,
         };
 
@@ -113,8 +111,6 @@ public sealed class BreedRepository(ApplicationDbContext dbContext) : IBreedRepo
         existing.AnimalType = breed.AnimalType;
         existing.NameEn = breed.NameEn;
         existing.NameFr = breed.NameFr;
-        existing.DescriptionEn = breed.DescriptionEn;
-        existing.DescriptionFr = breed.DescriptionFr;
         existing.IsActive = breed.IsActive;
 
         await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -129,8 +125,6 @@ public sealed class BreedRepository(ApplicationDbContext dbContext) : IBreedRepo
             entity.AnimalType,
             entity.NameEn,
             entity.NameFr,
-            entity.DescriptionEn,
-            entity.DescriptionFr,
             entity.IsActive);
     }
 }

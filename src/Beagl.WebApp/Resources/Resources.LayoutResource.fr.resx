@@ -14,4 +14,6 @@
   <data name="Nav.Logout" xml:space="preserve"><value>Déconnexion</value></data>
   <data name="Nav.Profile" xml:space="preserve"><value>Mon profil</value></data>
   <data name="Nav.ChangePassword" xml:space="preserve"><value>Changer le mot de passe</value></data>
+  <data name="MainLayout.Section.Main" xml:space="preserve"><value>Navigation</value></data>
+  <data name="MainLayout.ToggleMenu" xml:space="preserve"><value>Basculer le menu</value></data>
 </root>

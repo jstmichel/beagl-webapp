@@ -7,7 +7,6 @@
 
   <!-- Table headers -->
   <data name="Breeds.Table.Name" xml:space="preserve"><value>Name</value></data>
-  <data name="Breeds.Table.Description" xml:space="preserve"><value>Description</value></data>
   <data name="Breeds.Table.NameEn" xml:space="preserve"><value>Name (EN)</value></data>
   <data name="Breeds.Table.NameFr" xml:space="preserve"><value>Name (FR)</value></data>
   <data name="Breeds.Table.AnimalType" xml:space="preserve"><value>Animal Type</value></data>
@@ -44,8 +43,6 @@
   <data name="Breeds.Form.AnimalType" xml:space="preserve"><value>Animal type</value></data>
   <data name="Breeds.Form.NameEn" xml:space="preserve"><value>Name (English)</value></data>
   <data name="Breeds.Form.NameFr" xml:space="preserve"><value>Name (French)</value></data>
-  <data name="Breeds.Form.DescriptionEn" xml:space="preserve"><value>Description (English)</value></data>
-  <data name="Breeds.Form.DescriptionFr" xml:space="preserve"><value>Description (French)</value></data>
   <data name="Breeds.Form.SelectAnimalType" xml:space="preserve"><value>Select an animal type</value></data>
 
   <!-- Success messages -->
@@ -77,8 +74,6 @@
   <data name="breed.name_en_too_long" xml:space="preserve"><value>English name must not exceed 100 characters.</value></data>
   <data name="breed.name_fr_required" xml:space="preserve"><value>French name is required.</value></data>
   <data name="breed.name_fr_too_long" xml:space="preserve"><value>French name must not exceed 100 characters.</value></data>
-  <data name="breed.description_en_too_long" xml:space="preserve"><value>English description must not exceed 500 characters.</value></data>
-  <data name="breed.description_fr_too_long" xml:space="preserve"><value>French description must not exceed 500 characters.</value></data>
   <data name="breed.duplicate_name" xml:space="preserve"><value>A breed with this name already exists for the selected animal type.</value></data>
   <data name="breed.not_found" xml:space="preserve"><value>The breed was not found.</value></data>
 

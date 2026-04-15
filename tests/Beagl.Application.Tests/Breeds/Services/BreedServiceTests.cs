@@ -17,15 +17,13 @@ public class BreedServiceTests
 
     public static IEnumerable<object[]> InvalidInputCases()
     {
-        yield return new object[] { 99, "Name", "Nom", string.Empty, string.Empty, "breed.animal_type_required" };
-        yield return new object[] { 1, string.Empty, "Nom", string.Empty, string.Empty, "breed.name_en_required" };
-        yield return new object[] { 1, "   ", "Nom", string.Empty, string.Empty, "breed.name_en_required" };
-        yield return new object[] { 1, new string('a', 101), "Nom", string.Empty, string.Empty, "breed.name_en_too_long" };
-        yield return new object[] { 1, "Name", string.Empty, string.Empty, string.Empty, "breed.name_fr_required" };
-        yield return new object[] { 1, "Name", "   ", string.Empty, string.Empty, "breed.name_fr_required" };
-        yield return new object[] { 1, "Name", new string('a', 101), string.Empty, string.Empty, "breed.name_fr_too_long" };
-        yield return new object[] { 1, "Name", "Nom", new string('a', 501), string.Empty, "breed.description_en_too_long" };
-        yield return new object[] { 1, "Name", "Nom", string.Empty, new string('a', 501), "breed.description_fr_too_long" };
+        yield return new object[] { 99, "Name", "Nom", "breed.animal_type_required" };
+        yield return new object[] { 1, string.Empty, "Nom", "breed.name_en_required" };
+        yield return new object[] { 1, "   ", "Nom", "breed.name_en_required" };
+        yield return new object[] { 1, new string('a', 101), "Nom", "breed.name_en_too_long" };
+        yield return new object[] { 1, "Name", string.Empty, "breed.name_fr_required" };
+        yield return new object[] { 1, "Name", "   ", "breed.name_fr_required" };
+        yield return new object[] { 1, "Name", new string('a', 101), "breed.name_fr_too_long" };
     }
 
     [Fact]
@@ -43,7 +41,7 @@ public class BreedServiceTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Breed breed = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        Breed breed = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", true);
         BreedsPage page = new([breed], 1);
 
         _repositoryMock
@@ -92,7 +90,7 @@ public class BreedServiceTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Breed breed = new(id, AnimalType.Dog, "Labrador", "Labrador", "Friendly dog", "Chien amical", true);
+        Breed breed = new(id, AnimalType.Dog, "Labrador", "Labrador", true);
 
         _repositoryMock
             .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
@@ -108,7 +106,6 @@ public class BreedServiceTests
         result!.Id.Should().Be(id);
         result.AnimalType.Should().Be(AnimalType.Dog);
         result.NameEn.Should().Be("Labrador");
-        result.DescriptionEn.Should().Be("Friendly dog");
         result.IsActive.Should().BeTrue();
     }
 
@@ -158,7 +155,7 @@ public class BreedServiceTests
             .ReturnsAsync((Breed b, CancellationToken _) => b);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon", "A large cat", "Un grand chat");
+        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon");
 
         // Act
         Result<BreedDto> result = await service.CreateAsync(request, CancellationToken.None);
@@ -188,7 +185,7 @@ public class BreedServiceTests
             .ReturnsAsync((Breed b, CancellationToken _) => b);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Cat, "  Maine Coon  ", "  Maine Coon  ", "  A large cat  ", "  Un grand chat  ");
+        SaveBreedRequest request = new(AnimalType.Cat, "  Maine Coon  ", "  Maine Coon  ");
 
         // Act
         await service.CreateAsync(request, CancellationToken.None);
@@ -196,8 +193,6 @@ public class BreedServiceTests
         // Assert
         capturedBreed!.NameEn.Should().Be("Maine Coon");
         capturedBreed.NameFr.Should().Be("Maine Coon");
-        capturedBreed.DescriptionEn.Should().Be("A large cat");
-        capturedBreed.DescriptionFr.Should().Be("Un grand chat");
     }
 
     [Fact]
@@ -209,7 +204,7 @@ public class BreedServiceTests
             .ReturnsAsync(true);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty);
+        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon");
 
         // Act
         Result<BreedDto> result = await service.CreateAsync(request, CancellationToken.None);
@@ -226,13 +221,11 @@ public class BreedServiceTests
         int animalTypeValue,
         string nameEn,
         string nameFr,
-        string descriptionEn,
-        string descriptionFr,
         string expectedCode)
     {
         // Arrange
         BreedService service = CreateService();
-        SaveBreedRequest request = new((AnimalType)animalTypeValue, nameEn, nameFr, descriptionEn, descriptionFr);
+        SaveBreedRequest request = new((AnimalType)animalTypeValue, nameEn, nameFr);
 
         // Act
         Result<BreedDto> result = await service.CreateAsync(request, CancellationToken.None);
@@ -265,7 +258,7 @@ public class BreedServiceTests
             .ReturnsAsync((Breed?)null);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty);
+        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon");
 
         // Act
         Result<BreedDto> result = await service.UpdateAsync(Guid.NewGuid(), request, CancellationToken.None);
@@ -280,7 +273,7 @@ public class BreedServiceTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", true);
 
         _repositoryMock
             .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
@@ -295,7 +288,7 @@ public class BreedServiceTests
             .ReturnsAsync((Breed b, CancellationToken _) => b);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Dog, "Golden Retriever", "Golden Retriever", "Playful", "Joueur");
+        SaveBreedRequest request = new(AnimalType.Dog, "Golden Retriever", "Golden Retriever");
 
         // Act
         Result<BreedDto> result = await service.UpdateAsync(id, request, CancellationToken.None);
@@ -311,7 +304,7 @@ public class BreedServiceTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", true);
         Breed? capturedBreed = null;
 
         _repositoryMock
@@ -328,7 +321,7 @@ public class BreedServiceTests
             .ReturnsAsync((Breed b, CancellationToken _) => b);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Dog, "  Golden  ", "  Retriever  ", "  Playful  ", "  Joueur  ");
+        SaveBreedRequest request = new(AnimalType.Dog, "  Golden  ", "  Retriever  ");
 
         // Act
         await service.UpdateAsync(id, request, CancellationToken.None);
@@ -336,8 +329,6 @@ public class BreedServiceTests
         // Assert
         capturedBreed!.NameEn.Should().Be("Golden");
         capturedBreed.NameFr.Should().Be("Retriever");
-        capturedBreed.DescriptionEn.Should().Be("Playful");
-        capturedBreed.DescriptionFr.Should().Be("Joueur");
     }
 
     [Fact]
@@ -345,7 +336,7 @@ public class BreedServiceTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", true);
 
         _repositoryMock
             .Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
@@ -356,7 +347,7 @@ public class BreedServiceTests
             .ReturnsAsync(true);
 
         BreedService service = CreateService();
-        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty);
+        SaveBreedRequest request = new(AnimalType.Cat, "Maine Coon", "Maine Coon");
 
         // Act
         Result<BreedDto> result = await service.UpdateAsync(id, request, CancellationToken.None);
@@ -373,13 +364,11 @@ public class BreedServiceTests
         int animalTypeValue,
         string nameEn,
         string nameFr,
-        string descriptionEn,
-        string descriptionFr,
         string expectedCode)
     {
         // Arrange
         BreedService service = CreateService();
-        SaveBreedRequest request = new((AnimalType)animalTypeValue, nameEn, nameFr, descriptionEn, descriptionFr);
+        SaveBreedRequest request = new((AnimalType)animalTypeValue, nameEn, nameFr);
 
         // Act
         Result<BreedDto> result = await service.UpdateAsync(Guid.NewGuid(), request, CancellationToken.None);
@@ -395,7 +384,7 @@ public class BreedServiceTests
     {
         // Arrange
         Guid id = Guid.NewGuid();
-        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", string.Empty, string.Empty, true);
+        Breed existing = new(id, AnimalType.Cat, "Maine Coon", "Maine Coon", true);
         Breed? capturedBreed = null;
 
         _repositoryMock
