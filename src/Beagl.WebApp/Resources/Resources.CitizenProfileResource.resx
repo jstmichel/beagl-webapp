@@ -29,6 +29,9 @@
   <data name="CitizenProfile.LanguagePreference.French" xml:space="preserve"><value>French</value></data>
   <data name="CitizenProfile.Loading" xml:space="preserve"><value>Loading your profile...</value></data>
   <data name="CitizenProfile.FirstLogin.Banner" xml:space="preserve"><value>Please complete your profile to continue using the portal.</value></data>
+  <data name="CitizenProfile.Tab.Personal" xml:space="preserve"><value>Personal info</value></data>
+  <data name="CitizenProfile.Tab.Address" xml:space="preserve"><value>Address</value></data>
+  <data name="CitizenProfile.Tab.Preferences" xml:space="preserve"><value>Preferences</value></data>
   <data name="citizen_profile.first_name_required" xml:space="preserve"><value>A first name is required.</value></data>
   <data name="citizen_profile.last_name_required" xml:space="preserve"><value>A last name is required.</value></data>
   <data name="citizen_profile.address_required" xml:space="preserve"><value>An address is required.</value></data>

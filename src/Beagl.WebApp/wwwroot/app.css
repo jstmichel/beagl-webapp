@@ -1120,36 +1120,49 @@ body.auth-body {
     border: 1px solid var(--surface-border);
     border-radius: var(--radius-xl);
     padding: clamp(1.5rem, 2vw + 1rem, 2.25rem);
+    padding-top: 3.5rem;
+    text-align: center;
     background: var(--surface);
     box-shadow: var(--shadow-lg);
     animation: reveal-up var(--speed-med) var(--ease-standard) both;
 }
 
-/* Reuse brand styling in auth context */
-.app-shell__brand {
-    display: inline-flex;
+.auth-brand {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
-    color: var(--ink-strong);
-    font-size: 1.12rem;
-    font-weight: 800;
+    gap: 0.5rem;
+    margin-top: -5rem;
+    margin-bottom: 1.25rem;
 }
 
-.app-shell__brand-mark {
+.auth-brand__mark {
     display: inline-grid;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: var(--radius-md);
-    padding: 0.3rem;
-    background: linear-gradient(140deg, var(--brand-light), #ffffff);
-    box-shadow: 0 8px 20px rgba(78, 170, 171, 0.18);
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-lg);
+    padding: 0.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--surface-border);
 }
 
-.app-shell__brand-logo {
+.auth-brand__logo {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+.auth-brand__name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ink-strong);
+    text-decoration: none;
+}
+
+.auth-brand__name:hover {
+    color: var(--brand-1);
 }
 
 .auth-kicker {
@@ -1183,6 +1196,7 @@ body.auth-body {
 .auth-form {
     display: grid;
     gap: 1rem;
+    text-align: left;
 }
 
 .auth-field {
@@ -1212,6 +1226,23 @@ body.auth-body {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+.auth-card--wide {
+    width: min(100%, 42rem);
+}
+
+.auth-form-grid {
+    align-items: start;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 575.98px) {
+    .auth-form-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1401,6 +1432,21 @@ body.auth-body {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+}
+
+.profile-tabs .nav-link {
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    transition: color var(--speed-fast), border-color var(--speed-fast);
+}
+
+.profile-tabs .nav-link.active,
+.profile-tabs .nav-link:hover {
+    color: var(--brand-2);
+    border-bottom-color: var(--brand-1);
 }
 
 .email-field-wrapper {
@@ -1703,6 +1749,28 @@ body.auth-body {
     justify-content: space-between;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+.breeds-filter-bar {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.breeds-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 10rem;
+}
+
+.breeds-filter-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 /* ── Colors tab — reuses breeds styles plus these overrides ── */

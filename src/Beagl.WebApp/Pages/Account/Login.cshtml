@@ -21,12 +21,12 @@
 <body class="auth-body">
     <section class="auth-page-shell" aria-label="@L["Auth.Login.PageTitle"]">
         <article class="auth-card">
-            <a class="app-shell__brand text-decoration-none mb-3" href="/">
-                <span class="app-shell__brand-mark">
-                    <img class="app-shell__brand-logo" src="~/images/beagl_logo.png" alt="@L["Auth.Login.Brand.Alt"]" />
-                </span>
-                <span>@L["Auth.Login.Brand.Name"]</span>
-            </a>
+            <div class="auth-brand">
+                <a class="auth-brand__mark" href="/">
+                    <img class="auth-brand__logo" src="~/images/beagl_logo.png" alt="@L["Auth.Login.Brand.Alt"]" />
+                </a>
+                <a class="auth-brand__name" href="/">@L["Auth.Login.Brand.Name"]</a>
+            </div>
             <p class="auth-kicker">@L["Auth.Login.Kicker"]</p>
             <h1 class="auth-heading">@L["Auth.Login.Title"]</h1>
             <p class="auth-copy">@L["Auth.Login.Description"]</p>

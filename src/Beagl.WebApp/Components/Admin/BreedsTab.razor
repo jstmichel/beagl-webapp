@@ -24,29 +24,36 @@ else
                 <h2 class="h4 mb-1">@L["Breeds.Directory.Title"]</h2>
                 <p class="text-secondary mb-0">@L["Breeds.Directory.Description"]</p>
             </div>
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <div class="d-flex gap-2 align-items-center flex-wrap">
-                    <select class="form-select form-select-sm"
-                            aria-label="@L["Breeds.Filter.AnimalType"]"
-                            @bind="_animalTypeFilterRaw"
-                            @bind:after="OnFilterChangedAsync">
-                        <option value="">@L["Breeds.Filter.All"]</option>
-                        <option value="1">@L["Breeds.AnimalType.Cat"]</option>
-                        <option value="2">@L["Breeds.AnimalType.Dog"]</option>
-                    </select>
-                    <select class="form-select form-select-sm"
-                            aria-label="@L["Breeds.Filter.Status"]"
-                            @bind="_isActiveFilterRaw"
-                            @bind:after="OnFilterChangedAsync">
-                        <option value="">@L["Breeds.Filter.All"]</option>
-                        <option value="true">@L["Breeds.Status.Active"]</option>
-                        <option value="false">@L["Breeds.Status.Inactive"]</option>
-                    </select>
-                </div>
-                <button type="button" class="btn btn-primary" @onclick="OpenCreateModal">
-                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
-                    @L["Breeds.Action.Create"]
-                </button>
+            <button type="button" class="btn btn-primary" @onclick="OpenCreateModal">
+                <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                @L["Breeds.Action.Create"]
+            </button>
+        </div>
+
+        <div class="breeds-filter-bar mb-4">
+            <div class="breeds-filter-group">
+                <label class="breeds-filter-label" for="filterAnimalType">
+                    <i class="bi bi-funnel me-1" aria-hidden="true"></i>@L["Breeds.Filter.AnimalType"]
+                </label>
+                <select id="filterAnimalType" class="form-select form-select-sm"
+                        @bind="_animalTypeFilterRaw"
+                        @bind:after="OnFilterChangedAsync">
+                    <option value="">@L["Breeds.Filter.All"]</option>
+                    <option value="1">@L["Breeds.AnimalType.Cat"]</option>
+                    <option value="2">@L["Breeds.AnimalType.Dog"]</option>
+                </select>
+            </div>
+            <div class="breeds-filter-group">
+                <label class="breeds-filter-label" for="filterStatus">
+                    <i class="bi bi-toggle-on me-1" aria-hidden="true"></i>@L["Breeds.Filter.Status"]
+                </label>
+                <select id="filterStatus" class="form-select form-select-sm"
+                        @bind="_isActiveFilterRaw"
+                        @bind:after="OnFilterChangedAsync">
+                    <option value="">@L["Breeds.Filter.All"]</option>
+                    <option value="true">@L["Breeds.Status.Active"]</option>
+                    <option value="false">@L["Breeds.Status.Inactive"]</option>
+                </select>
             </div>
         </div>
 
@@ -65,7 +72,6 @@ else
                     <thead>
                         <tr>
                             <th scope="col">@L["Breeds.Table.Name"]</th>
-                            <th scope="col">@L["Breeds.Table.Description"]</th>
                             <th scope="col">@L["Breeds.Table.AnimalType"]</th>
                             <th scope="col">@L["Breeds.Table.Status"]</th>
                             <th scope="col" class="text-end">@L["Breeds.Table.Actions"]</th>
@@ -76,7 +82,6 @@ else
                         {
                             <tr>
                                 <td>@LocalizeName(breed.NameEn, breed.NameFr)</td>
-                                <td>@LocalizeName(breed.DescriptionEn, breed.DescriptionFr)</td>
                                 <td>@LocalizeAnimalType(breed.AnimalType)</td>
                                 <td>
                                     @if (breed.IsActive)
@@ -174,14 +179,6 @@ else
                     <div>
                         <label class="form-label" for="breedNameFr">@L["Breeds.Form.NameFr"]</label>
                         <InputText id="breedNameFr" class="form-control" @bind-Value="_form.NameFr" />
-                    </div>
-                    <div>
-                        <label class="form-label" for="breedDescriptionEn">@L["Breeds.Form.DescriptionEn"]</label>
-                        <InputTextArea id="breedDescriptionEn" class="form-control" rows="3" @bind-Value="_form.DescriptionEn" />
-                    </div>
-                    <div>
-                        <label class="form-label" for="breedDescriptionFr">@L["Breeds.Form.DescriptionFr"]</label>
-                        <InputTextArea id="breedDescriptionFr" class="form-control" rows="3" @bind-Value="_form.DescriptionFr" />
                     </div>
                 </div>
 

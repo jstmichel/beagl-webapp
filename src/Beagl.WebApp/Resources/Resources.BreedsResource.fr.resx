@@ -7,7 +7,6 @@
 
   <!-- Table headers -->
   <data name="Breeds.Table.Name" xml:space="preserve"><value>Nom</value></data>
-  <data name="Breeds.Table.Description" xml:space="preserve"><value>Description</value></data>
   <data name="Breeds.Table.NameEn" xml:space="preserve"><value>Nom (AN)</value></data>
   <data name="Breeds.Table.NameFr" xml:space="preserve"><value>Nom (FR)</value></data>
   <data name="Breeds.Table.AnimalType" xml:space="preserve"><value>Type d'animal</value></data>
@@ -44,8 +43,6 @@
   <data name="Breeds.Form.AnimalType" xml:space="preserve"><value>Type d'animal</value></data>
   <data name="Breeds.Form.NameEn" xml:space="preserve"><value>Nom (anglais)</value></data>
   <data name="Breeds.Form.NameFr" xml:space="preserve"><value>Nom (français)</value></data>
-  <data name="Breeds.Form.DescriptionEn" xml:space="preserve"><value>Description (anglais)</value></data>
-  <data name="Breeds.Form.DescriptionFr" xml:space="preserve"><value>Description (français)</value></data>
   <data name="Breeds.Form.SelectAnimalType" xml:space="preserve"><value>Sélectionnez un type d'animal</value></data>
 
   <!-- Success messages -->
@@ -77,8 +74,6 @@
   <data name="breed.name_en_too_long" xml:space="preserve"><value>Le nom en anglais ne doit pas dépasser 100 caractères.</value></data>
   <data name="breed.name_fr_required" xml:space="preserve"><value>Le nom en français est requis.</value></data>
   <data name="breed.name_fr_too_long" xml:space="preserve"><value>Le nom en français ne doit pas dépasser 100 caractères.</value></data>
-  <data name="breed.description_en_too_long" xml:space="preserve"><value>La description en anglais ne doit pas dépasser 500 caractères.</value></data>
-  <data name="breed.description_fr_too_long" xml:space="preserve"><value>La description en français ne doit pas dépasser 500 caractères.</value></data>
   <data name="breed.duplicate_name" xml:space="preserve"><value>Une race avec ce nom existe déjà pour le type d'animal sélectionné.</value></data>
   <data name="breed.not_found" xml:space="preserve"><value>La race est introuvable.</value></data>
 

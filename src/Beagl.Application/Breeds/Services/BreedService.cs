@@ -52,8 +52,6 @@ public sealed class BreedService(IBreedRepository repository) : IBreedService
             request.AnimalType,
             request.NameEn.Trim(),
             request.NameFr.Trim(),
-            request.DescriptionEn.Trim(),
-            request.DescriptionFr.Trim(),
             true);
 
         Breed created = await _repository.CreateAsync(breed, cancellationToken).ConfigureAwait(false);
@@ -88,8 +86,6 @@ public sealed class BreedService(IBreedRepository repository) : IBreedService
             AnimalType = request.AnimalType,
             NameEn = request.NameEn.Trim(),
             NameFr = request.NameFr.Trim(),
-            DescriptionEn = request.DescriptionEn.Trim(),
-            DescriptionFr = request.DescriptionFr.Trim(),
         };
 
         Breed saved = await _repository.UpdateAsync(updated, cancellationToken).ConfigureAwait(false);
@@ -137,16 +133,6 @@ public sealed class BreedService(IBreedRepository repository) : IBreedService
             return Result.Failure(new ResultError("breed.name_fr_too_long", $"The French name must not exceed {ValidationConstants.BreedNameMaxLength} characters."));
         }
 
-        if (request.DescriptionEn.Trim().Length > ValidationConstants.BreedDescriptionMaxLength)
-        {
-            return Result.Failure(new ResultError("breed.description_en_too_long", $"The English description must not exceed {ValidationConstants.BreedDescriptionMaxLength} characters."));
-        }
-
-        if (request.DescriptionFr.Trim().Length > ValidationConstants.BreedDescriptionMaxLength)
-        {
-            return Result.Failure(new ResultError("breed.description_fr_too_long", $"The French description must not exceed {ValidationConstants.BreedDescriptionMaxLength} characters."));
-        }
-
         return Result.Success();
     }
 
@@ -157,8 +143,6 @@ public sealed class BreedService(IBreedRepository repository) : IBreedService
             breed.AnimalType,
             breed.NameEn,
             breed.NameFr,
-            breed.DescriptionEn,
-            breed.DescriptionFr,
             breed.IsActive);
     }
 
