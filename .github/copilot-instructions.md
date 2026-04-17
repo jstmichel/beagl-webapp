@@ -51,6 +51,8 @@ Use these scoped instruction files as the source of truth for detailed guidance:
     - Brand tokens, CRUD UI patterns, detail panel structure, accessibility expectations, and Blazor versus Razor Pages selection guidance for the WebApp
 - `.github/instructions/localization.instructions.md`
     - i18n rules, resource organization, bilingual requirements, localization key patterns
+- `.github/instructions/agent-authoring.instructions.md`
+    - Skill, agent, and prompt authoring rules — loaded only when editing `.github/**/*.md` files
 
 ---
 
@@ -61,20 +63,6 @@ Use these scoped instruction files as the source of truth for detailed guidance:
 - Code must be written in English, including identifiers, comments, and documentation.
 - Repository changes should respect existing project boundaries and folder structure.
 
----
 
-# Commit Messages
 
-- Use Conventional Commits in lowercase.
-- Use a single header line.
-- Keep the title under 72 characters.
-- Add bullet points in the body for grouped changes when useful.
-- Add `BREAKING CHANGE:` in the body if applicable.
 
----
-
-# Skill Authoring Guidance
-
-- Skills should reference only the smallest relevant instruction files instead of treating this file as a monolith.
-- Put reusable domain knowledge in scoped instruction files, not duplicated across many skills.
-- Keep skill files focused on workflow and trigger behavior; keep coding standards in `.github/instructions/`.
